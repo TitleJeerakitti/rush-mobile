@@ -10,16 +10,16 @@ import {
 } from 'react-native';
 import { BlurView } from 'expo';
 import { Divider } from 'react-native-elements';
-import { Card, InputIcon, Button, TextLine } from './common';
+import { InputIcon, Button, TextLine } from './common';
 
 class LoginForm extends React.Component {
     render() {
-        const { container, appName, linkRight, height20 } = styles;
+        const { container, appName, linkRight } = styles;
         return (
             <View style={{ flex: 1 }}>
                 <StatusBar barStyle="light-content" />
                 <Image
-                    //resizeMode='cover'
+                    resizeMode='cover'
                     style={{
                         width: '100%',
                         height: '100%',
@@ -28,6 +28,8 @@ class LoginForm extends React.Component {
                 />
                 <BlurView tint="dark" intensity={40} style={StyleSheet.absoluteFill}>
                     <KeyboardAvoidingView style={container} behavior="padding">
+
+                        {/* -- Logo Section -- */}
                         <Image 
                             style={{ width: 132, height: 185 }}
                             source={require('../images/r-logo.png')}
@@ -35,30 +37,29 @@ class LoginForm extends React.Component {
                         <Text style={appName}>
                             R U S H
                         </Text>
-                        <Divider style={height20} />
-                        <Card>
-                            <InputIcon placeholder='E-mail' iconName='user' />
-                        </Card>
-                        <Card>
-                            <InputIcon placeholder='Password' iconName='lock' />
-                        </Card>
+
+                        <Divider style={{ height: 10 }} />
+                        
+                        {/* -- Input Section -- */}
+                        <InputIcon placeholder='E-mail' iconName='user' />
+                        <InputIcon placeholder='Password' iconName='lock' />
                         <TouchableOpacity style={linkRight}>
                             <Text style={{ color: 'white' }}>
                                 forget password?
                             </Text>
                         </TouchableOpacity>
-                        <Divider style={height20} />
-                        <Card>
-                            <Button color='#FFA80D'>
-                                เข้าสู่ระบบ
-                            </Button>
-                        </Card>
+
+                        <Divider style={{ height: 20 }} />
+
+                        {/* -- Button Section -- */}
+                        <Button color='#FFA80D'>
+                            เข้าสู่ระบบ
+                        </Button>
                         <TextLine title='or' />
-                        <Card>
-                            <Button color='#EF4036'>
-                                สมัครสมาชิก
-                            </Button>
-                        </Card>
+                        <Button color='#EF4036'>
+                            สมัครสมาชิก
+                        </Button>
+
                     </KeyboardAvoidingView>
                 </BlurView>
             </View>
@@ -80,12 +81,9 @@ const styles = {
     },
     linkRight: {
         alignSelf: 'flex-end',
-        marginHorizontal: 50,
+        marginHorizontal: '12%',
         marginTop: 5,
     },
-    height20: {
-        height: 20,
-    }
 };
 
 export default LoginForm;

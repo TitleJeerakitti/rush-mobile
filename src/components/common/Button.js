@@ -11,14 +11,15 @@ const Button = ({ children, color }) => {
 
 const styles = {
     containerStyle: {
-        padding: 15,
-        flex: 1,
-        alignItems: 'center',
-        borderRadius: 15,
+        padding: 10,
+        borderRadius: 10,
+        flexDirection: 'row',
+        marginHorizontal: '12%',
     },
     textStyle: {
-        fontSize: 16,
         color: 'white',
+        flex: 1,
+        textAlign: 'center',
     }
 };
 

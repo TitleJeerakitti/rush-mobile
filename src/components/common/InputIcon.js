@@ -40,17 +40,18 @@ class InputIcon extends React.Component {
 const styles = {
     containerStyle: {
         backgroundColor: 'white',
-        padding: 10,
-        flex: 1,
+        paddingHorizontal: 5,
         flexDirection: 'row',
         borderRadius: 25,
         alignItems: 'center',
         justifyContent: 'center',
+        marginHorizontal: '12%',
+        marginTop: 20,
     },
     textStyle: {
-        fontSize: 16,
         textAlign: 'center',
         flex: 1,
+        paddingVertical: 10,
         // paddingRight: 30,
     },
     clearShow: {
