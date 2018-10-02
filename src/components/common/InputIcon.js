@@ -14,13 +14,20 @@ class InputIcon extends React.Component {
     render() {
         const { containerStyle, textStyle, clearHide, clearShow } = styles;
         const { rightIconStyle } = this.state;
-        const { placeholder, iconName } = this.props;
+        const { 
+            placeholder,
+            iconName, 
+            secureTextEntry = false,
+            onChangeText
+        } = this.props;
         return (
             <View style={containerStyle}>
                 <Icon name={iconName} type='evilicon' size={30} />
                 <TextInput 
+                    onChangeText={onChangeText}
                     style={textStyle}
                     placeholder={placeholder}
+                    secureTextEntry={secureTextEntry}
                     autoCorrect={false}
                     autoCapitalize='none'
                     onFocus={() =>

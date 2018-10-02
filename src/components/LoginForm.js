@@ -8,11 +8,17 @@ import {
     StatusBar,
     TouchableOpacity
 } from 'react-native';
+import { connect } from 'react-redux';
 import { BlurView } from 'expo';
 import { Divider } from 'react-native-elements';
 import { InputIcon, Button, TextLine } from './common';
+import { authUserChange } from '../actions';
 
 class LoginForm extends React.Component {
+    onEmailChange(text) {
+        this.props.authUserChange(text);
+    }
+
     render() {
         const { container, appName, linkRight } = styles;
         return (
@@ -41,8 +47,16 @@ class LoginForm extends React.Component {
                         <Divider style={{ height: 10 }} />
                         
                         {/* -- Input Section -- */}
-                        <InputIcon placeholder='E-mail' iconName='user' />
-                        <InputIcon placeholder='Password' iconName='lock' />
+                        <InputIcon 
+                            placeholder='E-mail'
+                            iconName='user'
+                            onChangeText={this.onEmailChange.bind(this)}
+                        />
+                        <InputIcon
+                            placeholder='Password'
+                            iconName='lock' 
+                            secureTextEntry
+                        />
                         <TouchableOpacity style={linkRight}>
                             <Text style={{ color: 'white' }}>
                                 forget password?
@@ -86,4 +100,12 @@ const styles = {
     },
 };
 
-export default LoginForm;
+const mapStateToProps = ({ auth }) => {
+    const { email, password, user } = auth;
+    console.log({ email, password, user });
+    return { email, password, user };
+};
+
+export default connect(mapStateToProps, {
+    authUserChange,
+})(LoginForm);
