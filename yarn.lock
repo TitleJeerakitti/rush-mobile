@@ -5108,6 +5108,16 @@ react-native-gesture-handler@1.0.6:
     invariant "^2.2.2"
     prop-types "^15.5.10"
 
+react-native-hr-plus@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/react-native-hr-plus/-/react-native-hr-plus-1.0.6.tgz#355b94ad4ff4ba7eb84621ec62bdbe73c3179e9e"
+  integrity sha512-JUR4i4GMIbaAJLPpP2PkEqK+/CAXm4NLhkAPduYoBncjNTtNTY1PE338xkBRZTKS/r+TmLqexXhDu8ckzQ7KHA==
+
+react-native-hr@^1.1.4:
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/react-native-hr/-/react-native-hr-1.1.4.tgz#8079783adfc3cc3eb0923ada397523e050a719f7"
+  integrity sha512-Gi+MJPW73/mXTFjLkFf0vbWTTltyKbYdnSUNn2H8yt9m7NKPzrJp4TlCm8TqIsRsAMCaa55BGv3Z+i/cD9O69g==
+
 react-native-maps@0.21.0:
   version "0.21.0"
   resolved "https://registry.yarnpkg.com/react-native-maps/-/react-native-maps-0.21.0.tgz#005f58e93d7623ad59667e8002101970ddf235c2"

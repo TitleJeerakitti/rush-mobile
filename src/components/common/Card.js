@@ -15,6 +15,7 @@ const styles = {
     containerStyle: {
         flexDirection: 'row',
         marginTop: 10,
+        marginHorizontal: 50,
     }
 };
 
