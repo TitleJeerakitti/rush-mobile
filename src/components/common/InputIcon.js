@@ -1,44 +1,64 @@
 import React from 'react';
-import { TextInput, View } from 'react-native';
+import { TextInput, View, TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-elements';
 
 class InputIcon extends React.Component {
 
-    constructor() {
-        super();
-        this.state = {
-            rightIconStyle: styles.clearHide,
-        };
+    componentWillMount() {
+        const { password } = this.props;
+        const { textStyle, showStyle, } = styles;
+
+        this.setState({ rightIconStyle: showStyle, textStyle });
+
+        if (!password) {
+            this.setState({ ...this.state, textStyle: [textStyle, { paddingRight: 30 }] });
+        }
+    }
+
+    renderShowPassword() {
+        const { rightIconStyle } = this.state;
+        const { password, onPress, secureTextEntry } = this.props;
+
+        if (password && secureTextEntry) {
+            return (
+                <TouchableOpacity onPress={onPress}>
+                    <Icon name='eye' type='entypo' size={20} iconStyle={rightIconStyle} />
+                </TouchableOpacity>
+            );
+        } else if (password) {
+            return (
+                <TouchableOpacity onPress={onPress}>
+                    <Icon name='eye-with-line' type='entypo' size={20} iconStyle={rightIconStyle} />
+                </TouchableOpacity>
+            );
+        }
     }
 
     render() {
-        const { containerStyle, textStyle, clearHide, clearShow } = styles;
-        const { rightIconStyle } = this.state;
+        const { containerStyle } = styles;
+        const { textStyle } = this.state;
         const { 
             placeholder,
             iconName, 
-            secureTextEntry = false,
-            onChangeText
+            secureTextEntry,
+            onChangeText,
+            value,
         } = this.props;
+        
         return (
             <View style={containerStyle}>
                 <Icon name={iconName} type='evilicon' size={30} />
                 <TextInput 
+                    value={value}
                     onChangeText={onChangeText}
                     style={textStyle}
                     placeholder={placeholder}
                     secureTextEntry={secureTextEntry}
                     autoCorrect={false}
                     autoCapitalize='none'
-                    onFocus={() =>
-                        this.setState({ ...this.state, rightIconStyle: clearShow })
-                    }
-                    onEndEditing={() => 
-                        this.setState({ ...this.state, rightIconStyle: clearHide })
-                    }
                     underlineColorAndroid='transparent'
                 />
-                <Icon name='close-o' type='evilicon' size={20} iconStyle={rightIconStyle} />
+                {this.renderShowPassword()}
             </View>
         );
     }
@@ -59,16 +79,11 @@ const styles = {
         textAlign: 'center',
         flex: 1,
         paddingVertical: 10,
-        // paddingRight: 30,
     },
-    clearShow: {
+    showStyle: {
         paddingHorizontal: 5,
         color: 'black',
     },
-    clearHide: {
-        paddingHorizontal: 5,
-        color: 'white',
-    }
 };
 
 export { InputIcon };
