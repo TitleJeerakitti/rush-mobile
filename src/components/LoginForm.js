@@ -9,6 +9,8 @@ import {
     TouchableOpacity, 
     Dimensions,
     LayoutAnimation,
+    Platform,
+    UIManager,
 } from 'react-native';
 import { connect } from 'react-redux';
 import { BlurView } from 'expo';
@@ -18,6 +20,7 @@ import {
     authEmailChange,
     authPasswordChange,
     authLogin,
+    authToRegister,
 } from '../actions';
 
 class LoginForm extends React.Component {
@@ -86,7 +89,10 @@ class LoginForm extends React.Component {
                     เข้าสู่ระบบ
                 </Button>
                 <TextLine title='or' />
-                <Button color='#EF4036'>
+                <Button 
+                    color='#EF4036'
+                    onPress={() => this.props.authToRegister()}
+                >
                     สมัครสมาชิก
                 </Button>
             </View>
@@ -96,6 +102,10 @@ class LoginForm extends React.Component {
     render() {
         const { container, linkRight } = styles;
         const { secureTextEntry, logoSize, headerName } = this.state;
+        if (Platform.OS === 'android') {
+            // UIManager.setLayoutAnimationEnabledExperimental && 
+            UIManager.setLayoutAnimationEnabledExperimental(true);
+        }
 
         return (
             <View style={{ flex: 1 }}>
@@ -129,11 +139,13 @@ class LoginForm extends React.Component {
                             value={this.props.email}
                             placeholder='E-mail'
                             iconName='user'
+                            type='evilicon'
                             onChangeText={this.onEmailChange.bind(this)}
                         />
                         <InputIcon
                             placeholder='Password'
-                            iconName='lock' 
+                            iconName='lock'
+                            type='evilicon'
                             secureTextEntry={secureTextEntry}
                             password
                             value={this.props.password}
@@ -188,7 +200,6 @@ const styles = {
 
 const mapStateToProps = ({ auth }) => {
     const { email, password, user, loading, error } = auth;
-    console.log(auth);
     return { email, password, user, loading, error };
 };
 
@@ -196,4 +207,5 @@ export default connect(mapStateToProps, {
     authEmailChange,
     authPasswordChange,
     authLogin,
+    authToRegister,
 })(LoginForm);

@@ -5,7 +5,14 @@ import {
     PASSWORD_CHANGE,
     LOGIN_USER,
     LOGIN_FAILED,
-    LOGIN_SUCCESS
+    LOGIN_SUCCESS,
+    GOTO_REGISTER,
+    NAME_CHANGE,
+    PHONE_CHANGE,
+    CREATE_USER,
+    CREATE_FAIL,
+    CREATE_SUCCESS,
+    CLEAR_STATE,
 } from './types';
 
 export const authEmailChange = (text) => {
@@ -41,4 +48,47 @@ export const authLoginFailed = (dispatch, error) => {
 export const authLoginSuccess = (dispatch, user) => {
     dispatch({ type: LOGIN_SUCCESS, payload: user });
     Actions.app();
+};
+
+export const authToRegister = () => {
+    return (dispatch) => {
+        dispatch({ type: GOTO_REGISTER });
+        Actions.register();
+    };
+};
+
+export const authNameChange = (text) => {
+    return {
+        type: NAME_CHANGE,
+        payload: text,
+    };
+};
+
+export const authPhoneChange = (text) => {
+    return {
+        type: PHONE_CHANGE,
+        payload: text,
+    };
+};
+
+export const authCreateUser = (email, password) => {
+    return (dispatch) => {
+        dispatch({ type: CREATE_USER });
+        firebase.auth().createUserWithEmailAndPassword(email, password)
+            .then((user) => authCreateSuccess(dispatch, user))
+            .catch((error) => authCreateFail(dispatch, error.message));
+    };
+};
+
+export const authCreateFail = (dispatch, error) => {
+    dispatch({ type: CREATE_FAIL, payload: error });
+};
+
+export const authCreateSuccess = (dispatch, user) => {
+    dispatch({ type: CREATE_SUCCESS, payload: user });
+    Actions.pop();
+};
+
+export const authClearState = () => {
+    return { type: CLEAR_STATE };
 };
