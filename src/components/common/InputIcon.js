@@ -5,10 +5,20 @@ import { Icon } from 'react-native-elements';
 class InputIcon extends React.Component {
 
     componentWillMount() {
-        const { password } = this.props;
-        const { textStyle, showStyle, } = styles;
+        const { password, addStyle } = this.props;
+        const { textStyle, showStyle, containerStyle } = styles;
 
-        this.setState({ rightIconStyle: showStyle, textStyle });
+        if (!addStyle) {
+            this.setState({ 
+                rightIconStyle: showStyle, 
+                textStyle, 
+                containerStyle: { ...containerStyle, marginHorizontal: '12%', } });
+        } else {
+            this.setState({ 
+                rightIconStyle: showStyle, 
+                textStyle, 
+                containerStyle: { ...containerStyle, ...addStyle, } });
+        }
 
         if (!password) {
             this.setState({ ...this.state, textStyle: [textStyle, { paddingRight: 30 }] });
@@ -35,19 +45,19 @@ class InputIcon extends React.Component {
     }
 
     render() {
-        const { containerStyle } = styles;
-        const { textStyle } = this.state;
+        const { textStyle, containerStyle } = this.state;
         const { 
             placeholder,
             iconName, 
             secureTextEntry,
             onChangeText,
             value,
+            type,
         } = this.props;
         
         return (
-            <View style={containerStyle}>
-                <Icon name={iconName} type='evilicon' size={30} />
+            <View style={{ ...containerStyle, }}>
+                <Icon name={iconName} type={type} size={30} />
                 <TextInput 
                     value={value}
                     onChangeText={onChangeText}
@@ -72,7 +82,6 @@ const styles = {
         borderRadius: 25,
         alignItems: 'center',
         justifyContent: 'center',
-        marginHorizontal: '12%',
         marginTop: 20,
     },
     textStyle: {
