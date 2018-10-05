@@ -37,7 +37,7 @@ class RouterComponent extends React.Component {
                         // navBar={Header} 
                     >
                         <Scene key='login' component={LoginForm} hideNavBar initial />
-                        <Scene key='register' component={Register} title='สมัครสมาชิก' />
+                        <Scene key='register' component={Register} title='สมัครสมาชิก' onLeft />
                     </Scene>
                     {/* </Scene> */}
                     <Scene key='app'>

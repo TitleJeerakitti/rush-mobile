@@ -167,7 +167,6 @@ const styles = {
 
 const mapStateToProps = ({ auth }) => {
     const { name, phone, email, password, loading, error } = auth;
-    console.log(auth);
     return { name, phone, email, password, loading, error };
 };
 

@@ -53,7 +53,7 @@ export const authLoginSuccess = (dispatch, user) => {
 export const authToRegister = () => {
     return (dispatch) => {
         dispatch({ type: GOTO_REGISTER });
-        Actions.register();
+        Actions.register({ onBack: () => authClearState(dispatch) });
     };
 };
 
@@ -89,6 +89,7 @@ export const authCreateSuccess = (dispatch, user) => {
     Actions.pop();
 };
 
-export const authClearState = () => {
-    return { type: CLEAR_STATE };
+export const authClearState = (dispatch) => {
+    dispatch({ type: CLEAR_STATE });
+    Actions.pop();
 };

@@ -29,8 +29,23 @@ export default (state = INITIAL_STATE, action) => {
             return { ...state, email: action.payload, error: '' };
         case PASSWORD_CHANGE:
             return { ...state, password: action.payload, error: '' };
+        case NAME_CHANGE:
+            return { ...state, name: action.payload, error: '' };
+        case PHONE_CHANGE:
+            return { ...state, phone: action.payload, error: '' };
         case LOGIN_USER:
             return { ...state, loading: true, error: '' };
+        case CREATE_USER:
+            return { ...state, loading: true, error: '' };
+        case CLEAR_STATE:
+        case GOTO_REGISTER:
+            return INITIAL_STATE;
+        case LOGIN_SUCCESS:
+        case CREATE_SUCCESS:
+            return {
+                ...INITIAL_STATE,
+                user: action.payload,
+            };
         case LOGIN_FAILED:
             return { 
                 ...state,
@@ -38,16 +53,6 @@ export default (state = INITIAL_STATE, action) => {
                 error: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง',
                 password: '',
             };
-        case CLEAR_STATE:
-        case GOTO_REGISTER:
-            console.log('reducer');
-            return INITIAL_STATE;
-        case NAME_CHANGE:
-            return { ...state, name: action.payload, error: '' };
-        case PHONE_CHANGE:
-            return { ...state, phone: action.payload, error: '' };
-        case CREATE_USER:
-            return { ...state, loading: true, error: '' };
         case CREATE_FAIL:
             if (action.payload === 'The email address is already in use by another account.') {
                 return { 
@@ -66,12 +71,6 @@ export default (state = INITIAL_STATE, action) => {
                 ...state,
                 loading: false,
                 error: 'รหัสผ่านต้องยาวกว่า 6 ตัวอักษร',
-            };
-        case LOGIN_SUCCESS:
-        case CREATE_SUCCESS:
-            return {
-                ...INITIAL_STATE,
-                user: action.payload,
             };
         default:
             return state;
