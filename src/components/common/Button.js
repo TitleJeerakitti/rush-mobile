@@ -18,6 +18,9 @@ const styles = {
         borderRadius: 10,
         flexDirection: 'row',
         marginHorizontal: '12%',
+        shadowColor: 'black', 
+        shadowOpacity: 0.2, 
+        shadowOffset: { width: 1, height: 1 }, 
     },
     textStyle: {
         color: 'white',

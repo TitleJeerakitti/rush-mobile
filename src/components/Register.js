@@ -1,7 +1,7 @@
 import React from 'react';
 import { 
     Text,
-    View, 
+    View,
     Image, 
     StyleSheet, 
     KeyboardAvoidingView,
@@ -73,7 +73,7 @@ class Register extends React.Component {
     }
 
     render() {
-        const { container, cardStyle } = styles;
+        const { container, cardStyle, headerStyle } = styles;
         const { secureTextEntry } = this.state;
         if (Platform.OS === 'android') {
             // UIManager.setLayoutAnimationEnabledExperimental && 
@@ -93,12 +93,12 @@ class Register extends React.Component {
                 <BlurView tint="dark" intensity={40} style={StyleSheet.absoluteFill}>
                     <KeyboardAvoidingView style={container} behavior="padding">
                         <View style={cardStyle}>
-                            <Text style={{ fontSize: 16 }}>กรุณากรอกข้อมูลด้านล่าง</Text>
+                            <Text style={headerStyle}>กรุณากรอกข้อมูลด้านล่าง</Text>
                             <InputIcon
                                 placeholder='ชื่อ-สกุล'
                                 iconName='account-circle'
                                 type='meterial-community'
-                                addStyle={{ marginHorizontal: '5%' }}
+                                addStyle={{ marginHorizontal: '10%' }}
                                 onChangeText={this.onNameChange.bind(this)}
                                 value={this.props.name}
                             />
@@ -106,7 +106,7 @@ class Register extends React.Component {
                                 placeholder='เบอร์โทรศัพท์'
                                 iconName='phone'
                                 type='meterial-community'
-                                addStyle={{ marginHorizontal: '5%' }}
+                                addStyle={{ marginHorizontal: '10%' }}
                                 onChangeText={this.onPhoneChange.bind(this)}
                                 value={this.props.phone}
                             />
@@ -114,7 +114,7 @@ class Register extends React.Component {
                                 placeholder='อีเมล'
                                 iconName='mail'
                                 type='meterial-community'
-                                addStyle={{ marginHorizontal: '5%' }}
+                                addStyle={{ marginHorizontal: '10%' }}
                                 onChangeText={this.onEmailChange.bind(this)}
                                 value={this.props.email}
                             />
@@ -122,7 +122,7 @@ class Register extends React.Component {
                                 placeholder='รหัสผ่าน'
                                 iconName='lock'
                                 type='meterial-community'
-                                addStyle={{ marginHorizontal: '5%' }}
+                                addStyle={{ marginHorizontal: '10%' }}
                                 secureTextEntry={secureTextEntry}
                                 password
                                 onChangeText={this.onPasswordChange.bind(this)}
@@ -153,6 +153,9 @@ const styles = {
         paddingVertical: 20,
         borderRadius: 15,
         alignItems: 'center',
+        shadowColor: 'black', 
+        shadowOpacity: 0.2, 
+        shadowOffset: { width: 1, height: 1 }, 
     },
     errorText: {
         alignSelf: 'center', 
@@ -162,7 +165,11 @@ const styles = {
         shadowOpacity: 0.2, 
         shadowOffset: { width: 1, height: 1 }, 
         textAlign: 'center',
-    }
+    },
+    headerStyle: {
+        fontSize: 16, 
+        color: 'white',
+    },
 };
 
 const mapStateToProps = ({ auth }) => {
