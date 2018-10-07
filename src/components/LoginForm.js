@@ -2,10 +2,7 @@ import React from 'react';
 import { 
     View, 
     Text, 
-    KeyboardAvoidingView, 
     Image, 
-    StyleSheet, 
-    StatusBar,
     TouchableOpacity, 
     Dimensions,
     LayoutAnimation,
@@ -13,9 +10,14 @@ import {
     UIManager,
 } from 'react-native';
 import { connect } from 'react-redux';
-import { BlurView } from 'expo';
 import { Divider } from 'react-native-elements';
-import { InputIcon, Button, TextLine, Spinner } from './common';
+import { 
+    InputIcon, 
+    Button, 
+    TextLine, 
+    Spinner,
+    AuthBg,
+} from './common';
 import { 
     authEmailChange,
     authPasswordChange,
@@ -101,7 +103,7 @@ class LoginForm extends React.Component {
     }
 
     render() {
-        const { container, linkRight } = styles;
+        const { linkRight } = styles;
         const { secureTextEntry, logoSize, headerName } = this.state;
         if (Platform.OS === 'android') {
             // UIManager.setLayoutAnimationEnabledExperimental && 
@@ -109,78 +111,59 @@ class LoginForm extends React.Component {
         }
 
         return (
-            <View style={{ flex: 1 }}>
-                <StatusBar barStyle="light-content" />
-                <Image
-                    resizeMode='cover'
-                    style={{
-                        width: '100%',
-                        height: '100%',
-                    }}
-                    source={require('../images/bg_free.png')} 
+            <AuthBg>
+
+                {/* -- Logo Section -- */}
+                <Image 
+                    style={logoSize}
+                    source={require('../images/r-logo.png')}
                 />
-                <BlurView tint="dark" intensity={40} style={StyleSheet.absoluteFill}>
-                    <KeyboardAvoidingView style={container} behavior="padding">
+                <View>
+                    <Text style={headerName}>
+                        R U S H
+                    </Text>
+                </View>
 
-                        {/* -- Logo Section -- */}
-                        <Image 
-                            style={logoSize}
-                            source={require('../images/r-logo.png')}
-                        />
-                        <View>
-                            <Text style={headerName}>
-                                R U S H
-                            </Text>
-                        </View>
+                <Divider style={{ height: 10 }} />
+                
+                {/* -- Input Section -- */}
+                <InputIcon 
+                    value={this.props.email}
+                    placeholder='E-mail'
+                    iconName='user'
+                    type='evilicon'
+                    onChangeText={this.onEmailChange.bind(this)}
+                />
+                <InputIcon
+                    placeholder='Password'
+                    iconName='lock'
+                    type='evilicon'
+                    secureTextEntry={secureTextEntry}
+                    password
+                    value={this.props.password}
+                    onChangeText={this.onPasswordChange.bind(this)}
+                    onPress={() => this.setState({ secureTextEntry: !secureTextEntry })}
+                />
+                <TouchableOpacity 
+                    style={linkRight} 
+                    onPress={() => this.props.authForgetPassword()}
+                >
+                    <Text style={{ color: 'white' }}>
+                        forget password?
+                    </Text>
+                </TouchableOpacity>
 
-                        <Divider style={{ height: 10 }} />
-                        
-                        {/* -- Input Section -- */}
-                        <InputIcon 
-                            value={this.props.email}
-                            placeholder='E-mail'
-                            iconName='user'
-                            type='evilicon'
-                            onChangeText={this.onEmailChange.bind(this)}
-                        />
-                        <InputIcon
-                            placeholder='Password'
-                            iconName='lock'
-                            type='evilicon'
-                            secureTextEntry={secureTextEntry}
-                            password
-                            value={this.props.password}
-                            onChangeText={this.onPasswordChange.bind(this)}
-                            onPress={() => this.setState({ secureTextEntry: !secureTextEntry })}
-                        />
-                        <TouchableOpacity 
-                            style={linkRight} 
-                            onPress={() => this.props.authForgetPassword()}
-                        >
-                            <Text style={{ color: 'white' }}>
-                                forget password?
-                            </Text>
-                        </TouchableOpacity>
+                <Divider style={{ height: 20 }} />
 
-                        <Divider style={{ height: 20 }} />
+                {/* -- Button Section -- */}
+                {this.renderLoginButton()}
 
-                        {/* -- Button Section -- */}
-                        {this.renderLoginButton()}
-
-                    </KeyboardAvoidingView>
-                </BlurView>
-            </View>
+            </AuthBg>
         );
     }
 }
 
 const styles = {
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0,0,0,0.5)',
-    },
     appName: {
         fontSize: 40,
         fontWeight: 'bold',
