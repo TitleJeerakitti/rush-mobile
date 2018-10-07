@@ -2,17 +2,19 @@ import React from 'react';
 import { 
     Text,
     View,
-    Image, 
-    StyleSheet, 
-    KeyboardAvoidingView,
     LayoutAnimation,
     Platform,
     UIManager,
 } from 'react-native';
-import { BlurView } from 'expo';
 import { Divider } from 'react-native-elements';
 import { connect } from 'react-redux'; 
-import { InputIcon, Button, Spinner } from './common';
+import { 
+    InputIcon, 
+    Button, 
+    Spinner, 
+    AuthBg, 
+    AuthCard 
+} from './common';
 import {
     authNameChange,
     authPhoneChange,
@@ -73,7 +75,7 @@ class Register extends React.Component {
     }
 
     render() {
-        const { container, cardStyle, headerStyle } = styles;
+        const { headerStyle } = styles;
         const { secureTextEntry } = this.state;
         if (Platform.OS === 'android') {
             // UIManager.setLayoutAnimationEnabledExperimental && 
@@ -81,82 +83,54 @@ class Register extends React.Component {
         }
 
         return (
-            <View style={{ flex: 1 }}>
-                <Image
-                    resizeMode='cover'
-                    style={{
-                        width: '100%',
-                        height: '100%',
-                    }}
-                    source={require('../images/bg_free.png')} 
-                />
-                <BlurView tint="dark" intensity={40} style={StyleSheet.absoluteFill}>
-                    <KeyboardAvoidingView style={container} behavior="padding">
-                        <View style={cardStyle}>
-                            <Text style={headerStyle}>กรุณากรอกข้อมูลด้านล่าง</Text>
-                            <InputIcon
-                                placeholder='ชื่อ-สกุล'
-                                iconName='account-circle'
-                                type='meterial-community'
-                                addStyle={{ marginHorizontal: '10%' }}
-                                onChangeText={this.onNameChange.bind(this)}
-                                value={this.props.name}
-                            />
-                            <InputIcon
-                                placeholder='เบอร์โทรศัพท์'
-                                iconName='phone'
-                                type='meterial-community'
-                                addStyle={{ marginHorizontal: '10%' }}
-                                onChangeText={this.onPhoneChange.bind(this)}
-                                value={this.props.phone}
-                            />
-                            <InputIcon
-                                placeholder='อีเมล'
-                                iconName='mail'
-                                type='meterial-community'
-                                addStyle={{ marginHorizontal: '10%' }}
-                                onChangeText={this.onEmailChange.bind(this)}
-                                value={this.props.email}
-                            />
-                            <InputIcon
-                                placeholder='รหัสผ่าน'
-                                iconName='lock'
-                                type='meterial-community'
-                                addStyle={{ marginHorizontal: '10%' }}
-                                secureTextEntry={secureTextEntry}
-                                password
-                                onChangeText={this.onPasswordChange.bind(this)}
-                                onPress={() => 
-                                    this.setState({ secureTextEntry: !secureTextEntry, })}
-                                value={this.props.password}
-                            />
-                            <Divider style={{ height: 10 }} />
-                            {this.renderButton()}
-                        </View>
-                    </KeyboardAvoidingView>
-                </BlurView>
-            </View>
+            <AuthBg>
+                <AuthCard>
+                    <Text style={headerStyle}>กรุณากรอกข้อมูลด้านล่าง</Text>
+                    <InputIcon
+                        placeholder='ชื่อ-สกุล'
+                        iconName='account-circle'
+                        type='meterial-community'
+                        addStyle={{ marginHorizontal: '10%' }}
+                        onChangeText={this.onNameChange.bind(this)}
+                        value={this.props.name}
+                    />
+                    <InputIcon
+                        placeholder='เบอร์โทรศัพท์'
+                        iconName='phone'
+                        type='meterial-community'
+                        addStyle={{ marginHorizontal: '10%' }}
+                        onChangeText={this.onPhoneChange.bind(this)}
+                        value={this.props.phone}
+                    />
+                    <InputIcon
+                        placeholder='อีเมล'
+                        iconName='mail'
+                        type='meterial-community'
+                        addStyle={{ marginHorizontal: '10%' }}
+                        onChangeText={this.onEmailChange.bind(this)}
+                        value={this.props.email}
+                    />
+                    <InputIcon
+                        placeholder='รหัสผ่าน'
+                        iconName='lock'
+                        type='meterial-community'
+                        addStyle={{ marginHorizontal: '10%' }}
+                        secureTextEntry={secureTextEntry}
+                        password
+                        onChangeText={this.onPasswordChange.bind(this)}
+                        onPress={() => 
+                            this.setState({ secureTextEntry: !secureTextEntry, })}
+                        value={this.props.password}
+                    />
+                    <Divider style={{ height: 10 }} />
+                    {this.renderButton()}
+                </AuthCard>
+            </AuthBg>
         );
     }
 }
 
 const styles = {
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0,0,0,0.5)',
-    },
-    cardStyle: {
-        width: '80%',
-        backgroundColor: '#FFA80D',
-        paddingVertical: 20,
-        borderRadius: 15,
-        alignItems: 'center',
-        shadowColor: 'black', 
-        shadowOpacity: 0.2, 
-        shadowOffset: { width: 1, height: 1 }, 
-    },
     errorText: {
         alignSelf: 'center', 
         paddingBottom: 10, 
