@@ -83,6 +83,9 @@ const styles = {
         alignItems: 'center',
         justifyContent: 'center',
         marginTop: 20,
+        shadowColor: 'black', 
+        shadowOpacity: 0.2, 
+        shadowOffset: { width: 1, height: 1 }, 
     },
     textStyle: {
         textAlign: 'center',

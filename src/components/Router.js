@@ -5,6 +5,7 @@ import { Router, Scene } from 'react-native-router-flux';
 import LoginForm from './LoginForm';
 import HomeScreen from './HomeScreen';
 import Register from './Register';
+import ForgetPassword from './ForgetPassword';
 // import { Header } from './common';
 
 // class TabIcon extends React.Component {
@@ -38,6 +39,7 @@ class RouterComponent extends React.Component {
                     >
                         <Scene key='login' component={LoginForm} hideNavBar initial />
                         <Scene key='register' component={Register} title='สมัครสมาชิก' onLeft />
+                        <Scene key='forget' component={ForgetPassword} title='ลืมรหัสผ่าน' onLeft />
                     </Scene>
                     {/* </Scene> */}
                     <Scene key='app'>

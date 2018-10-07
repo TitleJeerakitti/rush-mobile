@@ -13,6 +13,8 @@ import {
     CREATE_FAIL,
     CREATE_SUCCESS,
     CLEAR_STATE,
+    FORGET_PASSWORD,
+    FORGET_REQUEST,
 } from './types';
 
 export const authEmailChange = (text) => {
@@ -92,4 +94,18 @@ export const authCreateSuccess = (dispatch, user) => {
 export const authClearState = (dispatch) => {
     dispatch({ type: CLEAR_STATE });
     Actions.pop();
+};
+
+export const authForgetPassword = () => {
+    return (dispatch) => {
+        dispatch({ type: FORGET_PASSWORD });
+        Actions.forget({ onBack: () => authClearState(dispatch) });
+    };
+};
+
+export const authForgetRequest = (email) => {
+    return (dispatch) => {
+        dispatch({ type: FORGET_REQUEST, payload: email });
+        Actions.pop();
+    };
 };

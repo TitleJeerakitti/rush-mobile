@@ -11,6 +11,8 @@ import {
     CREATE_FAIL,
     CREATE_SUCCESS,
     CLEAR_STATE,
+    FORGET_PASSWORD,
+    FORGET_REQUEST,
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -34,12 +36,13 @@ export default (state = INITIAL_STATE, action) => {
         case PHONE_CHANGE:
             return { ...state, phone: action.payload, error: '' };
         case LOGIN_USER:
-            return { ...state, loading: true, error: '' };
         case CREATE_USER:
             return { ...state, loading: true, error: '' };
         case CLEAR_STATE:
+        case FORGET_PASSWORD:
         case GOTO_REGISTER:
             return INITIAL_STATE;
+        case FORGET_REQUEST: // this state isn't done yet
         case LOGIN_SUCCESS:
         case CREATE_SUCCESS:
             return {

@@ -10,3 +10,5 @@ export const CREATE_USER = 'CREATE_USER';
 export const CREATE_FAIL = 'CREATE_FAIL';
 export const CREATE_SUCCESS = 'CREATE_SUCCESS';
 export const CLEAR_STATE = 'CLEAR_STATE';
+export const FORGET_PASSWORD = 'FORGET_PASSWORD';
+export const FORGET_REQUEST = 'FORGET_REQUEST';

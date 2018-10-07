@@ -21,6 +21,7 @@ import {
     authPasswordChange,
     authLogin,
     authToRegister,
+    authForgetPassword,
 } from '../actions';
 
 class LoginForm extends React.Component {
@@ -152,7 +153,10 @@ class LoginForm extends React.Component {
                             onChangeText={this.onPasswordChange.bind(this)}
                             onPress={() => this.setState({ secureTextEntry: !secureTextEntry })}
                         />
-                        <TouchableOpacity style={linkRight}>
+                        <TouchableOpacity 
+                            style={linkRight} 
+                            onPress={() => this.props.authForgetPassword()}
+                        >
                             <Text style={{ color: 'white' }}>
                                 forget password?
                             </Text>
@@ -208,4 +212,5 @@ export default connect(mapStateToProps, {
     authPasswordChange,
     authLogin,
     authToRegister,
+    authForgetPassword,
 })(LoginForm);
