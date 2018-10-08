@@ -1,11 +1,12 @@
 import React from 'react';
-import { Router, Scene } from 'react-native-router-flux';
+import { Router, Scene, Actions } from 'react-native-router-flux';
 // import { Icon } from 'react-native-elements';
 
 import LoginForm from './LoginForm';
 import HomeScreen from './HomeScreen';
 import Register from './Register';
 import ForgetPassword from './ForgetPassword';
+import { Header } from './common';
 // import { Header } from './common';
 
 // class TabIcon extends React.Component {
@@ -21,7 +22,8 @@ class RouterComponent extends React.Component {
     render() {
         return (
             <Router>
-                <Scene key='root' hideNavBar>
+                {/* panHandlers={null} disabled to slide back */}
+                <Scene key='root' hideNavBar panHandlers={null}>
                     {/* <Scene 
                         key='tabbar' 
                         tabs 
@@ -29,11 +31,11 @@ class RouterComponent extends React.Component {
                         showLabel={false} > 
                     */}
                     <Scene 
-                        key='auth' 
-                        initial 
+                        key='auth'
                         titleStyle={{ color: 'white' }}
                         navBarButtonColor='white'
                         navigationBarStyle={{ backgroundColor: 'black', borderBottomWidth: 0 }}
+                        initial
                         // icon={TabIcon} 
                         // navBar={Header} 
                     >
@@ -42,8 +44,34 @@ class RouterComponent extends React.Component {
                         <Scene key='forget' component={ForgetPassword} title='ลืมรหัสผ่าน' onLeft />
                     </Scene>
                     {/* </Scene> */}
-                    <Scene key='app'>
-                        <Scene key='home' component={HomeScreen} title='Home' initial />
+                    <Scene 
+                        key='app'
+                        drawer
+                        contentComponent={LoginForm}
+                        // gesturesEnabled={false}
+                    >
+                        <Scene
+                            key='homepage'
+                            initial
+                        >
+                            <Scene 
+                                key='home' 
+                                component={HomeScreen} 
+                                title='R U S H' 
+                                navBar={Header}
+                                onLeft={() => Actions.drawerOpen()}
+                                onRight={() => Actions.home2()}
+                                initial
+                            />
+                            <Scene 
+                                key='home2' 
+                                component={LoginForm} 
+                                title='page2' 
+                                navBar={Header}
+                                onLeft={() => Actions.drawerOpen()}
+                                onRight={() => Actions.pop()}
+                            />
+                        </Scene>
                     </Scene>
                 </Scene>
             </Router>
