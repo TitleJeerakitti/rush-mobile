@@ -8,10 +8,33 @@ import {
 import { Constants, LinearGradient } from 'expo';
 import { Icon } from 'react-native-elements';
 
-class Header extends React.Component {
+class NavHamberger extends React.Component {
+    renderSearch() {
+        const { search, onRight } = this.props;
+        if (search) {
+            return (
+                <TouchableWithoutFeedback onPress={onRight}>
+                    <Icon 
+                        name='search' 
+                        type='evilicon' 
+                        color='white' 
+                        iconStyle={{ paddingHorizontal: '5%' }} 
+                    />
+                </TouchableWithoutFeedback>
+            );
+        }
+        return (
+            <Icon 
+                name='rowing'
+                color='transparent' 
+                iconStyle={{ paddingHorizontal: '5%' }} 
+            />
+        );
+    }
+
     render() {
         const { containerStyle, navbarStyle, textStyle } = styles;
-        const { title, onRight, onLeft } = this.props;
+        const { title, onLeft } = this.props;
         return (
             <LinearGradient 
                 start={{ x: 0.0, y: 0.5 }} end={{ x: 0.8, y: 0.7 }}
@@ -29,14 +52,7 @@ class Header extends React.Component {
                         />
                     </TouchableWithoutFeedback>
                     <Text style={textStyle}>{title}</Text>
-                    <TouchableWithoutFeedback onPress={onRight}>
-                        <Icon 
-                            name='search' 
-                            type='evilicon' 
-                            color='white' 
-                            iconStyle={{ paddingHorizontal: '5%' }} 
-                        />
-                    </TouchableWithoutFeedback>
+                    {this.renderSearch()}
                 </View>
             </LinearGradient>
         );
@@ -63,4 +79,4 @@ const styles = {
     }
 };
 
-export { Header };
+export { NavHamberger };
