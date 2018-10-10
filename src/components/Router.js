@@ -5,6 +5,7 @@ import LoginForm from './LoginForm';
 import HomeScreen from './HomeScreen';
 import Register from './Register';
 import ForgetPassword from './ForgetPassword';
+import SideMenu from './SideMenu';
 import { NavHamberger, IconTab } from './common';
 
 class RouterComponent extends React.Component {
@@ -27,7 +28,7 @@ class RouterComponent extends React.Component {
                         <Scene key='forget' component={ForgetPassword} title='ลืมรหัสผ่าน' onLeft />
                     </Scene>
                     
-                    <Drawer key='app' contentComponent={HomeScreen} initial >
+                    <Drawer key='app' contentComponent={SideMenu} initial >
                         <Scene key='container' hideNavBar>
                             <Tabs key='tabber' tabBarStyle={tabBarStyle} showLabel={false}>
                                 <Scene key='homepage' icon={IconTab} iconName='home' initial>
