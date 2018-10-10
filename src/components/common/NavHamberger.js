@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import { Constants, LinearGradient } from 'expo';
 import { Icon } from 'react-native-elements';
+import { DARK_RED, ORANGE } from './colors';
 
 class NavHamberger extends React.Component {
     renderSearch() {
@@ -38,7 +39,7 @@ class NavHamberger extends React.Component {
         return (
             <LinearGradient 
                 start={{ x: 0.0, y: 0.5 }} end={{ x: 0.8, y: 0.7 }}
-                colors={['#FF220D', '#FF7E2F']}
+                colors={[DARK_RED, ORANGE]}
                 style={containerStyle}
             >
                 <StatusBar barStyle="light-content" />

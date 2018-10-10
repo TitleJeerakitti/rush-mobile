@@ -15,6 +15,7 @@ import {
     AuthBg, 
     AuthCard 
 } from './common';
+import { LIGHT_RED } from './common/colors';
 import {
     authNameChange,
     authPhoneChange,
@@ -65,7 +66,7 @@ class Register extends React.Component {
             <View style={{ width: '100%' }}>
                 <Text style={styles.errorText}>{error}</Text>
                 <Button 
-                    color='#EF4036'
+                    color={LIGHT_RED}
                     onPress={this.onCreateUser.bind(this)}
                 >
                     ลงทะเบียน
@@ -134,7 +135,7 @@ const styles = {
     errorText: {
         alignSelf: 'center', 
         paddingBottom: 10, 
-        color: '#EF4036', 
+        color: LIGHT_RED, 
         shadowColor: 'black', 
         shadowOpacity: 0.2, 
         shadowOffset: { width: 1, height: 1 }, 

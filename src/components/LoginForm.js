@@ -18,6 +18,7 @@ import {
     Spinner,
     AuthBg,
 } from './common';
+import { YELLOW, LIGHT_RED } from './common/colors';
 import { 
     authEmailChange,
     authPasswordChange,
@@ -86,14 +87,14 @@ class LoginForm extends React.Component {
             <View style={{ width: '100%' }}>
                 <Text style={styles.errorText}>{error}</Text>
                 <Button 
-                    color='#FFA80D'
+                    color={YELLOW}
                     onPress={this.onUserLogin.bind(this)}
                 >
                     เข้าสู่ระบบ
                 </Button>
                 <TextLine title='or' />
                 <Button 
-                    color='#EF4036'
+                    color={LIGHT_RED}
                     onPress={() => this.props.authToRegister()}
                 >
                     สมัครสมาชิก
@@ -177,7 +178,7 @@ const styles = {
     errorText: {
         alignSelf: 'center', 
         paddingBottom: 10, 
-        color: '#EF4036', 
+        color: LIGHT_RED, 
         shadowColor: 'black', 
         shadowOpacity: 0.5, 
         shadowOffset: { width: 1, height: 1 }, 

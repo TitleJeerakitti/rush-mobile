@@ -2,6 +2,7 @@ import React from 'react';
 import {
     View,
 } from 'react-native';
+import { YELLOW } from './colors';
 
 const AuthCard = ({ children }) => {
     const { cardStyle } = styles;
@@ -15,7 +16,7 @@ const AuthCard = ({ children }) => {
 const styles = {
     cardStyle: {
         width: '80%',
-        backgroundColor: '#FFA80D',
+        backgroundColor: YELLOW,
         paddingVertical: 20,
         borderRadius: 15,
         alignItems: 'center',

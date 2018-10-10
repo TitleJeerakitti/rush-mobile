@@ -1,38 +1,13 @@
 import React from 'react';
 import { Router, Scene, Actions, Drawer, Tabs } from 'react-native-router-flux';
-import { Icon } from 'react-native-elements';
 
 import LoginForm from './LoginForm';
 import HomeScreen from './HomeScreen';
 import Register from './Register';
 import ForgetPassword from './ForgetPassword';
-import { NavHamberger } from './common';
+import { NavHamberger, IconTab } from './common';
 
 class RouterComponent extends React.Component {
-
-    homeIcon() {
-        return (
-            <Icon name='home' type='material-community' size={30} />
-        );
-    }
-
-    historyIcon() {
-        return (
-            <Icon name='history' type='material-community' size={30} />
-        );
-    }
-
-    queueIcon() {
-        return (
-            <Icon name='account-multiple' type='material-community' size={30} />
-        );
-    }
-
-    promotionIcon() {
-        return (
-            <Icon name='sale' type='material-community' size={30} />
-        );
-    }
 
     render() {
         const { tabBarStyle } = styles;
@@ -45,16 +20,17 @@ class RouterComponent extends React.Component {
                         titleStyle={{ color: 'white' }}
                         navBarButtonColor='white'
                         navigationBarStyle={{ backgroundColor: 'black', borderBottomWidth: 0 }}
+                        // initial
                     >
                         <Scene key='login' component={LoginForm} hideNavBar initial />
                         <Scene key='register' component={Register} title='สมัครสมาชิก' onLeft />
                         <Scene key='forget' component={ForgetPassword} title='ลืมรหัสผ่าน' onLeft />
                     </Scene>
                     
-                    <Drawer key='app' contentComponent={HomeScreen} initial>
+                    <Drawer key='app' contentComponent={HomeScreen} initial >
                         <Scene key='container' hideNavBar>
                             <Tabs key='tabber' tabBarStyle={tabBarStyle} showLabel={false}>
-                                <Scene key='homepage' icon={this.homeIcon.bind('eiei')} initial>
+                                <Scene key='homepage' icon={IconTab} iconName='home' initial>
                                     <Scene 
                                         key='home' 
                                         component={HomeScreen} 
@@ -74,7 +50,7 @@ class RouterComponent extends React.Component {
                                         onRight={() => Actions.pop()}
                                     />
                                 </Scene>
-                                <Scene key='history' icon={this.historyIcon}>
+                                <Scene key='history' icon={IconTab} iconName='history'>
                                     <Scene 
                                         key='home' 
                                         component={HomeScreen} 
@@ -83,16 +59,8 @@ class RouterComponent extends React.Component {
                                         onLeft={() => Actions.drawerOpen()}
                                         initial
                                     />
-                                    <Scene 
-                                        key='home2' 
-                                        component={LoginForm} 
-                                        title='page2' 
-                                        navBar={NavHamberger}
-                                        onLeft={() => Actions.drawerOpen()}
-                                        onRight={() => Actions.pop()}
-                                    />
                                 </Scene>
-                                <Scene key='queue' icon={this.queueIcon}>
+                                <Scene key='queue' icon={IconTab} iconName='account-multiple'>
                                     <Scene 
                                         key='home' 
                                         component={HomeScreen} 
@@ -102,7 +70,7 @@ class RouterComponent extends React.Component {
                                         initial
                                     />
                                 </Scene>
-                                <Scene key='sale' icon={this.promotionIcon}>
+                                <Scene key='sale' icon={IconTab} iconName='sale'>
                                     <Scene 
                                         key='home' 
                                         component={HomeScreen} 
@@ -123,11 +91,10 @@ class RouterComponent extends React.Component {
 
 const styles = {
     tabBarStyle: {
-        backgroundColor: '#FFF',
+        backgroundColor: 'white',
         shadowOpacity: 0.2,
         shadowOffset: { width: 0, height: 0 },
-        shadowColor: '#000',
-        paddingHorizontal: '5%',
+        shadowColor: 'black',
     }
 };
 
