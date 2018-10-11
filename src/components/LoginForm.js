@@ -41,7 +41,7 @@ class LoginForm extends React.Component {
             this.setState({ 
                 ...this.state, 
                 logoSize: { width: 132, height: 185 }, 
-                headerName: appName 
+                headerName: appName  
             });
         } else if (width > 320) {
             this.setState({ 
