@@ -5,6 +5,7 @@ import {
     StatusBar,
     TouchableWithoutFeedback,
 } from 'react-native';
+import { Actions } from 'react-native-router-flux';
 import { Constants, LinearGradient } from 'expo';
 import { Icon } from 'react-native-elements';
 import { DARK_RED, DARK_ORANGE } from './colors';
@@ -35,7 +36,7 @@ class NavHamberger extends React.Component {
 
     render() {
         const { containerStyle, navbarStyle, textStyle } = styles;
-        const { title, onLeft } = this.props;
+        const { title } = this.props;
         return (
             <LinearGradient 
                 start={{ x: 0.0, y: 0.5 }} end={{ x: 0.8, y: 0.7 }}
@@ -44,7 +45,7 @@ class NavHamberger extends React.Component {
             >
                 <StatusBar barStyle="light-content" />
                 <View style={navbarStyle}>
-                    <TouchableWithoutFeedback onPress={onLeft}>
+                    <TouchableWithoutFeedback onPress={Actions.drawerOpen}>
                         <Icon 
                             name='navicon' 
                             type='evilicon' 

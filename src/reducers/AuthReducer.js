@@ -13,11 +13,12 @@ import {
     CLEAR_STATE,
     FORGET_PASSWORD,
     FORGET_REQUEST,
+    LOGOUT_USER,
 } from '../actions/types';
 
 const INITIAL_STATE = {
-    email: '',
-    password: '',
+    email: 'test@test.com',
+    password: '12345678',
     user: null,
     error: '',
     loading: false,
@@ -41,6 +42,7 @@ export default (state = INITIAL_STATE, action) => {
         case CLEAR_STATE:
         case FORGET_PASSWORD:
         case GOTO_REGISTER:
+        case LOGOUT_USER:
             return INITIAL_STATE;
         case FORGET_REQUEST: // this state isn't done yet
         case LOGIN_SUCCESS:

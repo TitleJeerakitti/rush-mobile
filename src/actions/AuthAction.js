@@ -15,6 +15,7 @@ import {
     CLEAR_STATE,
     FORGET_PASSWORD,
     FORGET_REQUEST,
+    LOGOUT_USER,
 } from './types';
 
 export const authEmailChange = (text) => {
@@ -107,5 +108,15 @@ export const authForgetRequest = (email) => {
     return (dispatch) => {
         dispatch({ type: FORGET_REQUEST, payload: email });
         Actions.pop();
+    };
+};
+
+export const authLogout = () => {
+    return (dispatch) => {
+        firebase.auth().signOut()
+        .then(() => {
+            dispatch({ type: LOGOUT_USER });
+            Actions.auth();
+        });
     };
 };

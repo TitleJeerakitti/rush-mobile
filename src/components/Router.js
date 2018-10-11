@@ -18,6 +18,7 @@ class RouterComponent extends React.Component {
                 <Scene key='root' hideNavBar panHandlers={null}>
                     <Scene 
                         key='auth'
+                        type='replace'
                         titleStyle={{ color: 'white' }}
                         navBarButtonColor='white'
                         navigationBarStyle={{ backgroundColor: 'black', borderBottomWidth: 0 }}
@@ -27,17 +28,20 @@ class RouterComponent extends React.Component {
                         <Scene key='register' component={Register} title='สมัครสมาชิก' onLeft />
                         <Scene key='forget' component={ForgetPassword} title='ลืมรหัสผ่าน' onLeft />
                     </Scene>
+
+                    <Scene key='profile'>
+                        <Scene key='edit_profile' component={HomeScreen} navBar={NavHamberger} />
+                    </Scene>
                     
                     <Drawer key='app' contentComponent={SideMenu} initial >
                         <Scene key='container' hideNavBar>
                             <Tabs key='tabber' tabBarStyle={tabBarStyle} showLabel={false}>
                                 <Scene key='homepage' icon={IconTab} iconName='home' initial>
                                     <Scene 
-                                        key='home' 
+                                        key='home_homepage' 
                                         component={HomeScreen} 
                                         title='R U S H' 
                                         navBar={NavHamberger}
-                                        onLeft={() => Actions.drawerOpen()}
                                         onRight={() => Actions.test1()}
                                         search
                                         initial
@@ -47,37 +51,33 @@ class RouterComponent extends React.Component {
                                         component={ForgetPassword} 
                                         title='test page' 
                                         navBar={NavHamberger}
-                                        onLeft={() => Actions.drawerOpen()}
                                         onRight={() => Actions.pop()}
                                     />
                                 </Scene>
                                 <Scene key='history' icon={IconTab} iconName='history'>
                                     <Scene 
-                                        key='home' 
+                                        key='home_history' 
                                         component={HomeScreen} 
                                         title='H I S T O R Y' 
                                         navBar={NavHamberger}
-                                        onLeft={() => Actions.drawerOpen()}
                                         initial
                                     />
                                 </Scene>
                                 <Scene key='queue' icon={IconTab} iconName='account-multiple'>
                                     <Scene 
-                                        key='home' 
+                                        key='home_queue' 
                                         component={HomeScreen} 
                                         title='Q U E U E' 
                                         navBar={NavHamberger}
-                                        onLeft={() => Actions.drawerOpen()}
                                         initial
                                     />
                                 </Scene>
                                 <Scene key='sale' icon={IconTab} iconName='sale'>
                                     <Scene 
-                                        key='home' 
+                                        key='home_sale' 
                                         component={HomeScreen} 
                                         title='P R O M O T I O N' 
                                         navBar={NavHamberger}
-                                        onLeft={() => Actions.drawerOpen()}
                                         initial
                                     />
                                 </Scene>

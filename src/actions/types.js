@@ -12,3 +12,4 @@ export const CREATE_SUCCESS = 'CREATE_SUCCESS';
 export const CLEAR_STATE = 'CLEAR_STATE';
 export const FORGET_PASSWORD = 'FORGET_PASSWORD';
 export const FORGET_REQUEST = 'FORGET_REQUEST';
+export const LOGOUT_USER = 'LOGOUT_USER';

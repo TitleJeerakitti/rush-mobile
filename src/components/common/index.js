@@ -6,3 +6,4 @@ export * from './NavHamberger';
 export * from './AuthBg';
 export * from './AuthCard';
 export * from './IconTab';
+export * from './CardSection';
