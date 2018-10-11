@@ -16,6 +16,7 @@ import {
     AuthBg,
     AuthCard,
 } from './common';
+import { LIGHT_RED } from './common/colors';
 
 class ForgetPassword extends React.Component {
     onEmailChange(text) {
@@ -31,7 +32,7 @@ class ForgetPassword extends React.Component {
             <View style={{ width: '100%' }}>
                 <Text style={styles.errorText}>{error}</Text>
                 <Button 
-                    color='#EF4036'
+                    color={LIGHT_RED}
                     onPress={() => this.props.authForgetRequest(email)}
                 >
                     Reset Password

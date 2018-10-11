@@ -4,6 +4,7 @@ import {
     Image,
     KeyboardAvoidingView,
     StyleSheet,
+    StatusBar,
 } from 'react-native';
 import { BlurView } from 'expo';
 
@@ -11,6 +12,7 @@ const AuthBg = ({ children }) => {
     const { container } = styles;
     return (
         <View style={{ flex: 1 }}>
+            <StatusBar barStyle="light-content" />
             <Image
                 resizeMode='cover'
                 style={{
