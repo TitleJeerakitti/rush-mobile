@@ -1,14 +1,8 @@
 import React from 'react';
-import { 
-    View,
-    Text,
-    StatusBar,
-    TouchableWithoutFeedback,
-} from 'react-native';
+import { TouchableWithoutFeedback, } from 'react-native';
 import { Actions } from 'react-native-router-flux';
-import { Constants, LinearGradient } from 'expo';
 import { Icon } from 'react-native-elements';
-import { DARK_RED, DARK_ORANGE } from './colors';
+import { NavContainer, NavCard, NavTitle } from '../common';
 
 class NavHamberger extends React.Component {
     renderSearch() {
@@ -20,65 +14,32 @@ class NavHamberger extends React.Component {
                         name='search' 
                         type='evilicon' 
                         color='white' 
-                        iconStyle={{ paddingHorizontal: '5%' }} 
                     />
                 </TouchableWithoutFeedback>
             );
         }
-        return (
-            <Icon 
-                name='rowing'
-                color='transparent' 
-                iconStyle={{ paddingHorizontal: '5%' }} 
-            />
-        );
     }
 
     render() {
-        const { containerStyle, navbarStyle, textStyle } = styles;
         const { title } = this.props;
         return (
-            <LinearGradient 
-                start={{ x: 0.0, y: 0.5 }} end={{ x: 0.8, y: 0.7 }}
-                colors={[DARK_RED, DARK_ORANGE]}
-                style={containerStyle}
-            >
-                <StatusBar barStyle="light-content" />
-                <View style={navbarStyle}>
+            <NavContainer>
+                <NavCard>
                     <TouchableWithoutFeedback onPress={Actions.drawerOpen}>
                         <Icon 
                             name='navicon' 
                             type='evilicon' 
-                            color='white' 
-                            iconStyle={{ paddingHorizontal: '5%' }} 
+                            color='white'
                         />
                     </TouchableWithoutFeedback>
-                    <Text style={textStyle}>{title}</Text>
+                </NavCard>
+                <NavTitle>{title}</NavTitle>
+                <NavCard>
                     {this.renderSearch()}
-                </View>
-            </LinearGradient>
+                </NavCard>
+            </NavContainer>
         );
     }
 }
-
-const styles = {
-    containerStyle: {
-        paddingTop: Constants.statusBarHeight,
-        shadowColor: 'black',
-        shadowOpacity: 0.2,
-        shadowOffset: { width: 1, height: 1 }
-    },
-    navbarStyle: {
-        height: 44,
-        flexDirection: 'row',
-    },
-    textStyle: {
-        color: 'white',
-        fontSize: 18,
-        flex: 1,
-        textAlign: 'center',
-        alignSelf: 'center',
-    }
-};
 
 export { NavHamberger };

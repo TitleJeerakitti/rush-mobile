@@ -6,7 +6,7 @@ import HomeScreen from './HomeScreen';
 import Register from './Register';
 import ForgetPassword from './ForgetPassword';
 import SideMenu from './SideMenu';
-import { NavHamberger, IconTab } from './common';
+import { NavHamberger, IconTab, NavBack } from './common';
 
 class RouterComponent extends React.Component {
 
@@ -49,8 +49,8 @@ class RouterComponent extends React.Component {
                                     <Scene 
                                         key='test1' 
                                         component={ForgetPassword} 
-                                        title='test page' 
-                                        navBar={NavHamberger}
+                                        title='ค้นหา' 
+                                        navBar={NavBack}
                                         onRight={() => Actions.pop()}
                                     />
                                 </Scene>
