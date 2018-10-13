@@ -1,24 +1,46 @@
 import React from 'react';
-import { View, Text } from 'react-native';
-import Slick from 'react-native-slick';
+import { View, ScrollView, Text, Image, Dimensions } from 'react-native';
+import Swiper from 'react-native-swiper';
 
 export default class HomeScreen extends React.Component {
     render() {
+        const { width } = Dimensions.get('window');
+        const imageHeight = Math.round((width * 5) / 9); // 1080 x 600
         return (
-            <View style={{ flex: 1 }}>
-                <Slick style={styles.wrapper} showsButtons>
+            <ScrollView style={{ flex: 1 }}>
+                <Swiper 
+                    style={styles.wrapper} 
+                    autoplay 
+                    showsPagination 
+                    dotColor='transparent' 
+                    dotStyle={{ borderWidth: 1, borderColor: 'white', }} 
+                    activeDotColor='white' 
+                    height={imageHeight}
+                >
                     <View style={styles.slide1}>
-                        <Text style={styles.text}>Hello Slick</Text>
+                        <Image 
+                            resizeMode={'cover'}
+                            style={{ width: '100%', height: imageHeight }} 
+                            source={require('../images/promotion_mockup.png')} 
+                        />
                     </View>
                     <View style={styles.slide2}>
-                        <Text style={styles.text}>Beautiful</Text>
+                        <Image 
+                            resizeMode={'cover'}
+                            style={{ width: '100%', height: imageHeight }} 
+                            source={require('../images/promotion_2.png')} 
+                        />
                     </View>
                     <View style={styles.slide3}>
-                        <Text style={styles.text}>And simple</Text>
+                        <Image 
+                            resizeMode={'cover'}
+                            style={{ width: '100%', height: imageHeight }} 
+                            source={require('../images/promotion_3.png')} 
+                        />
                     </View>
-                </Slick>
+                </Swiper>
                 <Text style={{ flex: 1 }}>Section</Text>
-            </View>
+            </ScrollView>
         );
     }
 }
@@ -27,26 +49,23 @@ const styles = {
     wrapper: {
     },
     slide1: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#9DD6EB',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#9DD6EB',
     },
     slide2: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#97CAE5',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#97CAE5',
     },
     slide3: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#92BBD9',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#92BBD9',
     },
     text: {
-      color: '#fff',
-      fontSize: 30,
-      fontWeight: 'bold',
+        color: '#fff',
+        fontSize: 30,
+        fontWeight: 'bold',
     }
 };

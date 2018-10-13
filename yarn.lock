@@ -5402,13 +5402,6 @@ react-native-screens@^1.0.0-alpha.11, react-native-screens@^1.0.0-alpha.5:
   resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-1.0.0-alpha.12.tgz#5953c39c9dbfbe324610005e07d85a416081c48c"
   integrity sha512-n/XyqUStDjtCymXUhAxG98asvgI8/OSH+v9AaAzUFEqfBwJLY8/UjY6m8PIJSgqRt4aR/Z9nO+A1mcMXw6dMdA==
 
-react-native-slick@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/react-native-slick/-/react-native-slick-1.0.1.tgz#691ea960f9385b2aa3e70af18a96077a9cfc15c1"
-  integrity sha1-aR6pYPk4Wyqj5wrxipYHepz8FcE=
-  dependencies:
-    prop-types "^15.5.10"
-
 react-native-svg@6.2.2:
   version "6.2.2"
   resolved "https://registry.yarnpkg.com/react-native-svg/-/react-native-svg-6.2.2.tgz#5803cddce374a542b4468c38a2474fca32080685"
@@ -5417,6 +5410,13 @@ react-native-svg@6.2.2:
     color "^2.0.1"
     lodash "^4.16.6"
     pegjs "^0.10.0"
+
+react-native-swiper@^1.5.13:
+  version "1.5.13"
+  resolved "https://registry.yarnpkg.com/react-native-swiper/-/react-native-swiper-1.5.13.tgz#fa695cd4ab77b9a9df2d2bfee38ea7274dd07a2e"
+  integrity sha512-byBPx3qz3FvZhk4O8LR8am5SoO/pwm2Sj1OmFuXOOLYEj87+PzQaTr9u7+mgU76Ti2TP1OWnCPTXH6XUXYwxyw==
+  dependencies:
+    prop-types "^15.5.10"
 
 react-native-tab-view@^0.0.77:
   version "0.0.77"
