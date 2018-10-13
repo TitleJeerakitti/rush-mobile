@@ -8,3 +8,5 @@ export * from './AuthCard';
 export * from './IconTab';
 export * from './CardSection';
 export * from './ButtonSideList';
+export * from './Slick';
+export * from './SlickItem';
