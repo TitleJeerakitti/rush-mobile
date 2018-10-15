@@ -1,12 +1,12 @@
 import React from 'react';
 import { View } from 'react-native';
 
-const CardSection = ({ children }) => {
+const Row = ({ children }) => {
     return (
-        <View style={{ marginHorizontal: '5%' }}>
+        <View style={{ flexDirection: 'row', }}>
             {children}
         </View>
     );
 };
 
-export { CardSection };
+export { Row };

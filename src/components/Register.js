@@ -10,7 +10,7 @@ import { Divider } from 'react-native-elements';
 import { connect } from 'react-redux'; 
 import { 
     InputIcon, 
-    Button, 
+    AuthButton, 
     Spinner, 
     AuthBg, 
     AuthCard 
@@ -65,12 +65,12 @@ class Register extends React.Component {
         return (
             <View style={{ width: '100%' }}>
                 <Text style={styles.errorText}>{error}</Text>
-                <Button 
+                <AuthButton 
                     color={LIGHT_RED}
                     onPress={this.onCreateUser.bind(this)}
                 >
                     ลงทะเบียน
-                </Button>
+                </AuthButton>
             </View>
         );
     }

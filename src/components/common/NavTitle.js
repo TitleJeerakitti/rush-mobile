@@ -1,18 +1,18 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { FontText } from '../common';
 
 const NavTitle = ({ children }) => {
     return (
-        <Text style={styles.textStyle}>
+        <FontText style={styles.textStyle}>
             {children}
-        </Text>
+        </FontText>
     );
 };
 
 const styles = {
     textStyle: {
         color: 'white',
-        fontSize: 18,
+        fontSize: 26,
         flex: 1,
         textAlign: 'center',
         alignSelf: 'center',

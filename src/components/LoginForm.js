@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import { Divider } from 'react-native-elements';
 import { 
     InputIcon, 
-    Button, 
+    AuthButton, 
     TextLine, 
     Spinner,
     AuthBg,
@@ -86,19 +86,19 @@ class LoginForm extends React.Component {
         return (
             <View style={{ width: '100%' }}>
                 <Text style={styles.errorText}>{error}</Text>
-                <Button 
+                <AuthButton 
                     color={YELLOW}
                     onPress={this.onUserLogin.bind(this)}
                 >
                     เข้าสู่ระบบ
-                </Button>
+                </AuthButton>
                 <TextLine title='or' />
-                <Button 
+                <AuthButton 
                     color={LIGHT_RED}
                     onPress={() => this.props.authToRegister()}
                 >
                     สมัครสมาชิก
-                </Button>
+                </AuthButton>
             </View>
         );
     }
@@ -156,7 +156,7 @@ class LoginForm extends React.Component {
 
                 <Divider style={{ height: 20 }} />
 
-                {/* -- Button Section -- */}
+                {/* -- AuthButton Section -- */}
                 {this.renderLoginButton()}
 
             </AuthBg>

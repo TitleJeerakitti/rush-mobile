@@ -1,14 +1,26 @@
 import React from 'react';
 import { Router, Scene, Actions, Drawer, Tabs } from 'react-native-router-flux';
-
+import { Font } from 'expo';
+import { connect } from 'react-redux';
 import LoginForm from './LoginForm';
 import HomeScreen from './HomeScreen';
 import Register from './Register';
 import ForgetPassword from './ForgetPassword';
 import SideMenu from './SideMenu';
 import { NavHamberger, IconTab, NavBack } from './common';
+import { fontLoader } from '../actions';
 
 class RouterComponent extends React.Component {
+
+    async componentDidMount() {
+        await Font.loadAsync({
+          thaisans: require('../../assets/ThaiSansNeue-Regular.ttf'),
+          thaisansItalic: require('../../assets/ThaiSansNeue-Italic.ttf')
+        });
+
+        this.props.fontLoader();
+        // other stuff
+    }
 
     render() {
         const { tabBarStyle } = styles;
@@ -99,4 +111,6 @@ const styles = {
     }
 };
 
-export default RouterComponent;
+export default connect(null, {
+    fontLoader,
+})(RouterComponent);

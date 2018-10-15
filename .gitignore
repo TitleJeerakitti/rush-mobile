@@ -3,3 +3,4 @@ node_modules/**/*
 npm-debug.*
 src/images/*
 .DS_Store
+assets/*

@@ -13,3 +13,5 @@ export const CLEAR_STATE = 'CLEAR_STATE';
 export const FORGET_PASSWORD = 'FORGET_PASSWORD';
 export const FORGET_REQUEST = 'FORGET_REQUEST';
 export const LOGOUT_USER = 'LOGOUT_USER';
+
+export const FONT_LOADED = 'FONT_LOADED';
