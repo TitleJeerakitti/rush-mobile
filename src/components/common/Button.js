@@ -1,31 +1,29 @@
 import React from 'react';
-import { TouchableOpacity, Text } from 'react-native';
+import { TouchableOpacity } from 'react-native';
+import { Row } from '../common';
 
-const Button = ({ children, color, onPress }) => {
+const Button = ({ onPress, children, color }) => {
     return (
         <TouchableOpacity 
-            style={[styles.containerStyle, { backgroundColor: color }]}
-            onPress={onPress}
+            onPress={onPress} 
+            style={{ ...styles.container, backgroundColor: color }}
         >
-            <Text style={styles.textStyle}>{children}</Text>
+            <Row>
+                {children}
+            </Row>
         </TouchableOpacity>
     );
 };
 
 const styles = {
-    containerStyle: {
+    container: {
+        alignItems: 'center',
         padding: 10,
         borderRadius: 10,
-        flexDirection: 'row',
-        marginHorizontal: '12%',
-        shadowColor: 'black', 
-        shadowOpacity: 0.2, 
-        shadowOffset: { width: 1, height: 1 }, 
-    },
-    textStyle: {
-        color: 'white',
-        flex: 1,
-        textAlign: 'center',
+        shadowOpacity: 0.2,
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 3 },
+        elevation: 1,
     }
 };
 

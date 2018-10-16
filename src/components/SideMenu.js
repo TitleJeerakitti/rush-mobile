@@ -5,7 +5,7 @@ import { Actions } from 'react-native-router-flux';
 import { connect } from 'react-redux';
 import { Constants, } from 'expo';
 import { ifIphoneX, getBottomSpace } from 'react-native-iphone-x-helper';
-import { CardSection, ButtonSideList } from './common';
+import { Row, ButtonSideList, FontText } from './common';
 import { authLogout } from '../actions';
 import { YELLOW } from './common/colors';
 
@@ -32,7 +32,7 @@ class SideMenu extends React.Component {
                             <Icon name='close' type='evilicon' color='white' />
                         </TouchableOpacity>
                     </View>
-                    <CardSection>
+                    <Row>
                         <Avatar 
                             large
                             rounded
@@ -49,7 +49,7 @@ class SideMenu extends React.Component {
                             </Text>
                             <Text style={{ color: 'white' }}>081-234-5678</Text>
                         </View>
-                    </CardSection>
+                    </Row>
                     <View style={flexEnd}>
                         <TouchableOpacity onPress={() => Actions.profile()}>
                             <Icon name='gear' type='evilicon' color='white' />
@@ -72,7 +72,7 @@ class SideMenu extends React.Component {
                 {/* Buttom Sign Out Section */}
                 <View style={signoutContainer}>
                     <TouchableOpacity onPress={() => this.props.authLogout()} >
-                        <Text style={signoutText}>ออกจากระบบ</Text>
+                        <FontText style={signoutText}>ออกจากระบบ</FontText>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -100,11 +100,11 @@ const styles = {
     },
     signoutText: {
         color: 'white',
-        paddingVertical: 5,
+        // paddingVertical: 5,
         paddingHorizontal: 15,
         borderWidth: 1,
         borderColor: 'white',
-        borderRadius: 14,
+        borderRadius: 15,
     },
     avatarStyle: {
         borderWidth: 2, 

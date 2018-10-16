@@ -10,7 +10,7 @@ import {
     authEmailChange,
 } from '../actions';
 import { 
-    Button,
+    AuthButton,
     InputIcon,
     Spinner,
     AuthBg,
@@ -31,12 +31,12 @@ class ForgetPassword extends React.Component {
         return (
             <View style={{ width: '100%' }}>
                 <Text style={styles.errorText}>{error}</Text>
-                <Button 
+                <AuthButton 
                     color={LIGHT_RED}
                     onPress={() => this.props.authForgetRequest(email)}
                 >
                     Reset Password
-                </Button>
+                </AuthButton>
             </View>
         );
     }

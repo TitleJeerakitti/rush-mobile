@@ -1,8 +1,8 @@
 import React from 'react';
-import { TouchableOpacity, View, Text, Dimensions } from 'react-native';
+import { TouchableOpacity, View, Dimensions } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import { Icon } from 'react-native-elements';
-import { CardSection } from './CardSection';
+import { FontText, Row } from '../common';
 
 class ButtonSideList extends React.Component {
     componentWillMount() {
@@ -23,7 +23,7 @@ class ButtonSideList extends React.Component {
                 }, 
                 iconSize: 40,
                 textSize: {
-                    fontSize: 18,
+                    fontSize: 28,
                 }
             });
         } else if (width > 320) {
@@ -40,7 +40,7 @@ class ButtonSideList extends React.Component {
                 }, 
                 iconSize: 35,
                 textSize: {
-                    fontSize: 16,
+                    fontSize: 26,
                 }
             });
         } else {
@@ -57,7 +57,7 @@ class ButtonSideList extends React.Component {
                 }, 
                 iconSize: 30,
                 textSize: {
-                    fontSize: 16,
+                    fontSize: 24,
                 }
             });
         }
@@ -93,12 +93,12 @@ class ButtonSideList extends React.Component {
         return (
             <TouchableOpacity onPress={this.sceneSelect.bind(this)} >
                 <View style={cardStyle}>
-                    <CardSection>
+                    <Row>
                         <Icon name={iconName} type='material-community' size={iconSize} />
                         <View style={textListStyle}>
-                            <Text style={textSize}>{title}</Text>
+                            <FontText style={textSize}>{title}</FontText>
                         </View>
-                    </CardSection>
+                    </Row>
                 </View>
             </TouchableOpacity>
         );

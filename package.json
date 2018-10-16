@@ -16,9 +16,11 @@
     "react-native-elements": "^0.19.1",
     "react-native-hr": "^1.1.4",
     "react-native-hr-plus": "^1.0.6",
+    "react-native-image-overlay": "^0.1.2",
     "react-native-iphone-x-helper": "^1.2.0",
     "react-native-linear-gradient": "^2.4.2",
     "react-native-router-flux": "^4.0.5",
+    "react-native-swiper": "^1.5.13",
     "react-redux": "^5.0.7",
     "redux": "^4.0.0",
     "redux-thunk": "^2.3.0"
