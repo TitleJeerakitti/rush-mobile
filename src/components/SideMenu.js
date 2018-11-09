@@ -11,13 +11,36 @@ import { YELLOW } from './common/colors';
 
 class SideMenu extends React.Component {
 
+    renderPicture() {
+        const { avatarStyle } = styles;
+        if (this.props.userInfo) {
+            return (
+                <Avatar 
+                    large
+                    rounded
+                    source={{ uri: this.props.userInfo.picture.data.url }}
+                    activeOpacity={1}
+                    containerStyle={avatarStyle}
+                />
+            );
+        }
+        return (
+            <Avatar 
+                large
+                rounded
+                icon={{ name: 'user', type: 'font-awesome' }}
+                activeOpacity={1}
+                containerStyle={avatarStyle}
+            />
+        );
+    }
+
     render() {
         const { 
             container, 
             profileContainer,
             signoutContainer,
             signoutText,
-            avatarStyle,
             flexEnd,
             nameContainer,
         } = styles;
@@ -33,19 +56,13 @@ class SideMenu extends React.Component {
                         </TouchableOpacity>
                     </View>
                     <Row>
-                        <Avatar 
-                            large
-                            rounded
-                            title='TJ'
-                            activeOpacity={1}
-                            containerStyle={avatarStyle}
-                        />
+                        {this.renderPicture()}
                         <View style={nameContainer}>
                             <Text 
                                 style={{ color: 'white', fontSize: 20, }} 
                                 numberOfLines={1}
                             >
-                                Title Jeerakitti
+                                {this.props.userInfo ? this.props.userInfo.name : 'Guest'}
                             </Text>
                             <Text style={{ color: 'white' }}>081-234-5678</Text>
                         </View>
@@ -123,4 +140,9 @@ const styles = {
     }
 };
 
-export default connect(null, { authLogout })(SideMenu);
+const mapStateToProp = ({ auth }) => {
+    const { userInfo } = auth;
+    return { userInfo };
+};
+
+export default connect(mapStateToProp, { authLogout })(SideMenu);

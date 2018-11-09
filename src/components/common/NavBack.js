@@ -5,6 +5,22 @@ import { Actions } from 'react-native-router-flux';
 import { NavCard, NavContainer, NavTitle } from '../common';
 
 class NavBack extends React.Component {
+    renderIcon() {
+        const { onRight } = this.props;
+        if (onRight) {
+            return (
+                <TouchableWithoutFeedback onPress={onRight}>
+                    <Icon 
+                        name='food'
+                        type='material-community'
+                        color='white'
+                        size={30}
+                    />
+                </TouchableWithoutFeedback>
+            );
+        }
+    }
+
     render() {
         const { title } = this.props;
         return (
@@ -21,12 +37,7 @@ class NavBack extends React.Component {
                 </NavCard>
                 <NavTitle>{title}</NavTitle>
                 <NavCard>
-                    <Icon 
-                        name='food'
-                        type='material-community'
-                        color='white'
-                        size={30}
-                    />
+                    {this.renderIcon()}
                 </NavCard>
             </NavContainer>
         );

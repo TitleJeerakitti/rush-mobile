@@ -7,6 +7,7 @@ const Button = ({ onPress, children, color }) => {
         <TouchableOpacity 
             onPress={onPress} 
             style={{ ...styles.container, backgroundColor: color }}
+            activeOpacity={1}
         >
             <Row>
                 {children}

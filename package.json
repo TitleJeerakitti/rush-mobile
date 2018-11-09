@@ -19,6 +19,7 @@
     "react-native-image-overlay": "^0.1.2",
     "react-native-iphone-x-helper": "^1.2.0",
     "react-native-linear-gradient": "^2.4.2",
+    "react-native-maps": "^0.22.0",
     "react-native-router-flux": "^4.0.5",
     "react-native-swiper": "^1.5.13",
     "react-redux": "^5.0.7",

@@ -16,6 +16,7 @@ import {
     FORGET_PASSWORD,
     FORGET_REQUEST,
     LOGOUT_USER,
+    FACEBOOK_LOGIN,
 } from './types';
 
 export const authEmailChange = (text) => {
@@ -118,5 +119,12 @@ export const authLogout = () => {
             dispatch({ type: LOGOUT_USER });
             Actions.auth();
         });
+    };
+};
+
+export const authFacebookLogin = (token, userInfo) => {
+    return (dispatch) => {
+        dispatch({ type: FACEBOOK_LOGIN, payload: { token, userInfo } });
+        Actions.app();
     };
 };

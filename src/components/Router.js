@@ -7,6 +7,7 @@ import HomeScreen from './HomeScreen';
 import Register from './Register';
 import ForgetPassword from './ForgetPassword';
 import SideMenu from './SideMenu';
+import SearchNearby from './SearchNearby';
 import { NavHamberger, IconTab, NavBack } from './common';
 import { fontLoader } from '../actions';
 
@@ -55,8 +56,7 @@ class RouterComponent extends React.Component {
                                         title='R U S H' 
                                         navBar={NavHamberger}
                                         onRight={() => Actions.test1()}
-                                        search
-                                        initial
+                                        // initial
                                     />
                                     <Scene 
                                         key='test1' 
@@ -64,6 +64,13 @@ class RouterComponent extends React.Component {
                                         title='ค้นหา' 
                                         navBar={NavBack}
                                         onRight={() => Actions.pop()}
+                                    />
+                                    <Scene 
+                                        key='search_nearby'
+                                        component={SearchNearby}
+                                        title='ค้นหาร้านอาหารใกล้คุณ'
+                                        navBar={NavBack}
+                                        // initial
                                     />
                                 </Scene>
                                 <Scene key='history' icon={IconTab} iconName='history'>

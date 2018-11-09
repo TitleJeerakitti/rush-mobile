@@ -19,3 +19,7 @@ export * from './Card';
 export * from './CardSection';
 export * from './Button';
 export * from './CategoryItem';
+export * from './ImageRound';
+export * from './ShopStatus';
+export * from './ShopDistance';
+export * from './Space';

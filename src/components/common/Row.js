@@ -1,9 +1,9 @@
 import React from 'react';
 import { View } from 'react-native';
 
-const Row = ({ children }) => {
+const Row = ({ children, style }) => {
     return (
-        <View style={{ flexDirection: 'row', }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', ...style }}>
             {children}
         </View>
     );

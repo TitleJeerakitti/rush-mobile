@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import { Divider } from 'react-native-elements';
+import Expo from 'expo';
 import { 
     InputIcon, 
     AuthButton, 
@@ -25,6 +26,7 @@ import {
     authLogin,
     authToRegister,
     authForgetPassword,
+    authFacebookLogin,
 } from '../actions';
 
 class LoginForm extends React.Component {
@@ -75,6 +77,35 @@ class LoginForm extends React.Component {
         this.props.authLogin(email, password);
     }
 
+    async logInFB() {
+        try {
+          const {
+            type,
+            token,
+            // expires,
+            // permissions,
+            // declinedPermissions,
+          } = await Expo.Facebook.logInWithReadPermissionsAsync('322995281815548', {
+            permissions: ['public_profile', 'user_birthday', 'user_gender', 'email'],
+          });
+          if (type === 'success') {
+            // Get the user's name using Facebook's Graph API
+            const response = await fetch(`https://graph.facebook.com/me?access_token=${token}&fields=id,name,email,birthday,gender,picture.type(large)`);
+            const responseJson = await response.json();
+            // console.log(response);
+            // console.log(token);
+            // console.log(responseJson);
+            // console.log('success with ', `Hi ${responseJson.name}!`);
+            this.props.authFacebookLogin(token, responseJson);
+            // Actions.app();
+          } else {
+            // type === 'cancel'
+          }
+        } catch ({ message }) {
+          alert(`Facebook Login Error: ${message}`);
+        }
+    }
+
     renderLoginButton() {
         const { loading, error } = this.props;
 
@@ -92,6 +123,14 @@ class LoginForm extends React.Component {
                 >
                     เข้าสู่ระบบ
                 </AuthButton>
+                <AuthButton 
+                    color={'#3b5998'}
+                    onPress={this.logInFB.bind(this)}
+                    style={{ marginTop: 10 }}
+                    facebook
+                >
+                    เข้าสู่ระบบด้วย Facebook
+                </AuthButton>
                 <TextLine title='or' />
                 <AuthButton 
                     color={LIGHT_RED}
@@ -102,6 +141,7 @@ class LoginForm extends React.Component {
             </View>
         );
     }
+
 
     render() {
         const { linkRight } = styles;
@@ -197,4 +237,5 @@ export default connect(mapStateToProps, {
     authLogin,
     authToRegister,
     authForgetPassword,
+    authFacebookLogin,
 })(LoginForm);

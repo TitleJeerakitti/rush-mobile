@@ -14,6 +14,7 @@ import {
     FORGET_PASSWORD,
     FORGET_REQUEST,
     LOGOUT_USER,
+    FACEBOOK_LOGIN,
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -24,6 +25,8 @@ const INITIAL_STATE = {
     loading: false,
     name: '',
     phone: '',
+    token: '',
+    userInfo: null,
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -76,6 +79,12 @@ export default (state = INITIAL_STATE, action) => {
                 ...state,
                 loading: false,
                 error: 'รหัสผ่านต้องยาวกว่า 6 ตัวอักษร',
+            };
+        case FACEBOOK_LOGIN:
+            return {
+                ...state,
+                token: action.payload.token,
+                userInfo: action.payload.userInfo,
             };
         default:
             return state;
