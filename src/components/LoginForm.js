@@ -108,6 +108,7 @@ class LoginForm extends React.Component {
 
     renderLoginButton() {
         const { loading, error } = this.props;
+        const { maxWidth, errorText, marginTop10 } = styles;
 
         if (loading) {
             return (
@@ -115,8 +116,8 @@ class LoginForm extends React.Component {
             );
         }
         return (
-            <View style={{ width: '100%' }}>
-                <Text style={styles.errorText}>{error}</Text>
+            <View style={maxWidth}>
+                <Text style={errorText}>{error}</Text>
                 <AuthButton 
                     color={YELLOW}
                     onPress={this.onUserLogin.bind(this)}
@@ -126,7 +127,7 @@ class LoginForm extends React.Component {
                 <AuthButton 
                     color={'#3b5998'}
                     onPress={this.logInFB.bind(this)}
-                    style={{ marginTop: 10 }}
+                    style={marginTop10}
                     facebook
                 >
                     เข้าสู่ระบบด้วย Facebook
@@ -144,7 +145,7 @@ class LoginForm extends React.Component {
 
 
     render() {
-        const { linkRight } = styles;
+        const { linkRight, height10, height20, white, } = styles;
         const { secureTextEntry, logoSize, headerName } = this.state;
         if (Platform.OS === 'android') {
             // UIManager.setLayoutAnimationEnabledExperimental && 
@@ -165,7 +166,7 @@ class LoginForm extends React.Component {
                     </Text>
                 </View>
 
-                <Divider style={{ height: 10 }} />
+                <Divider style={height10} />
                 
                 {/* -- Input Section -- */}
                 <InputIcon 
@@ -189,12 +190,12 @@ class LoginForm extends React.Component {
                     style={linkRight} 
                     onPress={() => this.props.authForgetPassword()}
                 >
-                    <Text style={{ color: 'white' }}>
+                    <Text style={white}>
                         forget password?
                     </Text>
                 </TouchableOpacity>
 
-                <Divider style={{ height: 20 }} />
+                <Divider style={height20} />
 
                 {/* -- AuthButton Section -- */}
                 {this.renderLoginButton()}
@@ -223,7 +224,22 @@ const styles = {
         shadowOpacity: 0.5, 
         shadowOffset: { width: 1, height: 1 }, 
         textAlign: 'center',
-    }
+    },
+    maxWidth: {
+        width: '100%',
+    },
+    marginTop10: {
+        marginTop: 10,
+    },
+    height10: {
+        height: 10,
+    },
+    height20: {
+        height: 20,
+    },
+    white: {
+        color: 'white',
+    },
 };
 
 const mapStateToProps = ({ auth }) => {
