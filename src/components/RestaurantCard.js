@@ -12,6 +12,18 @@ import {
 } from './common';
 
 class RestaurantCard extends React.Component {
+    renderDistance() {
+        const { distance } = this.props.data;
+        if (distance < 1000) {
+            return (
+                <ShopDistance>{distance} M</ShopDistance>
+            );
+        }
+        return (
+            <ShopDistance>{distance / 1000} KM</ShopDistance>
+        );
+    }
+
     render() {
         const { card } = styles;
         const {
@@ -21,7 +33,6 @@ class RestaurantCard extends React.Component {
             rating,
             reviewCount,
             category,
-            distance,
         } = this.props.data;
         return (
             <Card style={{ marginTop: 10 }}>
@@ -63,7 +74,7 @@ class RestaurantCard extends React.Component {
                                 </Row>
                                 <Row style={{ marginTop: 5 }}>
                                     <ShopStatus isOpen={isOpen} />
-                                    <ShopDistance distance={distance} />
+                                    {this.renderDistance()}
                                 </Row>
                             </View>
                         </Row>

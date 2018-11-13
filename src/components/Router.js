@@ -70,7 +70,7 @@ class RouterComponent extends React.Component {
                                         component={SearchNearby}
                                         title='ค้นหาร้านอาหารใกล้คุณ'
                                         navBar={NavBack}
-                                        // initial
+                                        initial
                                     />
                                 </Scene>
                                 <Scene key='history' icon={IconTab} iconName='history'>

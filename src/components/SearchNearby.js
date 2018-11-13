@@ -1,7 +1,8 @@
 import React from 'react';
-import { ScrollView, RefreshControl } from 'react-native';
+import { ScrollView, RefreshControl, } from 'react-native';
 import { Divider } from 'react-native-elements';
 import RestaurantCard from './RestaurantCard';
+import { FilterCard, FilterItem, FilterButton } from './common';
 
 class SearchNearby extends React.Component {
 
@@ -10,7 +11,13 @@ class SearchNearby extends React.Component {
         this.state = {
             restaurants: [],
             refreshing: false,
-            error: '',
+            filters: [
+                { type: 'ระยะทาง' }, 
+                { type: 'ความนิยม' }, 
+                { type: 'ตัวอักษร' }
+            ],
+            sortType: 'ระยะทาง',
+            visible: false,
         };
     }
 
@@ -24,26 +31,58 @@ class SearchNearby extends React.Component {
 
     getRestaurantAPI() {
         this.setState({ refreshing: true });
-        fetch('http://localhost:3000/restaurants', {
+        fetch(this.selectAPI(), {
             headers: {
                 'Cache-Control': 'no-cache'
             }
         })
             .then(response => response.json())
             .then(responseData => {
-                this.setState({ 
+                this.setState({
                     restaurants: responseData,
                     refreshing: false
                 });
             })
             .catch(() => {
-                console.log('error connect!');  
+                console.log('error connect!');
             });
+    }
+
+    selectAPI() {
+        if (this.state.sortType === 'ระยะทาง') { 
+            return ('http://localhost:3000/restaurants?_sort=distance&_order=asc');
+        } else if (this.state.sortType === 'ความนิยม') {
+            return ('http://localhost:3000/restaurants?_sort=rating&_order=desc');
+        }
+        return ('http://localhost:3000/restaurants?_sort=name&_order=asc');
     }
 
     renderRestaurant() {
         return this.state.restaurants.map(restaurant =>
             <RestaurantCard key={restaurant.id} data={restaurant} />
+        );
+    }
+
+    renderItem() {
+        return this.state.filters.map((filter, index) =>
+            <FilterItem 
+                key={index}
+                onPress={() => {
+                    this.setState({ sortType: filter.type, visible: false }, () => {
+                        this.onRefresh();
+                    });
+                }}
+            >
+                {filter.type}
+            </FilterItem>
+        );
+    }
+
+    renderFilter() {
+        return (
+            <FilterCard visible={this.state.visible}>
+                {this.renderItem()}
+            </FilterCard>
         );
     }
 
@@ -59,7 +98,11 @@ class SearchNearby extends React.Component {
                     />
                 }
             >
+                <FilterButton onPress={() => this.setState({ visible: true })} >
+                    {this.state.sortType}
+                </FilterButton>
                 {this.renderRestaurant()}
+                {this.renderFilter()}
                 <Divider style={space} />
             </ScrollView>
         );
