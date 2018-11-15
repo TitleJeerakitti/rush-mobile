@@ -4,3 +4,7 @@ npm-debug.*
 src/images/*
 .DS_Store
 assets/*
+yarn-error.log
+Backend/env/*
+Backend/.vscode
+src/test_json
