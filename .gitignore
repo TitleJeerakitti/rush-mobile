@@ -7,3 +7,4 @@ assets/*
 yarn-error.log
 Backend/env/*
 Backend/.vscode
+src/test_json
