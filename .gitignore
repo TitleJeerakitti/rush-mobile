@@ -1,3 +1,9 @@
 node_modules/**/*
 .expo/*
 npm-debug.*
+src/images/*
+.DS_Store
+assets/*
+yarn-error.log
+Backend/env/*
+Backend/.vscode

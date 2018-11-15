@@ -1,0 +1,22 @@
+version: "3"
+services:
+  db:
+    image: postgres:latest
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER:'root'
+      - POSTGRES_PASSWORD:'password'
+      - POSTGRES_DB:'rush_postgres'
+  web:
+    build: .
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    stdin_open: true
+    tty: true
+volumes:
+  postgres_data:      
