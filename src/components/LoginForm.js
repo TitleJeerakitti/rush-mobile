@@ -93,8 +93,8 @@ class LoginForm extends React.Component {
             const response = await fetch(`https://graph.facebook.com/me?access_token=${token}&fields=id,name,email,birthday,gender,picture.type(large)`);
             const responseJson = await response.json();
             // console.log(response);
-            // console.log(token);
-            // console.log(responseJson);
+            console.log(token);
+            console.log(responseJson);
             // console.log('success with ', `Hi ${responseJson.name}!`);
             this.props.authFacebookLogin(token, responseJson);
             // Actions.app();

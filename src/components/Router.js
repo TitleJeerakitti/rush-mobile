@@ -1,6 +1,6 @@
 import React from 'react';
 import { Router, Scene, Actions, Drawer, Tabs } from 'react-native-router-flux';
-import { Font } from 'expo';
+import { Font, ScreenOrientation } from 'expo';
 import { connect } from 'react-redux';
 import LoginForm from './LoginForm';
 import HomeScreen from './HomeScreen';
@@ -12,6 +12,10 @@ import { NavHamberger, IconTab, NavBack } from './common';
 import { fontLoader } from '../actions';
 
 class RouterComponent extends React.Component {
+
+    componentWillMount() {
+        ScreenOrientation.allow('PORTRAIT');
+    }
 
     async componentDidMount() {
         await Font.loadAsync({
@@ -46,7 +50,7 @@ class RouterComponent extends React.Component {
                         <Scene key='edit_profile' component={HomeScreen} navBar={NavHamberger} />
                     </Scene>
                     
-                    <Drawer key='app' contentComponent={SideMenu} initial >
+                    <Drawer key='app' contentComponent={SideMenu} initial>
                         <Scene key='container' hideNavBar>
                             <Tabs key='tabber' tabBarStyle={tabBarStyle} showLabel={false}>
                                 <Scene key='homepage' icon={IconTab} iconName='home' initial>
@@ -56,7 +60,7 @@ class RouterComponent extends React.Component {
                                         title='R U S H' 
                                         navBar={NavHamberger}
                                         onRight={() => Actions.test1()}
-                                        // initial
+                                        initial
                                     />
                                     <Scene 
                                         key='test1' 
@@ -70,7 +74,7 @@ class RouterComponent extends React.Component {
                                         component={SearchNearby}
                                         title='ค้นหาร้านอาหารใกล้คุณ'
                                         navBar={NavBack}
-                                        initial
+                                        // initial
                                     />
                                 </Scene>
                                 <Scene key='history' icon={IconTab} iconName='history'>
