@@ -7,4 +7,6 @@ assets/*
 yarn-error.log
 src/test_json
 
-Backend/rush/__pycache__/
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
