@@ -8,6 +8,7 @@ import Register from './Register';
 import ForgetPassword from './ForgetPassword';
 import SideMenu from './SideMenu';
 import SearchNearby from './SearchNearby';
+import SearchByName from './SearchByName';
 import { NavHamberger, IconTab, NavBack } from './common';
 import { fontLoader } from '../actions';
 
@@ -59,15 +60,16 @@ class RouterComponent extends React.Component {
                                         component={HomeScreen} 
                                         title='R U S H' 
                                         navBar={NavHamberger}
-                                        onRight={() => Actions.test1()}
+                                        onRight={() => Actions.search_name()}
                                         initial
                                     />
                                     <Scene 
-                                        key='test1' 
-                                        component={ForgetPassword} 
+                                        key='search_name' 
+                                        component={SearchByName} 
                                         title='ค้นหา' 
                                         navBar={NavBack}
-                                        onRight={() => Actions.pop()}
+                                        // onRight={() => Actions.pop()}
+                                        // initial
                                     />
                                     <Scene 
                                         key='search_nearby'

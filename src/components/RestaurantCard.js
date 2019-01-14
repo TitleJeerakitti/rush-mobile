@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View, } from 'react-native';
 import { Rating, Icon } from 'react-native-elements';
 import {
     Card,
@@ -40,6 +40,7 @@ class RestaurantCard extends React.Component {
                     <TouchableOpacity
                         style={card}
                         activeOpacity={1}
+                        onPress={() => console.log('click')}
                     >
                         <Row>
                             <ImageRound
@@ -54,17 +55,21 @@ class RestaurantCard extends React.Component {
                                     {name}
                                 </FontText>
                                 <Row>
-                                    <Rating
-                                        startingValue={rating}
-                                        readonly
-                                        imageSize={12}
-                                    />
-                                    <FontText
-                                        size={16}
-                                        style={{ marginLeft: 10 }}
-                                    >
-                                        {reviewCount} รีวิว
-                                    </FontText>
+                                    <TouchableOpacity onPress={() => console.log('click rate')}>
+                                        <Row>
+                                            <Rating
+                                                startingValue={rating}
+                                                readonly
+                                                imageSize={12}
+                                            />
+                                            <FontText
+                                                size={16}
+                                                style={{ marginLeft: 10 }}
+                                            >
+                                                {reviewCount} รีวิว
+                                            </FontText>
+                                        </Row>
+                                    </TouchableOpacity>
                                     <Row style={{ flex: 1, justifyContent: 'flex-end' }}>
                                         <Icon name='tag' type='evilicon' size={16} color='gray' />
                                         <FontText style={{ color: 'gray' }} numberOfLines={1} >
