@@ -9,6 +9,7 @@ import ForgetPassword from './ForgetPassword';
 import SideMenu from './SideMenu';
 import SearchNearby from './SearchNearby';
 import SearchByName from './SearchByName';
+import RestaurantMenu from './RestaurantMenu';
 import { NavHamberger, IconTab, NavBack } from './common';
 import { fontLoader } from '../actions';
 
@@ -77,6 +78,13 @@ class RouterComponent extends React.Component {
                                         title='ค้นหาร้านอาหารใกล้คุณ'
                                         navBar={NavBack}
                                         // initial
+                                    />
+                                    <Scene 
+                                        key='restaurant_menu'
+                                        component={RestaurantMenu}
+                                        reduxTitle
+                                        // title={this.props.currentRestaurant}
+                                        navBar={NavBack}
                                     />
                                 </Scene>
                                 <Scene key='history' icon={IconTab} iconName='history'>

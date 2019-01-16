@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ScrollView, Text, TextInput, TouchableOpacity } from 'react-native';
+import { View, ScrollView, TextInput, TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { Row, FontText } from './common';
 import RestaurantCard from './RestaurantCard';
@@ -30,12 +30,6 @@ class SearchByName extends React.Component {
         });
     }
 
-    clearText() {
-        this.setState({
-            text: ''
-        });
-    }
-
     getRestaurantAPI() {
         fetch(`http://localhost:3000/restaurants?name=${this.state.text}`, {
             headers: {
@@ -52,6 +46,12 @@ class SearchByName extends React.Component {
             .catch(() => {
                 console.log('error connect!');
             });
+    }
+
+    clearText() {
+        this.setState({
+            text: ''
+        });
     }
 
     renderClear() {

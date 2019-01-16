@@ -1,6 +1,8 @@
 import React from 'react';
 import { TouchableOpacity, View, } from 'react-native';
+import { connect } from 'react-redux';
 import { Rating, Icon } from 'react-native-elements';
+import { restaurantSelected } from '../actions';
 import {
     Card,
     CardSection,
@@ -12,6 +14,11 @@ import {
 } from './common';
 
 class RestaurantCard extends React.Component {
+
+    onClick() {
+        this.props.restaurantSelected(this.props.data);
+    }
+
     renderDistance() {
         const { distance } = this.props.data;
         if (distance < 1000) {
@@ -40,7 +47,7 @@ class RestaurantCard extends React.Component {
                     <TouchableOpacity
                         style={card}
                         activeOpacity={1}
-                        onPress={() => console.log('click')}
+                        onPress={this.onClick.bind(this)}
                     >
                         <Row>
                             <ImageRound
@@ -101,4 +108,4 @@ const styles = {
     }
 };
 
-export default RestaurantCard;
+export default connect(null, { restaurantSelected })(RestaurantCard);

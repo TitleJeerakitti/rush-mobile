@@ -2,9 +2,11 @@ import React from 'react';
 import { TouchableWithoutFeedback } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
+import { connect } from 'react-redux';
 import { NavCard, NavContainer, NavTitle } from '../common';
 
-class NavBack extends React.Component {
+class NavBackComponent extends React.Component {
+
     renderIcon() {
         const { onRight } = this.props;
         if (onRight) {
@@ -21,8 +23,18 @@ class NavBack extends React.Component {
         }
     }
 
+    renderTitle() {
+        const { reduxTitle, title } = this.props;
+        if (reduxTitle) {
+            return (
+                <NavTitle>{this.props.currentRestaurant}</NavTitle>
+                // <NavTitle>{restaurantTitle}</NavTitle>
+            );
+        }
+        return (<NavTitle>{title}</NavTitle>);
+    }
+
     render() {
-        const { title } = this.props;
         return (
             <NavContainer>
                 <NavCard>
@@ -35,7 +47,7 @@ class NavBack extends React.Component {
                         />
                     </TouchableWithoutFeedback>
                 </NavCard>
-                <NavTitle>{title}</NavTitle>
+                {this.renderTitle()}
                 <NavCard>
                     {this.renderIcon()}
                 </NavCard>
@@ -43,5 +55,12 @@ class NavBack extends React.Component {
         );
     }
 }
+
+const mapStateToProps = ({ restaurant }) => {
+    const { currentRestaurant } = restaurant;
+    return { currentRestaurant };
+};
+
+const NavBack = connect(mapStateToProps)(NavBackComponent);
 
 export { NavBack };
