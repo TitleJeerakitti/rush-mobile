@@ -51,10 +51,12 @@ class SearchNearby extends React.Component {
     selectAPI() {
         if (this.state.sortType === 'ระยะทาง') { 
             return ('http://localhost:3000/restaurants?_sort=distance&_order=asc');
+            // return ('http://10.66.10.222:8000/testing/restaurant');
         } else if (this.state.sortType === 'ความนิยม') {
             return ('http://localhost:3000/restaurants?_sort=rating&_order=desc');
         }
-        return ('http://localhost:3000/restaurants?_sort=name&_order=asc');
+        // return ('http://localhost:3000/restaurants?_sort=name&_order=asc');
+        return ('http://10.66.10.222:8000/testing/restaurant');
     }
 
     renderRestaurant() {
