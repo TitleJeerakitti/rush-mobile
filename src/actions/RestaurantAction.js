@@ -1,9 +1,19 @@
 import { Actions } from 'react-native-router-flux';
-import { RESTAURANT_SELECTED } from './types';
+import { 
+    RESTAURANT_SELECTED,
+    ADD_MENU,
+} from './types';
 
 export const restaurantSelected = (data) => {
     return (dispatch) => {
         dispatch({ type: RESTAURANT_SELECTED, payload: data });
         Actions.restaurant_menu({ onBack: () => Actions.pop() });
+    };
+};
+
+export const addMenu = (data) => {
+    return {
+        type: ADD_MENU,
+        payload: data
     };
 };

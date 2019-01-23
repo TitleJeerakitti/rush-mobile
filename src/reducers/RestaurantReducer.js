@@ -1,10 +1,8 @@
-import { RESTAURANT_SELECTED } from '../actions/types';
+import { RESTAURANT_SELECTED, ADD_MENU } from '../actions/types';
 
 const INITIAL_STATE = {
     restaurantId: '',
     currentRestaurant: '',
-    currentCategory: '',
-    categories: [],
     menu: [],
 };
 
@@ -15,6 +13,11 @@ export default (state = INITIAL_STATE, action) => {
                 ...state,
                 currentRestaurant: action.payload.name,
                 restaurantId: action.payload.id,
+            };
+        case ADD_MENU:
+            return {
+                ...state,
+                
             };
         default:
             return { INITIAL_STATE };

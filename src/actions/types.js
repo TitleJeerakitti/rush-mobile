@@ -18,3 +18,4 @@ export const FACEBOOK_LOGIN = 'FACEBOOK_LOGIN';
 export const FONT_LOADED = 'FONT_LOADED';
 
 export const RESTAURANT_SELECTED = 'RESTAURANT_SELECTED';
+export const ADD_MENU = 'ADD_MENU';

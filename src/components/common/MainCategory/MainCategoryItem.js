@@ -1,6 +1,6 @@
 import React from 'react';
-import { TouchableOpacity } from 'react-native';
-import { FontText } from '..';
+import { TouchableOpacity, } from 'react-native';
+import { FontText, Row } from '../../common';
 
 const MainCategoryItem = ({ onPress, children, selected }) => {
     const { container, whiteBg, yellowBg } = styles;
@@ -10,9 +10,16 @@ const MainCategoryItem = ({ onPress, children, selected }) => {
             onPress={onPress}
             activeOpacity={1}
         >
-            <FontText style={{ color: selected ? '#000' : '#FFF' }}>
-                {children}
-            </FontText>
+            <Row>
+                <FontText 
+                    style={{ 
+                        color: selected ? '#000' : '#FFF',
+                        // textDecorationLine: selected ? 'underline' : 'none'
+                    }}
+                >
+                    {children}
+                </FontText>
+            </Row>
         </TouchableOpacity>
     );
 };
@@ -27,10 +34,11 @@ const styles = {
         borderTopRightRadius: 10,
         shadowOffset: { width: 5, height: -5 },
         shadowOpacity: 0.1,
-        shadowRadius: 10
+        shadowRadius: 10,
+        marginHorizontal: 0.2,
     },
     whiteBg: {
-        backgroundColor: '#FFF',
+        backgroundColor: '#FAFAFA',
     },
     yellowBg: {
         backgroundColor: '#FFA80D',

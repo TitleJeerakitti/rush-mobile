@@ -26,3 +26,4 @@ export * from './FilterCard';
 export * from './FilterItem';
 export * from './FilterButton';
 export * from './MainCategory';
+export * from './MenuCard';

@@ -1,7 +1,15 @@
 import React from 'react';
 import { ScrollView, View, Text } from 'react-native';
 import { connect } from 'react-redux';
-import { Slick, SlickItem, FilterCard, FilterItem, FilterButton, Card, Row, MainCategory } from './common';
+import { 
+    Slick, 
+    SlickItem, 
+    FilterCard, 
+    FilterItem, 
+    FilterButton,
+    MainCategory,
+    MenuCard,
+} from './common';
 
 class RestaurantMenu extends React.Component {
     constructor(props) {
@@ -54,6 +62,9 @@ class RestaurantMenu extends React.Component {
                     {this.state.sortType}
                 </FilterButton>
                 <MainCategory />
+                <View style={{ backgroundColor: '#FAFAFA' }}>
+                    <MenuCard />
+                </View>
                 {this.renderFilter()}
             </ScrollView>
         );

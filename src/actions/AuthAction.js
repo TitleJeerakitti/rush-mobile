@@ -37,11 +37,26 @@ export const authLogin = (email, password) => {
     return (dispatch) => {
         dispatch({ type: LOGIN_USER });
 
-        firebase.auth().signInWithEmailAndPassword(email, password)
-            .then((user) => authLoginSuccess(dispatch, user))
-            .catch(
-                (error) => authLoginFailed(dispatch, error.message)
-            );
+        fetch('http://10.66.10.222:8000/api/auth/login/', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: 'sivakornterk',
+                password: 'Terk1234',
+            }),
+        })
+            .then((response) => response.json())
+            .then((responseData) => {
+                console.log(responseData);
+            }).catch(() => console.log('error'));
+        // firebase.auth().signInWithEmailAndPassword(email, password)
+        //     .then((user) => authLoginSuccess(dispatch, user))
+        //     .catch(
+        //         (error) => authLoginFailed(dispatch, error.message)
+        //     );
     };
 };
 
