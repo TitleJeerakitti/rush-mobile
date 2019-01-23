@@ -7,6 +7,11 @@ assets/*
 yarn-error.log
 src/test_json
 
+
+#python
+Backend/media
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
