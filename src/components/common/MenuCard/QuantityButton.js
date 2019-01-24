@@ -59,7 +59,8 @@ const styles = {
         backgroundColor: '#FFF',
     },
     whiteText: {
-        color: '#FFF'
+        color: '#FFF',
+        fontSize: 20,
     },
     leftRadius: {
         borderTopLeftRadius: 5, 

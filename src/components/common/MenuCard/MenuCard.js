@@ -1,6 +1,5 @@
 import React from 'react';
-import { View, Text, Dimensions } from 'react-native';
-import { Icon } from 'react-native-elements';
+import { View, Dimensions } from 'react-native';
 import { Card, CardSection, ImageRound, FontText, QuantityButton } from '../../common';
 
 class MenuCard extends React.Component {
@@ -11,6 +10,7 @@ class MenuCard extends React.Component {
     }
 
     render() {
+        const { name, price, picture } = this.props;
         return (
             <Card>
                 <CardSection>
@@ -27,10 +27,10 @@ class MenuCard extends React.Component {
                             padding: 10,
                         }} 
                     >
-                        <ImageRound source={{ uri: 'https://is1-ssl.mzstatic.com/image/thumb/Purple71/v4/47/cf/cf/47cfcf79-9e1d-b21f-8e10-2658b7650c15/mzl.oiljceng.png/246x0w.jpg' }} />
+                        <ImageRound source={{ uri: picture }} />
                         <View style={{ justifyContent: 'center', flex: 1 }}>
-                            <FontText>EIEI</FontText>
-                            <FontText>120 บาท</FontText>
+                            <FontText>{name}</FontText>
+                            <FontText>{price} บาท</FontText>
                         </View>
                         <QuantityButton />
                     </View>
