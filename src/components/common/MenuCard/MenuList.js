@@ -38,9 +38,10 @@ class MenuContainerList extends React.Component {
     }
 
     renderMenuItem(menus) {
-        return menus.map((menu, index) => 
+        return menus.map(menu =>
             <MenuCard 
-                key={index} 
+                key={menu.id} 
+                id={menu.id}
                 name={menu.name} 
                 price={menu.price} 
                 picture={menu.picture} 
@@ -60,7 +61,7 @@ class MenuContainerList extends React.Component {
 
     render() {
         this.getSubCategory();
-        // console.log(this.props.restaurantId, ' compare ', this.props.currentCategory);
+        // console.log(this.state.subCategorys.length);
         return (
             <View style={{ backgroundColor: '#FAFAFA', }}>
                 <Card>

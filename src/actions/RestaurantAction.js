@@ -11,9 +11,9 @@ export const restaurantSelected = (data) => {
     };
 };
 
-export const addMenu = (data) => {
+export const addMenu = (id, qty) => {
     return {
         type: ADD_MENU,
-        payload: data
+        payload: { id, qty },
     };
 };

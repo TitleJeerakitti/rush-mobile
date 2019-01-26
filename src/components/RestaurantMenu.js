@@ -106,6 +106,7 @@ class RestaurantMenu extends React.Component {
     render() {
         // console.log(restaurantId, currentCategory, mainCategorys);
         // console.log(this.state.mainCategorys);
+        // console.log(this.state.currentCategory);
         return (
             <ScrollView style={{ flex: 1 }}>
                 <Slick>

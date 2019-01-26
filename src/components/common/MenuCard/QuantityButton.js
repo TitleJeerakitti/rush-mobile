@@ -1,8 +1,10 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
+import { connect } from 'react-redux';
 import { Row } from '../../common';
+import { addMenu } from '../../../actions';
 
-class QuantityButton extends React.Component {
+class QuantityMenu extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -10,10 +12,16 @@ class QuantityButton extends React.Component {
         };
     }
 
-    additiveAmount() {
+    subtractAmount() {
         if (this.state.amount > 0) {
             this.setState({ amount: --this.state.amount });
         }
+    }
+
+    additionAmount() {
+        this.setState({ amount: ++this.state.amount });
+        console.log(this.props.id, this.state.amount);
+        this.props.addMenu(this.props.id, this.state.amount);
     }
 
     render() {
@@ -22,7 +30,10 @@ class QuantityButton extends React.Component {
             <Row>
                 <TouchableOpacity 
                     style={[container, grayBg, leftRadius]}
-                    onPress={() => this.additiveAmount()}
+                    onPress={() => {
+                        this.subtractAmount();
+                        console.log(this.props.id);
+                    }}
                 >
                     <Text style={whiteText}>-</Text>
                 </TouchableOpacity>
@@ -33,7 +44,7 @@ class QuantityButton extends React.Component {
                 </View>
                 <TouchableOpacity 
                     style={[container, grayBg, rightRadius]}
-                    onPress={() => this.setState({ amount: ++this.state.amount })}
+                    onPress={this.additionAmount.bind(this)}
                 >
                     <Text style={whiteText}>+</Text>
                 </TouchableOpacity>
@@ -72,4 +83,10 @@ const styles = {
     }
 };
 
+// const mapStateToProps = ({ restaurant }) => {
+//     const { menu } = restaurant;
+//     return menu;
+// };
+
+const QuantityButton = connect(null, { addMenu })(QuantityMenu);
 export { QuantityButton };
