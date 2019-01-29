@@ -10,6 +10,7 @@ import SideMenu from './SideMenu';
 import SearchNearby from './SearchNearby';
 import SearchByName from './SearchByName';
 import RestaurantMenu from './RestaurantMenu';
+import MenuRemain from './MenuRemain';
 import { NavHamberger, IconTab, NavBack } from './common';
 import { fontLoader } from '../actions';
 
@@ -77,14 +78,22 @@ class RouterComponent extends React.Component {
                                         component={SearchNearby}
                                         title='ค้นหาร้านอาหารใกล้คุณ'
                                         navBar={NavBack}
+                                        // onRight={() => console.log('click')}
                                         // initial
                                     />
                                     <Scene 
                                         key='restaurant_menu'
                                         component={RestaurantMenu}
                                         reduxTitle
+                                        onRight={() => Actions.menu_remaining()}
                                         // title={this.props.currentRestaurant}
                                         navBar={NavBack}
+                                    />
+                                    <Scene 
+                                        key='menu_remaining'
+                                        component={MenuRemain}
+                                        navBar={NavBack}
+                                        title='รายการอาหารของคุณ'
                                     />
                                 </Scene>
                                 <Scene key='history' icon={IconTab} iconName='history'>

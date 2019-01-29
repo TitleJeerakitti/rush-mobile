@@ -47,16 +47,12 @@ export default class HomeScreen extends React.Component {
                     <SlickItem source={require('../images/promotion_3.png')} />
                     <SlickItem source={require('../images/promotion3.png')} />
                 </Slick>
-                <Card>
-                    <CardSection>
-                        <Button color={DARK_RED} onPress={() => Actions.search_nearby()}>
-                            <Icon name='map-marker' type='material-community' color='white' />
-                            <FontText color='white' size={size} style={{ paddingLeft: 5 }}>
-                                ค้นหาร้านอาหารบริเวณใกล้เคียง
-                            </FontText>
-                        </Button>
-                    </CardSection>
-                </Card>
+                <Button color={DARK_RED} onPress={() => Actions.search_nearby()}>
+                    <Icon name='map-marker' type='material-community' color='white' />
+                    <FontText color='white' size={size} style={{ paddingLeft: 5 }}>
+                        ค้นหาร้านอาหารบริเวณใกล้เคียง
+                    </FontText>
+                </Button>
                 <Card>
                 <LinearGradient 
                     start={{ x: 0.0, y: 0.0 }} end={{ x: 1.0, y: 1.0 }}

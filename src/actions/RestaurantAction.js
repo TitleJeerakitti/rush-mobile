@@ -1,7 +1,9 @@
 import { Actions } from 'react-native-router-flux';
 import { 
     RESTAURANT_SELECTED,
+    RESTAURANT_GET_MENU,
     ADD_MENU,
+    SUB_MENU,
 } from './types';
 
 export const restaurantSelected = (data) => {
@@ -11,9 +13,31 @@ export const restaurantSelected = (data) => {
     };
 };
 
+export const restaurantGetMenu = () => {
+    return (dispatch) => { 
+        fetch('http://localhost:3000/full_request', {
+            headers: {
+                'Cache-Control': 'no-cache'
+            }
+        })
+            .then(response => response.json())
+            .then(responseData => {
+                dispatch({ type: RESTAURANT_GET_MENU, payload: responseData });
+            })
+            .catch(() => console.log('error'));
+    };
+};
+
 export const addMenu = (id, qty) => {
     return {
         type: ADD_MENU,
+        payload: { id, qty },
+    };
+};
+
+export const subMenu = (id, qty) => {
+    return {
+        type: SUB_MENU,
         payload: { id, qty },
     };
 };

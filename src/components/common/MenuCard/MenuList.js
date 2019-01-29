@@ -1,6 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import { Divider } from 'react-native-elements';
+// import { connect } from 'react-redux';
 import { Card, CardSection, FontText, MenuCard } from '../../common';
 
 class MenuContainerList extends React.Component {
@@ -11,34 +12,24 @@ class MenuContainerList extends React.Component {
         };
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        if (JSON.stringify(this.state.subCategorys) !== JSON.stringify(nextState.subCategorys)) {
-            return true;
-        } else if (this.props.restaurantId !== nextProps.restaurantId) {
-            return true;
-        } else if (this.props.currentCategory !== nextProps.currentCategory) {
-            return true;
-        }
-        return false;
-    }
+    // componentWillMount() {
+    //     console.log(this.props.data);
+    // }
 
-    getSubCategory() {
-        fetch(`http://localhost:3000/sub_category?supplier_id=${this.props.restaurantId}&main_category_id=${this.props.currentCategory}`, {
-            headers: {
-                'Cache-Control': 'no-cache'
-            } 
-        })
-            .then(response => response.json())
-            .then(responseData => {
-                this.setState({
-                    subCategorys: responseData,
-                });
-            })
-            .catch(() => console.log('error'));
-    }
+    // shouldComponentUpdate(nextProps, nextState) {
+    //     // console.log(nextProps)
+    //     if (JSON.stringify(this.state.subCategorys) !== JSON.stringify(nextState.subCategorys)) {
+    //         return true;
+    //     } else if (this.props.restaurantId !== nextProps.restaurantId) {
+    //         return true;
+    //     } else if (this.props.currentCategory !== nextProps.currentCategory) {
+    //         return true;
+    //     }
+    //     return false;
+    // }
 
     renderMenuItem(menus) {
-        return menus.map(menu =>
+        return menus.map(menu => 
             <MenuCard 
                 key={menu.id} 
                 id={menu.id}
@@ -50,26 +41,25 @@ class MenuContainerList extends React.Component {
     }
 
     renderSubCategory() {
-        return this.state.subCategorys.map((subCategory, index) => 
-            <CardSection key={index}>
-                <FontText >{subCategory.name}</FontText>
-                { this.renderMenuItem(subCategory.menu) }
-                <Divider style={{ height: 10, backgroundColor: 'transparent' }} />
-            </CardSection>
-        );
+        const { data, currentCategory } = this.props;
+
+        if (data.main_categories !== undefined) {
+            const subCategories = data.main_categories[currentCategory].sub_categories;
+            return subCategories.map((subCategory, index) => 
+                <CardSection key={index}>
+                    <FontText >{subCategory.name}</FontText>
+                    { this.renderMenuItem(subCategory.menus) }
+                    <Divider style={{ height: 10, backgroundColor: 'transparent' }} />
+                </CardSection>
+            );
+        }
     }
 
     render() {
-        this.getSubCategory();
-        // console.log(this.state.subCategorys.length);
         return (
             <View style={{ backgroundColor: '#FAFAFA', }}>
                 <Card>
-                    {/* <CardSection>
-                        <FontText >test</FontText>
-                    </CardSection> */}
                     {this.renderSubCategory()}
-                    {/* <MenuCard /> */}
                 </Card>
             </View>
         );

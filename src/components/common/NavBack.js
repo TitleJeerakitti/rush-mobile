@@ -1,9 +1,9 @@
 import React from 'react';
-import { TouchableWithoutFeedback } from 'react-native';
+import { TouchableOpacity, Text, TouchableWithoutFeedback, View } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 import { connect } from 'react-redux';
-import { NavCard, NavContainer, NavTitle } from '../common';
+import { NavCard, NavContainer, NavTitle, } from '../common';
 
 class NavBackComponent extends React.Component {
 
@@ -11,14 +11,39 @@ class NavBackComponent extends React.Component {
         const { onRight } = this.props;
         if (onRight) {
             return (
-                <TouchableWithoutFeedback onPress={onRight}>
+                <TouchableOpacity 
+                    onPress={onRight}
+                    activeOpacity={1}
+                >
                     <Icon 
                         name='food'
                         type='material-community'
                         color='white'
                         size={30}
                     />
-                </TouchableWithoutFeedback>
+                    {this.renderNotify()}
+                </TouchableOpacity>
+            );
+        }
+    }
+
+    renderNotify() {
+        const { total } = this.props;
+        if (total > 99) {
+            return (
+                <View style={styles.notifyBox} >
+                    <Text style={{ color: 'white' }}>
+                        99+
+                    </Text>
+                </View>
+            );
+        } else if (total > 0) {
+            return (
+                <View style={styles.notifyBox} >
+                    <Text style={{ color: 'white' }}>
+                        {this.props.total}
+                    </Text>
+                </View>
             );
         }
     }
@@ -38,7 +63,9 @@ class NavBackComponent extends React.Component {
         return (
             <NavContainer>
                 <NavCard>
-                    <TouchableWithoutFeedback onPress={() => Actions.pop()}>
+                    <TouchableWithoutFeedback 
+                        onPress={() => Actions.pop()}
+                    >
                         <Icon 
                             name='chevron-left'
                             type='evilicon'
@@ -57,10 +84,26 @@ class NavBackComponent extends React.Component {
 }
 
 const mapStateToProps = ({ restaurant }) => {
-    const { currentRestaurant } = restaurant;
-    return { currentRestaurant };
+    const { currentRestaurant, total } = restaurant;
+    return { currentRestaurant, total };
+};
+
+const styles = {
+    notifyBox: {
+        minWidth: 22,
+        height: 22,
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'absolute', 
+        right: '-10%', 
+        top: '-10%', 
+        backgroundColor: 'red',
+        borderColor: 'white',
+        borderWidth: 1,
+        borderRadius: 11,
+        paddingHorizontal: 5
+    }
 };
 
 const NavBack = connect(mapStateToProps)(NavBackComponent);
-
 export { NavBack };

@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import { Row } from '../../common';
-import { addMenu } from '../../../actions';
+import { addMenu, subMenu } from '../../../actions';
 
 class QuantityMenu extends React.Component {
     constructor(props) {
@@ -12,28 +12,34 @@ class QuantityMenu extends React.Component {
         };
     }
 
+    componentWillMount() {
+        for (const [index, menu] of this.props.menus.entries()) {
+            if (menu.id === this.props.id) {
+                this.setState({ amount: menu.qty });
+            }
+        }
+    }
+
     subtractAmount() {
         if (this.state.amount > 0) {
             this.setState({ amount: --this.state.amount });
+            this.props.subMenu(this.props.id, this.state.amount);
         }
     }
 
     additionAmount() {
         this.setState({ amount: ++this.state.amount });
-        console.log(this.props.id, this.state.amount);
         this.props.addMenu(this.props.id, this.state.amount);
     }
 
     render() {
-        const { container, grayBg, whiteBg, leftRadius, rightRadius, whiteText } = styles;
+        // console.log(this.state.amount);
+        const { container, grayBg, whiteBg, redBg, leftRadius, rightRadius, whiteText } = styles;
         return (
             <Row>
                 <TouchableOpacity 
-                    style={[container, grayBg, leftRadius]}
-                    onPress={() => {
-                        this.subtractAmount();
-                        console.log(this.props.id);
-                    }}
+                    style={[container, this.state.amount === 0 ? grayBg : redBg, leftRadius]}
+                    onPress={this.subtractAmount.bind(this)}
                 >
                     <Text style={whiteText}>-</Text>
                 </TouchableOpacity>
@@ -43,7 +49,7 @@ class QuantityMenu extends React.Component {
                     <Text>{this.state.amount}</Text>
                 </View>
                 <TouchableOpacity 
-                    style={[container, grayBg, rightRadius]}
+                    style={[container, this.state.amount === 0 ? grayBg : redBg, rightRadius]}
                     onPress={this.additionAmount.bind(this)}
                 >
                     <Text style={whiteText}>+</Text>
@@ -66,6 +72,9 @@ const styles = {
     grayBg: {
         backgroundColor: '#AAA', 
     },
+    redBg: {
+        backgroundColor: '#FF6000',
+    },
     whiteBg: {
         backgroundColor: '#FFF',
     },
@@ -83,10 +92,11 @@ const styles = {
     }
 };
 
-// const mapStateToProps = ({ restaurant }) => {
-//     const { menu } = restaurant;
-//     return menu;
-// };
+const mapStateToProps = ({ restaurant }) => {
+    // console.log('render')
+    const { menus } = restaurant;
+    return { menus };
+};
 
-const QuantityButton = connect(null, { addMenu })(QuantityMenu);
+const QuantityButton = connect(mapStateToProps, { addMenu, subMenu })(QuantityMenu);
 export { QuantityButton };

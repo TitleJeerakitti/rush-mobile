@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, View, Text } from 'react-native';
+import { ScrollView, /* View, Text */ } from 'react-native';
 import { connect } from 'react-redux';
 import { 
     Slick, 
@@ -8,21 +8,22 @@ import {
     FilterItem, 
     FilterButton,
     MainCategory,
-    MenuCard,
-    FontText,
-    Card,
-    CardSection,
+    // MenuCard,
+    // FontText,
+    // Card,
+    // CardSection,
     MenuList,
     MainCategoryItem,
 } from './common';
+import { restaurantGetMenu } from '../actions';
 
 class RestaurantMenu extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            menus: [],
-            mainCategorys: [],
-            currentCategory: '',
+            // data: {},
+            // mainCategorys: [],
+            currentCategory: 0,
             // refreshing: false,
             filters: [
                 { type: 'ความนิยม' }, 
@@ -31,28 +32,42 @@ class RestaurantMenu extends React.Component {
             ],
             sortType: 'ราคา',
             visible: false,
+            // refresh: false,
         };
     }
 
     componentWillMount() {
-        this.apiCategory();
+        // this.apiCategory();
+        this.props.restaurantGetMenu();
     }
 
-    apiCategory() {
-        fetch(`http://localhost:3000/main_category?supplier_id=${this.props.restaurantId}`, {
-                headers: {
-                    'Cache-Control': 'no-cache'
-                }
-            })
-                .then(response => response.json())
-                .then(async responseData => {
-                    await this.setState({
-                        mainCategorys: responseData,
-                        currentCategory: responseData[0].id,
-                    });
-                })
-                .catch(() => console.log('error'));
-    }
+    // componentWillReceiveProps(props) {
+    //     console.log(props.refresh);
+    //     this.setState({ ...this.state, refresh: props.refresh });
+    //     // this.render();
+    // }
+
+    // shouldComponentUpdate(nextProps) {
+    //     console.log('shoud componet update');
+    //     // console.log('refresh: ', nextProps.refresh);
+        
+    //     return true;
+    // }
+
+    // apiCategory() {
+    //     fetch('http://localhost:3000/full_request', {
+    //             headers: {
+    //                 'Cache-Control': 'no-cache'
+    //             }
+    //         })
+    //             .then(response => response.json())
+    //             .then(responseData => {
+    //                 this.setState({
+    //                     data: responseData,
+    //                 });
+    //             })
+    //             .catch(() => console.log('error'));
+    // }
 
     renderItem() {
         return this.state.filters.map((filter, index) =>
@@ -79,34 +94,38 @@ class RestaurantMenu extends React.Component {
     }
 
     renderMainCategoryItem() {
-        return this.state.mainCategorys.map(category => 
-            <MainCategoryItem 
-                key={category.id}
-                onPress={() => this.setState({ currentCategory: category.id })}
-                selected={category.id === this.state.currentCategory}
-            >
-                {category.name}
-            </MainCategoryItem>
-        );
+        if (this.props.menuData.main_categories !== undefined) {
+            return this.props.menuData.main_categories.map((category, index) => 
+                <MainCategoryItem 
+                    key={index}
+                    onPress={() => this.setState({ currentCategory: index })}
+                    selected={index === this.state.currentCategory}
+                >
+                    {category.name}
+                </MainCategoryItem>
+            );
+        }
     }
 
     renderMenuList() {
-        const { restaurantId } = this.props;
+        // const { restaurantId } = this.props;
+        const { menuData } = this.props;
         const { currentCategory } = this.state;
-        if (currentCategory !== '') {
-            return (
-                <MenuList 
-                    restaurantId={restaurantId}
-                    currentCategory={currentCategory}
-                />
-            );
-        }
+        return (
+            <MenuList 
+                // restaurantId={restaurantId}
+                currentCategory={currentCategory}
+                data={menuData}
+                // refresh={this.state.refresh}
+            />
+        );
     }
 
     render() {
         // console.log(restaurantId, currentCategory, mainCategorys);
         // console.log(this.state.mainCategorys);
         // console.log(this.state.currentCategory);
+        // console.log('renderMenu');
         return (
             <ScrollView style={{ flex: 1 }}>
                 <Slick>
@@ -128,8 +147,8 @@ class RestaurantMenu extends React.Component {
 }
 
 const mapStateToProps = ({ restaurant }) => {
-    const { currentRestaurant, restaurantId } = restaurant;
-    return { currentRestaurant, restaurantId };
+    const { currentRestaurant, restaurantId, menus, menuData } = restaurant;
+    return { currentRestaurant, restaurantId, menus, menuData };
 };
 
-export default connect(mapStateToProps, null)(RestaurantMenu);
+export default connect(mapStateToProps, { restaurantGetMenu })(RestaurantMenu);

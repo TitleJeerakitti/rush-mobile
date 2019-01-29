@@ -16,7 +16,9 @@ import {
 class RestaurantCard extends React.Component {
 
     onClick() {
-        this.props.restaurantSelected(this.props.data);
+        if (!this.props.disabled) {
+            this.props.restaurantSelected(this.props.data);
+        }
     }
 
     renderDistance() {

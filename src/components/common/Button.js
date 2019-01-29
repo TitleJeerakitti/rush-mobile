@@ -1,18 +1,22 @@
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
-import { Row } from '../common';
+import { Row, Card, CardSection } from '../common';
 
 const Button = ({ onPress, children, color }) => {
     return (
-        <TouchableOpacity 
-            onPress={onPress} 
-            style={{ ...styles.container, backgroundColor: color }}
-            activeOpacity={1}
-        >
-            <Row>
-                {children}
-            </Row>
-        </TouchableOpacity>
+        <Card>
+            <CardSection>
+                <TouchableOpacity 
+                    onPress={onPress} 
+                    style={{ ...styles.container, backgroundColor: color }}
+                    activeOpacity={1}
+                >
+                    <Row>
+                        {children}
+                    </Row>
+                </TouchableOpacity>
+            </CardSection>
+        </Card>
     );
 };
 
