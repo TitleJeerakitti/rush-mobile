@@ -1,42 +1,15 @@
 import React from 'react';
 import { View } from 'react-native';
 import { Divider } from 'react-native-elements';
-// import { connect } from 'react-redux';
 import { Card, CardSection, FontText, MenuCard } from '../../common';
 
 class MenuContainerList extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            subCategorys: [],
-        };
-    }
-
-    // componentWillMount() {
-    //     console.log(this.props.data);
-    // }
-
-    // shouldComponentUpdate(nextProps, nextState) {
-    //     // console.log(nextProps)
-    //     if (JSON.stringify(this.state.subCategorys) !== JSON.stringify(nextState.subCategorys)) {
-    //         return true;
-    //     } else if (this.props.restaurantId !== nextProps.restaurantId) {
-    //         return true;
-    //     } else if (this.props.currentCategory !== nextProps.currentCategory) {
-    //         return true;
-    //     }
-    //     return false;
-    // }
 
     renderMenuItem(menus, subIndex) {
         return menus.map((menu, index) => 
             <MenuCard 
                 key={menu.id} 
-                id={menu.id}
-                name={menu.name} 
-                price={menu.price} 
-                picture={menu.picture} 
-                qty={menu.quantity}
+                data={menu}
                 subIndex={subIndex}
                 index={index}
                 currentCategory={this.props.currentCategory}

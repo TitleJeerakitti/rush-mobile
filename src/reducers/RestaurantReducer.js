@@ -12,13 +12,15 @@ const INITIAL_STATE = {
     restaurantId: '',
     currentRestaurant: '',
     currentCategory: 0,
-    menus: [],
     total: 0,
+    subTotal: 0,
 };
 
 function addMenu(state, data) {
-    const quantity = state.menuData.main_categories[data.currentCategory]
-                    .sub_categories[data.id].menus[data.index].quantity;
+    const menu = state.menuData.main_categories[data.currentCategory]
+                    .sub_categories[data.id].menus[data.index];
+    const quantity = menu.quantity;
+    const price = menu.price;
     // const quantity = menus.quantity;
     return update(state, {
         menuData: {
@@ -36,7 +38,8 @@ function addMenu(state, data) {
                 }
             }
         },
-        total: { $set: state.total + 1 }
+        total: { $set: state.total + 1 },
+        subTotal: { $set: state.subTotal + price }
     });
     // console.log(state.menuData.main_categories[state.currentCategory]
     // .sub_categories[data.id].menus.filter(menu => menu.id === data.qty));
@@ -55,8 +58,10 @@ function addMenu(state, data) {
 }
 
 function subMenu(state, data) {
-    const quantity = state.menuData.main_categories[data.currentCategory]
-                    .sub_categories[data.id].menus[data.index].quantity;
+    const menu = state.menuData.main_categories[data.currentCategory]
+                    .sub_categories[data.id].menus[data.index];
+    const quantity = menu.quantity;
+    const price = menu.price;
     return update(state, {
         menuData: {
             main_categories: {
@@ -73,7 +78,8 @@ function subMenu(state, data) {
                 }
             }
         },
-        total: { $set: state.total - 1 }
+        total: { $set: state.total - 1 },
+        subTotal: { $set: state.subTotal - price }
     });
     // for (const [index, menu] of state.menus.entries()) {
     //     if (menu.id === data.id) {

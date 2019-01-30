@@ -3,7 +3,7 @@ import { View, TouchableOpacity } from 'react-native';
 import { Row, FontText } from '../../common';
 import { ORANGE } from '../colors';
 
-const Subtotal = ({ price, time }) => {
+const Subtotal = ({ price, time, onPress }) => {
     const { 
         container, 
         leftContainer,

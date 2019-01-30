@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, /* View, Text */ } from 'react-native';
+import { ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import { 
     Slick, 
@@ -8,10 +8,6 @@ import {
     FilterItem, 
     FilterButton,
     MainCategory,
-    // MenuCard,
-    // FontText,
-    // Card,
-    // CardSection,
     MenuList,
     MainCategoryItem,
 } from './common';
@@ -42,7 +38,10 @@ class RestaurantMenu extends React.Component {
             <FilterItem 
                 key={index}
                 onPress={() => {
-                    this.setState({ sortType: filter.type, visible: false }, () => {
+                    this.setState({ 
+                        sortType: filter.type, 
+                        visible: false 
+                    }, () => {
                         // this.onRefresh();
                         console.log('click');
                     });
@@ -62,12 +61,14 @@ class RestaurantMenu extends React.Component {
     }
 
     renderMainCategoryItem() {
-        if (this.props.menuData.main_categories !== undefined) {
-            return this.props.menuData.main_categories.map((category, index) => 
+        const { menuData, currentCategory } = this.props;
+        const mainCategories = menuData.main_categories;
+        if (mainCategories !== undefined) {
+            return mainCategories.map((category, index) => 
                 <MainCategoryItem 
                     key={index}
                     onPress={() => this.props.currentCategoryChange(index)}
-                    selected={index === this.props.currentCategory}
+                    selected={index === currentCategory}
                 >
                     {category.name}
                 </MainCategoryItem>
@@ -76,11 +77,9 @@ class RestaurantMenu extends React.Component {
     }
 
     renderMenuList() {
-        // const { restaurantId } = this.props;
         const { menuData, currentCategory } = this.props;
         return (
-            <MenuList 
-                // restaurantId={restaurantId}
+            <MenuList
                 currentCategory={currentCategory}
                 data={menuData}
             />
@@ -100,7 +99,6 @@ class RestaurantMenu extends React.Component {
                 <MainCategory>
                     {this.renderMainCategoryItem()}
                 </MainCategory>
-                    {/* {this.renderSubCategory()} */}
                 {this.renderMenuList()}
                 {this.renderFilter()}
             </ScrollView>
@@ -109,8 +107,8 @@ class RestaurantMenu extends React.Component {
 }
 
 const mapStateToProps = ({ restaurant }) => {
-    const { currentRestaurant, restaurantId, menuData, currentCategory } = restaurant;
-    return { currentRestaurant, restaurantId, menuData, currentCategory };
+    const { menuData, currentCategory } = restaurant;
+    return { menuData, currentCategory };
 };
 
 export default connect(mapStateToProps, { 
