@@ -1,44 +1,92 @@
 import update from 'immutability-helper';
-import { RESTAURANT_SELECTED, ADD_MENU, SUB_MENU, RESTAURANT_GET_MENU } from '../actions/types';
+import { 
+    RESTAURANT_SELECTED, 
+    ADD_MENU, SUB_MENU, 
+    RESTAURANT_GET_MENU, 
+    CHANGE_CURRENT_CATEGORY 
+} from '../actions/types';
 
 const INITIAL_STATE = {
     data: {},
     menuData: {},
     restaurantId: '',
     currentRestaurant: '',
-    currentCategory: '',
+    currentCategory: 0,
     menus: [],
     total: 0,
 };
 
 function addMenu(state, data) {
-    for (const [index, menu] of state.menus.entries()) {
-        if (menu.id === data.id) {
-            return update(state, { 
-                menus: { [index]: { $set: data } }, 
-                total: { $set: state.total + 1 } 
-            });
-        }
-    }
-    return update(state, { 
-        menus: { $push: [data] }, 
-        total: { $set: state.total + 1 } 
+    const quantity = state.menuData.main_categories[data.currentCategory]
+                    .sub_categories[data.id].menus[data.index].quantity;
+    // const quantity = menus.quantity;
+    return update(state, {
+        menuData: {
+            main_categories: {
+                [data.currentCategory]: {
+                    sub_categories: {
+                        [data.id]: {
+                            menus: {
+                                [data.index]: {
+                                    quantity: { $set: quantity + 1 }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        total: { $set: state.total + 1 }
     });
+    // console.log(state.menuData.main_categories[state.currentCategory]
+    // .sub_categories[data.id].menus.filter(menu => menu.id === data.qty));
+    // for (const [index, menu] of state.menus.entries()) {
+    //     if (menu.id === data.id) {
+    //         return update(state, { 
+    //             menus: { [index]: { $set: data } }, 
+    //             total: { $set: state.total + 1 } 
+    //         });
+    //     }
+    // }
+    // return update(state, { 
+    //     menus: { $push: [data] }, 
+    //     total: { $set: state.total + 1 } 
+    // });
 }
 
 function subMenu(state, data) {
-    for (const [index, menu] of state.menus.entries()) {
-        if (menu.id === data.id) {
-            return update(state, { 
-                menus: { [index]: { $set: data } }, 
-                total: { $set: state.total - 1 } 
-            });
-        }
-    }
-    return update(state, { 
-        menus: { $push: [data] }, 
-        total: { $set: state.total - 1 } 
+    const quantity = state.menuData.main_categories[data.currentCategory]
+                    .sub_categories[data.id].menus[data.index].quantity;
+    return update(state, {
+        menuData: {
+            main_categories: {
+                [data.currentCategory]: {
+                    sub_categories: {
+                        [data.id]: {
+                            menus: {
+                                [data.index]: {
+                                    quantity: { $set: quantity - 1 }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        total: { $set: state.total - 1 }
     });
+    // for (const [index, menu] of state.menus.entries()) {
+    //     if (menu.id === data.id) {
+    //         return update(state, { 
+    //             menus: { [index]: { $set: data } }, 
+    //             total: { $set: state.total - 1 } 
+    //         });
+    //     }
+    // }
+    // return update(state, { 
+    //     menus: { $push: [data] }, 
+    //     total: { $set: state.total - 1 } 
+    // });
 }
 
 export default (state = INITIAL_STATE, action) => {
@@ -54,6 +102,11 @@ export default (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 menuData: action.payload
+            };
+        case CHANGE_CURRENT_CATEGORY:
+            return {
+                ...state,
+                currentCategory: action.payload
             };
         case ADD_MENU:
             return addMenu(state, action.payload);

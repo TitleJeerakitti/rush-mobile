@@ -28,14 +28,18 @@ class MenuContainerList extends React.Component {
     //     return false;
     // }
 
-    renderMenuItem(menus) {
-        return menus.map(menu => 
+    renderMenuItem(menus, subIndex) {
+        return menus.map((menu, index) => 
             <MenuCard 
                 key={menu.id} 
                 id={menu.id}
                 name={menu.name} 
                 price={menu.price} 
                 picture={menu.picture} 
+                qty={menu.quantity}
+                subIndex={subIndex}
+                index={index}
+                currentCategory={this.props.currentCategory}
             />
         );
     }
@@ -48,7 +52,7 @@ class MenuContainerList extends React.Component {
             return subCategories.map((subCategory, index) => 
                 <CardSection key={index}>
                     <FontText >{subCategory.name}</FontText>
-                    { this.renderMenuItem(subCategory.menus) }
+                    { this.renderMenuItem(subCategory.menus, index) }
                     <Divider style={{ height: 10, backgroundColor: 'transparent' }} />
                 </CardSection>
             );

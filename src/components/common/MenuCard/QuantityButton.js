@@ -5,40 +5,31 @@ import { Row } from '../../common';
 import { addMenu, subMenu } from '../../../actions';
 
 class QuantityMenu extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            amount: 0
-        };
-    }
-
-    componentWillMount() {
-        for (const [index, menu] of this.props.menus.entries()) {
-            if (menu.id === this.props.id) {
-                this.setState({ amount: menu.qty });
-            }
-        }
-    }
+    // constructor(props) {
+    //     super(props);
+    //     this.state = {
+    //         amount: 0
+    //     };
+    // }
 
     subtractAmount() {
-        if (this.state.amount > 0) {
-            this.setState({ amount: --this.state.amount });
-            this.props.subMenu(this.props.id, this.state.amount);
+        if (this.props.qty > 0) {
+            // console.log(this.props.id);
+            this.props.subMenu(this.props.subIndex, this.props.id, this.props.index, this.props.currentCategory);
         }
     }
 
     additionAmount() {
-        this.setState({ amount: ++this.state.amount });
-        this.props.addMenu(this.props.id, this.state.amount);
+        this.props.addMenu(this.props.subIndex, this.props.id, this.props.index, this.props.currentCategory);
     }
 
     render() {
-        // console.log(this.state.amount);
+        const { qty } = this.props;
         const { container, grayBg, whiteBg, redBg, leftRadius, rightRadius, whiteText } = styles;
         return (
             <Row>
                 <TouchableOpacity 
-                    style={[container, this.state.amount === 0 ? grayBg : redBg, leftRadius]}
+                    style={[container, qty === 0 ? grayBg : redBg, leftRadius]}
                     onPress={this.subtractAmount.bind(this)}
                 >
                     <Text style={whiteText}>-</Text>
@@ -46,10 +37,10 @@ class QuantityMenu extends React.Component {
                 <View
                     style={[container, whiteBg]}
                 >
-                    <Text>{this.state.amount}</Text>
+                    <Text>{qty}</Text>
                 </View>
                 <TouchableOpacity 
-                    style={[container, this.state.amount === 0 ? grayBg : redBg, rightRadius]}
+                    style={[container, qty === 0 ? grayBg : redBg, rightRadius]}
                     onPress={this.additionAmount.bind(this)}
                 >
                     <Text style={whiteText}>+</Text>

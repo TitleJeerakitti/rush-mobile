@@ -15,15 +15,12 @@ import {
     MenuList,
     MainCategoryItem,
 } from './common';
-import { restaurantGetMenu } from '../actions';
+import { restaurantGetMenu, currentCategoryChange } from '../actions';
 
 class RestaurantMenu extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            // data: {},
-            // mainCategorys: [],
-            currentCategory: 0,
             // refreshing: false,
             filters: [
                 { type: 'ความนิยม' }, 
@@ -37,37 +34,8 @@ class RestaurantMenu extends React.Component {
     }
 
     componentWillMount() {
-        // this.apiCategory();
         this.props.restaurantGetMenu();
     }
-
-    // componentWillReceiveProps(props) {
-    //     console.log(props.refresh);
-    //     this.setState({ ...this.state, refresh: props.refresh });
-    //     // this.render();
-    // }
-
-    // shouldComponentUpdate(nextProps) {
-    //     console.log('shoud componet update');
-    //     // console.log('refresh: ', nextProps.refresh);
-        
-    //     return true;
-    // }
-
-    // apiCategory() {
-    //     fetch('http://localhost:3000/full_request', {
-    //             headers: {
-    //                 'Cache-Control': 'no-cache'
-    //             }
-    //         })
-    //             .then(response => response.json())
-    //             .then(responseData => {
-    //                 this.setState({
-    //                     data: responseData,
-    //                 });
-    //             })
-    //             .catch(() => console.log('error'));
-    // }
 
     renderItem() {
         return this.state.filters.map((filter, index) =>
@@ -98,8 +66,8 @@ class RestaurantMenu extends React.Component {
             return this.props.menuData.main_categories.map((category, index) => 
                 <MainCategoryItem 
                     key={index}
-                    onPress={() => this.setState({ currentCategory: index })}
-                    selected={index === this.state.currentCategory}
+                    onPress={() => this.props.currentCategoryChange(index)}
+                    selected={index === this.props.currentCategory}
                 >
                     {category.name}
                 </MainCategoryItem>
@@ -109,23 +77,17 @@ class RestaurantMenu extends React.Component {
 
     renderMenuList() {
         // const { restaurantId } = this.props;
-        const { menuData } = this.props;
-        const { currentCategory } = this.state;
+        const { menuData, currentCategory } = this.props;
         return (
             <MenuList 
                 // restaurantId={restaurantId}
                 currentCategory={currentCategory}
                 data={menuData}
-                // refresh={this.state.refresh}
             />
         );
     }
 
     render() {
-        // console.log(restaurantId, currentCategory, mainCategorys);
-        // console.log(this.state.mainCategorys);
-        // console.log(this.state.currentCategory);
-        // console.log('renderMenu');
         return (
             <ScrollView style={{ flex: 1 }}>
                 <Slick>
@@ -147,8 +109,11 @@ class RestaurantMenu extends React.Component {
 }
 
 const mapStateToProps = ({ restaurant }) => {
-    const { currentRestaurant, restaurantId, menus, menuData } = restaurant;
-    return { currentRestaurant, restaurantId, menus, menuData };
+    const { currentRestaurant, restaurantId, menuData, currentCategory } = restaurant;
+    return { currentRestaurant, restaurantId, menuData, currentCategory };
 };
 
-export default connect(mapStateToProps, { restaurantGetMenu })(RestaurantMenu);
+export default connect(mapStateToProps, { 
+    restaurantGetMenu, 
+    currentCategoryChange 
+})(RestaurantMenu);

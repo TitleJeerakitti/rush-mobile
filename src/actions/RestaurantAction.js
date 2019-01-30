@@ -2,6 +2,7 @@ import { Actions } from 'react-native-router-flux';
 import { 
     RESTAURANT_SELECTED,
     RESTAURANT_GET_MENU,
+    CHANGE_CURRENT_CATEGORY,
     ADD_MENU,
     SUB_MENU,
 } from './types';
@@ -28,16 +29,20 @@ export const restaurantGetMenu = () => {
     };
 };
 
-export const addMenu = (id, qty) => {
+export const currentCategoryChange = (index) => {
+    return { type: CHANGE_CURRENT_CATEGORY, payload: index };
+};
+
+export const addMenu = (id, qty, index, currentCategory) => {
     return {
         type: ADD_MENU,
-        payload: { id, qty },
+        payload: { id, qty, index, currentCategory },
     };
 };
 
-export const subMenu = (id, qty) => {
+export const subMenu = (id, qty, index, currentCategory) => {
     return {
         type: SUB_MENU,
-        payload: { id, qty },
+        payload: { id, qty, index, currentCategory },
     };
 };

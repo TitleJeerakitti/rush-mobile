@@ -15,47 +15,72 @@ class MainRemain extends React.Component {
         };
     }
 
-    componentWillMount() {
-        fetch('http://localhost:3000/fake_remain?id=00005', {
-            headers: {
-                'Cache-Control': 'no-cache'
-            }
-        })
-            .then((response) => response.json())
-            .then((responseData) => {
-                const data = responseData.pop();
-                this.setState({ ...this.state, all_menus: data.menu });
-            }
-                // this.props.menus.map(menu => 
-                //     console.log(responseData[0].menu.filter((data) => data.id === menu.id))
-                //     //this.setState({ ...this.state, all_menus: this.state.all_menus.push(responseData[0].menu.filter((data) => data.id === menu.id)) })
-                //     // update(this.state, {
-                //     //     all_menus: { $push: [responseData[0].menu.filter((data) => data.id === menu.id)] }
-                //     // })
-                //     )
-            )
-            .catch((error) => console.log(error));
-    }
+    // componentWillMount() {
+    //     fetch('http://localhost:3000/fake_remain?id=00005', {
+    //         headers: {
+    //             'Cache-Control': 'no-cache'
+    //         }
+    //     })
+    //         .then((response) => response.json())
+    //         .then((responseData) => {
+    //             const data = responseData.pop();
+    //             this.setState({ ...this.state, all_menus: data.menu });
+    //         }
+    //             // this.props.menus.map(menu => 
+    //             //     console.log(responseData[0].menu.filter((data) => data.id === menu.id))
+    //             //     //this.setState({ ...this.state, all_menus: this.state.all_menus.push(responseData[0].menu.filter((data) => data.id === menu.id)) })
+    //             //     // update(this.state, {
+    //             //     //     all_menus: { $push: [responseData[0].menu.filter((data) => data.id === menu.id)] }
+    //             //     // })
+    //             //     )
+    //         )
+    //         .catch((error) => console.log(error));
+    // }
 
     renderMenu() {
         if (this.props.total > 0) {
-            return this.props.menus.map(menu => {
-                const value = this.state.all_menus.filter((data) => data.id === menu.id);
-                const data = value.pop();
-                if (data !== undefined && menu.qty > 0) {
-                    return (
-                        // <Text key={menu.id}>{valueData.name} จำนวน {menu.qty}</Text>
-                        <MenuCard 
-                            key={data.id} 
-                            id={data.id}
-                            name={data.name} 
-                            price={data.price} 
-                            picture={data.picture} 
-                        />
-                    );
-                }
-            }
-            );
+            const mainCategories = this.props.menuData.main_categories;
+            return mainCategories.map((mainCategory, mainIndex) => {
+                const subCategories = mainCategory.sub_categories;
+                return subCategories.map((subCategory, subIndex) => {
+                    const menus = subCategory.menus;
+                    return menus.map((menu, index) => {
+                        if (menu.quantity > 0) {
+                            return (
+                                <MenuCard 
+                                    key={menu.id} 
+                                    id={menu.id}
+                                    name={menu.name} 
+                                    price={menu.price} 
+                                    picture={menu.picture}
+                                    qty={menu.quantity} 
+                                    subIndex={subIndex}
+                                    index={index}
+                                    currentCategory={mainIndex}
+                                />
+                            );
+                        }
+                        return <View key={index} />;
+                    });
+                });
+            });
+            // return this.props.menus.map(menu => {
+            //     const value = this.state.all_menus.filter((data) => data.id === menu.id);
+            //     const data = value.pop();
+            //     if (data !== undefined && menu.qty > 0) {
+            //         return (
+            //             // <Text key={menu.id}>{valueData.name} จำนวน {menu.qty}</Text>
+            //             <MenuCard 
+            //                 key={data.id} 
+            //                 id={data.id}
+            //                 name={data.name} 
+            //                 price={data.price} 
+            //                 picture={data.picture} 
+            //             />
+            //         );
+            //     }
+            // }
+            // );
         }
         return (
             <View 
@@ -82,7 +107,7 @@ class MainRemain extends React.Component {
                 <TextLineFont title='รายการอาหารที่สั่ง' />
                 <ScrollView style={{ flex: 1 }}>
                     {this.renderMenu()}
-                    <Button color={GREEN} onPress={() => { setTimeout(()=> {Actions.refresh({refresh: true})}, 1000); Actions.pop(); }}>
+                    <Button color={GREEN} onPress={() => Actions.pop()}>
                         <FontText color='white' size={24}>สั่งอาหารเพิ่มเติม</FontText>
                     </Button>
                 </ScrollView>
@@ -94,9 +119,9 @@ class MainRemain extends React.Component {
 }
 
 const mapStateToProps = ({ restaurant }) => {
-    const { menus, data, total } = restaurant;
+    const { menus, data, total, menuData } = restaurant;
     // console.log(menus);
-    return { menus, data, total }; 
+    return { menus, data, total, menuData }; 
 };
 
 export default connect(mapStateToProps, null)(MainRemain);

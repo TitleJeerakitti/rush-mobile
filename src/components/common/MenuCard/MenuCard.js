@@ -10,7 +10,7 @@ class MenuCard extends React.Component {
     }
 
     render() {
-        const { name, price, picture, id } = this.props;
+        const { name, price, picture, id, qty, subIndex, index } = this.props;
         return (
             <Card>
                 <CardSection>
@@ -32,7 +32,7 @@ class MenuCard extends React.Component {
                             <FontText>{name}</FontText>
                             <FontText>{price} บาท</FontText>
                         </View>
-                        <QuantityButton id={id} />
+                        <QuantityButton id={id} qty={qty} name={name} subIndex={subIndex} index={index} currentCategory={this.props.currentCategory} />
                     </View>
                 </CardSection>
             </Card>
