@@ -1,16 +1,24 @@
 import React from 'react';
 import { Router, Scene, Actions, Drawer, Tabs } from 'react-native-router-flux';
-import { Font } from 'expo';
+import { Font, ScreenOrientation } from 'expo';
 import { connect } from 'react-redux';
 import LoginForm from './LoginForm';
 import HomeScreen from './HomeScreen';
 import Register from './Register';
 import ForgetPassword from './ForgetPassword';
 import SideMenu from './SideMenu';
+import SearchNearby from './SearchNearby';
+import SearchByName from './SearchByName';
+import RestaurantMenu from './RestaurantMenu';
+import MenuRemain from './MenuRemain';
 import { NavHamberger, IconTab, NavBack } from './common';
 import { fontLoader } from '../actions';
 
 class RouterComponent extends React.Component {
+
+    componentWillMount() {
+        ScreenOrientation.allow('PORTRAIT');
+    }
 
     async componentDidMount() {
         await Font.loadAsync({
@@ -45,7 +53,7 @@ class RouterComponent extends React.Component {
                         <Scene key='edit_profile' component={HomeScreen} navBar={NavHamberger} />
                     </Scene>
                     
-                    <Drawer key='app' contentComponent={SideMenu} initial >
+                    <Drawer key='app' contentComponent={SideMenu} initial>
                         <Scene key='container' hideNavBar>
                             <Tabs key='tabber' tabBarStyle={tabBarStyle} showLabel={false}>
                                 <Scene key='homepage' icon={IconTab} iconName='home' initial>
@@ -54,16 +62,38 @@ class RouterComponent extends React.Component {
                                         component={HomeScreen} 
                                         title='R U S H' 
                                         navBar={NavHamberger}
-                                        onRight={() => Actions.test1()}
-                                        search
+                                        onRight={() => Actions.search_name()}
                                         initial
                                     />
                                     <Scene 
-                                        key='test1' 
-                                        component={ForgetPassword} 
+                                        key='search_name' 
+                                        component={SearchByName} 
                                         title='ค้นหา' 
                                         navBar={NavBack}
-                                        onRight={() => Actions.pop()}
+                                        // onRight={() => Actions.pop()}
+                                        // initial
+                                    />
+                                    <Scene 
+                                        key='search_nearby'
+                                        component={SearchNearby}
+                                        title='ค้นหาร้านอาหารใกล้คุณ'
+                                        navBar={NavBack}
+                                        // onRight={() => console.log('click')}
+                                        // initial
+                                    />
+                                    <Scene 
+                                        key='restaurant_menu'
+                                        component={RestaurantMenu}
+                                        reduxTitle
+                                        onRight={() => Actions.menu_remaining()}
+                                        // title={this.props.currentRestaurant}
+                                        navBar={NavBack}
+                                    />
+                                    <Scene 
+                                        key='menu_remaining'
+                                        component={MenuRemain}
+                                        navBar={NavBack}
+                                        title='รายการอาหารของคุณ'
                                     />
                                 </Scene>
                                 <Scene key='history' icon={IconTab} iconName='history'>

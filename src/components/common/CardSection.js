@@ -3,7 +3,7 @@ import { View } from 'react-native';
 
 const CardSection = ({ children }) => {
     return (
-        <View style={{ marginHorizontal: '5%' }}>
+        <View style={{ marginHorizontal: 10 }}>
             {children}
         </View>
     );

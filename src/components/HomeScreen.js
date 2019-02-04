@@ -2,6 +2,7 @@ import React from 'react';
 import { ScrollView, Dimensions, } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { LinearGradient } from 'expo';
+import { Actions } from 'react-native-router-flux';
 import { 
     Slick, 
     SlickItem, 
@@ -40,22 +41,18 @@ export default class HomeScreen extends React.Component {
         const { size } = this.state;
         return (
             <ScrollView style={{ flex: 1 }}>
-                <Card>
-                    <Slick>
-                        <SlickItem source={require('../images/promotion_mockup.png')} />
-                        <SlickItem source={require('../images/promotion_2.png')} />
-                        <SlickItem source={require('../images/promotion_3.png')} />
-                        <SlickItem source={require('../images/promotion3.png')} />
-                    </Slick>
-                </Card>
-                <Card>
-                    <CardSection>
-                        <Button color={DARK_RED}>
-                            <Icon name='map-marker' type='material-community' color='white' />
-                            <FontText color='white' size={size}> ค้นหาร้านอาหารใกล้เคียง</FontText>
-                        </Button>
-                    </CardSection>
-                </Card>
+                <Slick>
+                    <SlickItem source={require('../images/promotion_mockup.png')} />
+                    <SlickItem source={require('../images/promotion_2.png')} />
+                    <SlickItem source={require('../images/promotion_3.png')} />
+                    <SlickItem source={require('../images/promotion3.png')} />
+                </Slick>
+                <Button color={DARK_RED} onPress={() => Actions.search_nearby()}>
+                    <Icon name='map-marker' type='material-community' color='white' />
+                    <FontText color='white' size={size} style={{ paddingLeft: 5 }}>
+                        ค้นหาร้านอาหารบริเวณใกล้เคียง
+                    </FontText>
+                </Button>
                 <Card>
                 <LinearGradient 
                     start={{ x: 0.0, y: 0.0 }} end={{ x: 1.0, y: 1.0 }}

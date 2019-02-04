@@ -6,8 +6,8 @@ import { NavContainer, NavCard, NavTitle } from '../common';
 
 class NavHamberger extends React.Component {
     renderSearch() {
-        const { search, onRight } = this.props;
-        if (search) {
+        const { onRight } = this.props;
+        if (onRight) {
             return (
                 <TouchableWithoutFeedback onPress={onRight}>
                     <Icon 

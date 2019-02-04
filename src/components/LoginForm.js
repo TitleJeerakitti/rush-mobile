@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import { Divider } from 'react-native-elements';
+import Expo from 'expo';
 import { 
     InputIcon, 
     AuthButton, 
@@ -25,6 +26,7 @@ import {
     authLogin,
     authToRegister,
     authForgetPassword,
+    authFacebookLogin,
 } from '../actions';
 
 class LoginForm extends React.Component {
@@ -75,8 +77,38 @@ class LoginForm extends React.Component {
         this.props.authLogin(email, password);
     }
 
+    async logInFB() {
+        try {
+          const {
+            type,
+            token,
+            // expires,
+            // permissions,
+            // declinedPermissions,
+          } = await Expo.Facebook.logInWithReadPermissionsAsync('322995281815548', {
+            permissions: ['public_profile', 'user_birthday', 'user_gender', 'email'],
+          });
+          if (type === 'success') {
+            // Get the user's name using Facebook's Graph API
+            const response = await fetch(`https://graph.facebook.com/me?access_token=${token}&fields=id,name,email,birthday,gender,picture.type(large)`);
+            const responseJson = await response.json();
+            // console.log(response);
+            console.log(token);
+            console.log(responseJson);
+            // console.log('success with ', `Hi ${responseJson.name}!`);
+            this.props.authFacebookLogin(token, responseJson);
+            // Actions.app();
+          } else {
+            // type === 'cancel'
+          }
+        } catch ({ message }) {
+          alert(`Facebook Login Error: ${message}`);
+        }
+    }
+
     renderLoginButton() {
         const { loading, error } = this.props;
+        const { maxWidth, errorText, marginTop10 } = styles;
 
         if (loading) {
             return (
@@ -84,13 +116,21 @@ class LoginForm extends React.Component {
             );
         }
         return (
-            <View style={{ width: '100%' }}>
-                <Text style={styles.errorText}>{error}</Text>
+            <View style={maxWidth}>
+                <Text style={errorText}>{error}</Text>
                 <AuthButton 
                     color={YELLOW}
                     onPress={this.onUserLogin.bind(this)}
                 >
                     เข้าสู่ระบบ
+                </AuthButton>
+                <AuthButton 
+                    color={'#3b5998'}
+                    onPress={this.logInFB.bind(this)}
+                    style={marginTop10}
+                    facebook
+                >
+                    เข้าสู่ระบบด้วย Facebook
                 </AuthButton>
                 <TextLine title='or' />
                 <AuthButton 
@@ -103,8 +143,9 @@ class LoginForm extends React.Component {
         );
     }
 
+
     render() {
-        const { linkRight } = styles;
+        const { linkRight, height10, height20, white, } = styles;
         const { secureTextEntry, logoSize, headerName } = this.state;
         if (Platform.OS === 'android') {
             // UIManager.setLayoutAnimationEnabledExperimental && 
@@ -125,7 +166,7 @@ class LoginForm extends React.Component {
                     </Text>
                 </View>
 
-                <Divider style={{ height: 10 }} />
+                <Divider style={height10} />
                 
                 {/* -- Input Section -- */}
                 <InputIcon 
@@ -149,12 +190,12 @@ class LoginForm extends React.Component {
                     style={linkRight} 
                     onPress={() => this.props.authForgetPassword()}
                 >
-                    <Text style={{ color: 'white' }}>
+                    <Text style={white}>
                         forget password?
                     </Text>
                 </TouchableOpacity>
 
-                <Divider style={{ height: 20 }} />
+                <Divider style={height20} />
 
                 {/* -- AuthButton Section -- */}
                 {this.renderLoginButton()}
@@ -183,7 +224,22 @@ const styles = {
         shadowOpacity: 0.5, 
         shadowOffset: { width: 1, height: 1 }, 
         textAlign: 'center',
-    }
+    },
+    maxWidth: {
+        width: '100%',
+    },
+    marginTop10: {
+        marginTop: 10,
+    },
+    height10: {
+        height: 10,
+    },
+    height20: {
+        height: 20,
+    },
+    white: {
+        color: 'white',
+    },
 };
 
 const mapStateToProps = ({ auth }) => {
@@ -197,4 +253,5 @@ export default connect(mapStateToProps, {
     authLogin,
     authToRegister,
     authForgetPassword,
+    authFacebookLogin,
 })(LoginForm);

@@ -16,6 +16,7 @@ import {
     FORGET_PASSWORD,
     FORGET_REQUEST,
     LOGOUT_USER,
+    FACEBOOK_LOGIN,
 } from './types';
 
 export const authEmailChange = (text) => {
@@ -36,11 +37,26 @@ export const authLogin = (email, password) => {
     return (dispatch) => {
         dispatch({ type: LOGIN_USER });
 
-        firebase.auth().signInWithEmailAndPassword(email, password)
-            .then((user) => authLoginSuccess(dispatch, user))
-            .catch(
-                (error) => authLoginFailed(dispatch, error.message)
-            );
+        fetch('http://10.66.10.222:8000/api/auth/login/', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: 'sivakornterk',
+                password: 'Terk1234',
+            }),
+        })
+            .then((response) => response.json())
+            .then((responseData) => {
+                console.log(responseData);
+            }).catch(() => console.log('error'));
+        // firebase.auth().signInWithEmailAndPassword(email, password)
+        //     .then((user) => authLoginSuccess(dispatch, user))
+        //     .catch(
+        //         (error) => authLoginFailed(dispatch, error.message)
+        //     );
     };
 };
 
@@ -118,5 +134,12 @@ export const authLogout = () => {
             dispatch({ type: LOGOUT_USER });
             Actions.auth();
         });
+    };
+};
+
+export const authFacebookLogin = (token, userInfo) => {
+    return (dispatch) => {
+        dispatch({ type: FACEBOOK_LOGIN, payload: { token, userInfo } });
+        Actions.app();
     };
 };
