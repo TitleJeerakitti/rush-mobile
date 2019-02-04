@@ -21,7 +21,7 @@ class SearchNearby extends React.Component {
         };
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.getRestaurantAPI();
     }
 
@@ -50,8 +50,8 @@ class SearchNearby extends React.Component {
 
     selectAPI() {
         if (this.state.sortType === 'ระยะทาง') { 
-            return ('http://localhost:3000/restaurants?_sort=distance&_order=asc');
-            // return ('http://10.66.10.222:8000/testing/restaurant');
+            // return ('http://localhost:3000/restaurants?_sort=distance&_order=asc');
+            return ('http://10.66.10.222:8000/restaurant/nearbyRestaurant');
         } else if (this.state.sortType === 'ความนิยม') {
             return ('http://localhost:3000/restaurants?_sort=rating&_order=desc');
         }
@@ -60,6 +60,7 @@ class SearchNearby extends React.Component {
     }
 
     renderRestaurant() {
+        console.log(this.state.restaurants);
         return this.state.restaurants.map(restaurant =>
             <RestaurantCard 
                 key={restaurant.id} 

@@ -22,13 +22,17 @@ class MenuContainerList extends React.Component {
 
         if (data.main_categories !== undefined) {
             const subCategories = data.main_categories[currentCategory].sub_categories;
-            return subCategories.map((subCategory, index) => 
-                <CardSection key={index}>
-                    <FontText >{subCategory.name}</FontText>
-                    { this.renderMenuItem(subCategory.menus, index) }
-                    <Divider style={{ height: 10, backgroundColor: 'transparent' }} />
-                </CardSection>
-            );
+            return subCategories.map((subCategory, index) => {
+                if (subCategory.menus.length > 0) {
+                    return (
+                        <CardSection key={index}>
+                            <FontText >{subCategory.name}</FontText>
+                            { this.renderMenuItem(subCategory.menus, index) }
+                            <Divider style={{ height: 10, backgroundColor: 'transparent' }} />
+                        </CardSection>
+                    );
+                }
+            });
         }
     }
 

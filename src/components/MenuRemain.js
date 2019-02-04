@@ -2,12 +2,62 @@ import React from 'react';
 import { View, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
+import { Divider } from 'react-native-elements';
 // import update from 'immutability-helper';
-import { TextLineFont, Button, FontText, DiscountCode, Subtotal, MenuCard } from './common';
+import { 
+    TextLineFont, 
+    Button, 
+    FontText, 
+    DiscountCode, 
+    Subtotal, 
+    MenuCard, 
+    OrderConfirm,
+} from './common';
+import { loadData } from '../actions';
 import { GREEN } from './common/colors';
 import RestaurantCard from './RestaurantCard';
 
 class MainRemain extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            visible: false,
+            menus: [],
+        };
+    }
+
+    shouldBuy() {
+        if (this.props.total > 0) {
+            this.confirmData();
+            this.setState({ visible: true });
+        }
+    }
+
+    confirmData() {
+        if (this.props.total > 0) {
+            const mainCategories = this.props.menuData.main_categories;
+            mainCategories.forEach(mainCategory => {
+                const subCategories = mainCategory.sub_categories;
+                subCategories.forEach(subCategory => {
+                    const menus = subCategory.menus;
+                    menus.forEach(menu => {
+                        if (menu.quantity > 0) {
+                            this.setState(prevState => ({
+                                menus: [...prevState.menus, { id: menu.id, qty: menu.quantity }]
+                            }));
+                        }
+                    });
+                });
+            });
+        }
+    }
+
+    placeOrder() {
+        this.setState({ visible: false, menus: [] });
+        this.props.loadData();
+        Actions.popTo('home_homepage');
+        Actions.queue();
+    }
 
     renderMenu() {
         if (this.props.total > 0) {
@@ -40,8 +90,22 @@ class MainRemain extends React.Component {
         );
     }
 
+    renderConfirmPopup() {
+        return (
+            <OrderConfirm 
+                price={this.props.subTotal} 
+                total={this.props.total}
+                menuData={this.props.menuData}
+                visible={this.state.visible} 
+                onCancel={() => this.setState({ visible: !this.state.visible, menus: [] })} 
+                onConfirm={() => this.placeOrder()}
+            />
+        );
+    }
+
     render() {
-        const { data, menuData, subTotal, total } = this.props;
+        const { data, menuData, subTotal } = this.props;
+        // console.log(this.state.menus);
 
         return (
             <View style={{ flex: 1 }}>
@@ -55,9 +119,15 @@ class MainRemain extends React.Component {
                     <Button color={GREEN} onPress={() => Actions.pop()}>
                         <FontText color='white' size={24}>สั่งอาหารเพิ่มเติม</FontText>
                     </Button>
+                    <Divider style={{ height: 10, backgroundColor: 'transparent' }} />
                 </ScrollView>
                 <DiscountCode onPress={() => console.log('code')} />
-                <Subtotal price={subTotal} time={menuData.estimate_time} total={total} />
+                <Subtotal 
+                    price={subTotal} 
+                    time={menuData.estimate_time} 
+                    onPress={() => this.shouldBuy()} 
+                />
+                {this.renderConfirmPopup()}
             </View>
         );
     }
@@ -77,4 +147,4 @@ const mapStateToProps = ({ restaurant }) => {
     return { data, total, menuData, subTotal }; 
 };
 
-export default connect(mapStateToProps, null)(MainRemain);
+export default connect(mapStateToProps, { loadData })(MainRemain);

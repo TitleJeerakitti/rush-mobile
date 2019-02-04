@@ -92,6 +92,7 @@ class RestaurantCard extends React.Component {
                                 </Row>
                             </View>
                         </Row>
+                        {this.props.children}
                     </TouchableOpacity>
                 </CardSection>
             </Card>

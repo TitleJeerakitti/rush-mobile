@@ -16,7 +16,7 @@ export const restaurantSelected = (data) => {
 
 export const restaurantGetMenu = () => {
     return (dispatch) => { 
-        fetch('http://localhost:3000/full_request', {
+        fetch('http://10.66.10.222:8000/restaurant/restaurantDetail/?id=1', {
             headers: {
                 'Cache-Control': 'no-cache'
             }

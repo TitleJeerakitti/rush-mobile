@@ -22,7 +22,7 @@ const Subtotal = ({ price, time, onPress }) => {
                     <FontText color='white' size={24}>{price.toFixed(2)} บาท</FontText>
                     <FontText color='white' style={{ top: -5 }} size={18}>{time} นาที</FontText>
                 </View>
-                <TouchableOpacity onPress={() => console.log('order')} style={btnContainer}>
+                <TouchableOpacity onPress={onPress} style={btnContainer} activeOpacity={1}>
                     <FontText color={ORANGE} size={22}>สั่งอาหาร</FontText>
                 </TouchableOpacity>
             </Row>

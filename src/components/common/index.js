@@ -29,3 +29,4 @@ export * from './MainCategory';
 export * from './MenuCard';
 export * from './TextLineFont';
 export * from './RemainMenu';
+export * from './Modal';
