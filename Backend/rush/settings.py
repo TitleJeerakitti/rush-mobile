@@ -37,9 +37,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'oauth2_provider',
-    'corsheaders',
     'testing.apps.TestingConfig',
+    'phonenumber_field',
+    'account.apps.AccountConfig',
+    'supplier.apps.SupplierConfig',
+    'customer.apps.CustomerConfig',
 ]
 
 MIDDLEWARE = [
@@ -81,6 +85,10 @@ OAUTH2_PROVIDER = {
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
     )
 }
 
@@ -98,6 +106,9 @@ DATABASES = {
     }
 }
 
+
+#Custom User model
+AUTH_USER_MODEL = 'account.User'
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
