@@ -30,7 +30,7 @@ class RestaurantMenu extends React.Component {
     }
 
     componentWillMount() {
-        this.props.restaurantGetMenu();
+        this.props.restaurantGetMenu(this.props.restaurantId);
     }
 
     renderItem() {
@@ -107,8 +107,8 @@ class RestaurantMenu extends React.Component {
 }
 
 const mapStateToProps = ({ restaurant }) => {
-    const { menuData, currentCategory } = restaurant;
-    return { menuData, currentCategory };
+    const { menuData, currentCategory, restaurantId } = restaurant;
+    return { menuData, currentCategory, restaurantId };
 };
 
 export default connect(mapStateToProps, { 

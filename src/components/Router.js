@@ -54,7 +54,9 @@ class RouterComponent extends React.Component {
                         <Scene key='edit_profile' component={HomeScreen} navBar={NavHamberger} />
                     </Scene>
                     
-                    <Drawer key='app' contentComponent={SideMenu} initial>
+                    <Drawer key='app' contentComponent={SideMenu} 
+                    initial
+                    >
                         <Scene key='container' hideNavBar>
                             <Tabs key='tabber' tabBarStyle={tabBarStyle} showLabel={false}>
                                 <Scene key='homepage' icon={IconTab} iconName='home' initial>

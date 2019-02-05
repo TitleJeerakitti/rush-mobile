@@ -60,7 +60,6 @@ class SearchNearby extends React.Component {
     }
 
     renderRestaurant() {
-        console.log(this.state.restaurants);
         return this.state.restaurants.map(restaurant =>
             <RestaurantCard 
                 key={restaurant.id} 

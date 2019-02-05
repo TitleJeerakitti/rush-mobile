@@ -14,6 +14,7 @@ export const FORGET_PASSWORD = 'FORGET_PASSWORD';
 export const FORGET_REQUEST = 'FORGET_REQUEST';
 export const LOGOUT_USER = 'LOGOUT_USER';
 export const FACEBOOK_LOGIN = 'FACEBOOK_LOGIN';
+export const GET_TOKEN = 'GET_TOKEN';
 
 export const FONT_LOADED = 'FONT_LOADED';
 export const DATA_LOAD = 'DATA_LOAD';

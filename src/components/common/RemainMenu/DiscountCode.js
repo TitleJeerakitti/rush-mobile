@@ -14,6 +14,7 @@ const DiscountCode = ({ onPress }) => {
                     placeholder='กรอกโค้ดส่วนลด...'
                     autoCapitalize='characters'
                     autoCorrect={false}
+                    underlineColorAndroid='transparent'
                     style={inputText} 
                 />
                 <TouchableOpacity onPress={onPress}>

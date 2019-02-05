@@ -12,13 +12,17 @@ import { YELLOW } from './common/colors';
 class SideMenu extends React.Component {
 
     renderPicture() {
+        const { userInfo } = this.props;
         const { avatarStyle } = styles;
-        if (this.props.userInfo) {
+        if (userInfo) {
             return (
                 <Avatar 
                     large
                     rounded
-                    source={{ uri: this.props.userInfo.picture.data.url }}
+                    source={{ 
+                        uri: userInfo.picture.data !== undefined ? 
+                        userInfo.picture.data.url : userInfo.picture 
+                    }}
                     activeOpacity={1}
                     containerStyle={avatarStyle}
                 />
@@ -32,6 +36,22 @@ class SideMenu extends React.Component {
                 activeOpacity={1}
                 containerStyle={avatarStyle}
             />
+        );
+    }
+
+    renderPhone() {
+        const { userInfo } = this.props;
+        if (userInfo) {
+            return (
+                <Text style={{ color: 'white' }}>
+                    {userInfo.tel_number !== undefined ? userInfo.tel_number : ''}
+                </Text>
+            );
+        }
+        return (
+            <Text style={{ color: 'white' }}>
+                081-234-5678         
+            </Text>
         );
     }
 
@@ -64,7 +84,7 @@ class SideMenu extends React.Component {
                             >
                                 {this.props.userInfo ? this.props.userInfo.name : 'Guest'}
                             </Text>
-                            <Text style={{ color: 'white' }}>081-234-5678</Text>
+                            {this.renderPhone()}
                         </View>
                     </Row>
                     <View style={flexEnd}>
@@ -88,7 +108,7 @@ class SideMenu extends React.Component {
 
                 {/* Buttom Sign Out Section */}
                 <View style={signoutContainer}>
-                    <TouchableOpacity onPress={() => this.props.authLogout()} >
+                    <TouchableOpacity onPress={() => this.props.authLogout(this.props.token)} >
                         <FontText style={signoutText}>ออกจากระบบ</FontText>
                     </TouchableOpacity>
                 </View>
@@ -141,8 +161,8 @@ const styles = {
 };
 
 const mapStateToProp = ({ auth }) => {
-    const { userInfo } = auth;
-    return { userInfo };
+    const { userInfo, token } = auth;
+    return { userInfo, token };
 };
 
 export default connect(mapStateToProp, { authLogout })(SideMenu);

@@ -1,10 +1,7 @@
 import React from 'react';
-import { Modal, View, ScrollView, TouchableOpacity } from 'react-native';
+import { Modal, View, ScrollView } from 'react-native';
 import { Divider } from 'react-native-elements';
-// import update from 'immutability-helper';
-// import { BlurView } from 'expo';  
-import { FontText, TextLineFont, Row, Button } from '../../common';
-import { GREEN, DARK_RED } from '../colors';
+import { FontText, Row, CancelConfirmButton, } from '../../common';
 
 class OrderConfirm extends React.Component {
     
@@ -55,21 +52,16 @@ class OrderConfirm extends React.Component {
                         <ScrollView>
                             {this.renderItem()}
                         </ScrollView>
-                        <View style={{ borderBottomColor: 'black', borderBottomWidth: 1, marginVertical: 10 }} />
+                        <View style={styles.line} />
                         <Row>
                             <FontText style={{ flex: 1 }} size={24}>ราคาสุทธิ</FontText>
                             <FontText size={24}>{price.toFixed(2)} บาท</FontText>
                         </Row>
                         <Divider style={{ height: 10, backgroundColor: 'transparent' }} />
-                        <Row>
-                            <TouchableOpacity onPress={onCancel} style={[styles.btn, { borderColor: DARK_RED }]} >
-                                <FontText color={DARK_RED}>ยกเลิก</FontText>
-                            </TouchableOpacity>
-                            <View style={{ flex: 1 }} />
-                            <TouchableOpacity onPress={onConfirm} style={[styles.btn, { borderColor: GREEN, backgroundColor: GREEN }]} >
-                                <FontText color='white'>ยืนยัน</FontText>
-                            </TouchableOpacity>
-                        </Row>
+                        <CancelConfirmButton 
+                            onConfirm={onConfirm}
+                            onCancel={onCancel}
+                        />
                     </View>
                 </View>
             </Modal>
@@ -94,14 +86,12 @@ const styles = {
         shadowOpacity: 0.4,
         shadowOffset: { width: 0, height: 0 },
         shadowRadius: 20,
+        elevation: 10,
     },
-    btn: {
-        flex: 5,
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        padding: 5,
-        borderRadius: 19,
-        borderWidth: 1,
+    line: { 
+        borderBottomColor: 'black', 
+        borderBottomWidth: 1, 
+        marginVertical: 10 
     }
 };
 
