@@ -101,7 +101,7 @@ const styles = {
         borderColor: 'white',
         borderWidth: 1,
         borderRadius: 11,
-        paddingHorizontal: 5
+        paddingHorizontal: 5,
     }
 };
 

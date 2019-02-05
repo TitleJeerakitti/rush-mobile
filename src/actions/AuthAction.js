@@ -5,7 +5,6 @@ import {
     PASSWORD_CHANGE,
     LOGIN_USER,
     LOGIN_FAILED,
-    LOGIN_SUCCESS,
     GOTO_REGISTER,
     NAME_CHANGE,
     PHONE_CHANGE,
@@ -17,6 +16,7 @@ import {
     FORGET_REQUEST,
     LOGOUT_USER,
     FACEBOOK_LOGIN,
+    GET_TOKEN,
 } from './types';
 
 export const authEmailChange = (text) => {
@@ -33,25 +33,29 @@ export const authPasswordChange = (text) => {
     };
 };
 
-export const authLogin = (email, password) => {
+export const authLogin = (username, password) => {
     return (dispatch) => {
         dispatch({ type: LOGIN_USER });
 
-        fetch('http://10.66.10.222:8000/api/auth/login/', {
+        fetch('http://10.66.10.222:8000/auth/login/', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                username: 'sivakornterk',
-                password: 'Terk1234',
+                username,
+                password,
             }),
         })
             .then((response) => response.json())
             .then((responseData) => {
-                console.log(responseData);
-            }).catch(() => console.log('error'));
+                if (responseData.role === 'customer') {
+                    authLoginSuccess(dispatch, responseData);
+                } else {
+                    authLoginFailed(dispatch, 'error');
+                }
+            }).catch(() => authLoginFailed(dispatch, 'error'));
         // firebase.auth().signInWithEmailAndPassword(email, password)
         //     .then((user) => authLoginSuccess(dispatch, user))
         //     .catch(
@@ -65,7 +69,7 @@ export const authLoginFailed = (dispatch, error) => {
 };
 
 export const authLoginSuccess = (dispatch, user) => {
-    dispatch({ type: LOGIN_SUCCESS, payload: user });
+    dispatch({ type: GET_TOKEN, payload: user });
     Actions.app();
 };
 
@@ -127,13 +131,23 @@ export const authForgetRequest = (email) => {
     };
 };
 
-export const authLogout = () => {
+export const authLogout = (token) => {
     return (dispatch) => {
-        firebase.auth().signOut()
+        fetch('http://10.66.10.222:8000/auth/logout/', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                Token: token,
+            }),
+        })
         .then(() => {
             dispatch({ type: LOGOUT_USER });
             Actions.auth();
-        });
+        })
+        .catch(() => console.log('error'));
     };
 };
 

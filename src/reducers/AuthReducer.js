@@ -3,7 +3,6 @@ import {
     PASSWORD_CHANGE,
     LOGIN_USER,
     LOGIN_FAILED,
-    LOGIN_SUCCESS,
     GOTO_REGISTER,
     NAME_CHANGE,
     PHONE_CHANGE,
@@ -15,11 +14,12 @@ import {
     FORGET_REQUEST,
     LOGOUT_USER,
     FACEBOOK_LOGIN,
+    GET_TOKEN,
 } from '../actions/types';
 
 const INITIAL_STATE = {
-    email: 'test@test.com',
-    password: '12345678',
+    email: 'customer',
+    password: 'eiei1234',
     user: null,
     error: '',
     loading: false,
@@ -48,7 +48,6 @@ export default (state = INITIAL_STATE, action) => {
         case LOGOUT_USER:
             return INITIAL_STATE;
         case FORGET_REQUEST: // this state isn't done yet
-        case LOGIN_SUCCESS:
         case CREATE_SUCCESS:
             return {
                 ...INITIAL_STATE,
@@ -85,6 +84,13 @@ export default (state = INITIAL_STATE, action) => {
                 ...state,
                 token: action.payload.token,
                 userInfo: action.payload.userInfo,
+            };
+        case GET_TOKEN:
+            return {
+                ...state,
+                token: action.payload.token,
+                userInfo: action.payload.user_info,
+                loading: false,
             };
         default:
             return state;

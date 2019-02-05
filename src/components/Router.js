@@ -11,6 +11,7 @@ import SearchNearby from './SearchNearby';
 import SearchByName from './SearchByName';
 import RestaurantMenu from './RestaurantMenu';
 import MenuRemain from './MenuRemain';
+import Queue from './Queue';
 import { NavHamberger, IconTab, NavBack } from './common';
 import { fontLoader } from '../actions';
 
@@ -53,7 +54,9 @@ class RouterComponent extends React.Component {
                         <Scene key='edit_profile' component={HomeScreen} navBar={NavHamberger} />
                     </Scene>
                     
-                    <Drawer key='app' contentComponent={SideMenu} initial>
+                    <Drawer key='app' contentComponent={SideMenu} 
+                    initial
+                    >
                         <Scene key='container' hideNavBar>
                             <Tabs key='tabber' tabBarStyle={tabBarStyle} showLabel={false}>
                                 <Scene key='homepage' icon={IconTab} iconName='home' initial>
@@ -108,7 +111,7 @@ class RouterComponent extends React.Component {
                                 <Scene key='queue' icon={IconTab} iconName='account-multiple'>
                                     <Scene 
                                         key='home_queue' 
-                                        component={HomeScreen} 
+                                        component={Queue} 
                                         title='Q U E U E' 
                                         navBar={NavHamberger}
                                         initial

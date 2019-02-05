@@ -92,6 +92,7 @@ class RestaurantCard extends React.Component {
                                 </Row>
                             </View>
                         </Row>
+                        {this.props.children}
                     </TouchableOpacity>
                 </CardSection>
             </Card>
@@ -106,7 +107,10 @@ const styles = {
         borderRadius: 15,
         shadowOpacity: 0.1,
         shadowColor: 'black',
-        shadowOffset: { width: 10, height: 5 },
+        shadowOffset: { width: 0, height: 0 },
+        shadowRadius: 10,
+        elevation: 4
+        ,
     }
 };
 

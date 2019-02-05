@@ -53,6 +53,7 @@ const styles = {
         shadowRadius: 10,
         flexDirection: 'row',
         padding: 10,
+        elevation: 4,
     }
 };
 

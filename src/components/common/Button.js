@@ -28,7 +28,7 @@ const styles = {
         shadowOpacity: 0.2,
         shadowColor: 'black',
         shadowOffset: { width: 0, height: 3 },
-        elevation: 1,
+        elevation: 2,
     }
 };
 
