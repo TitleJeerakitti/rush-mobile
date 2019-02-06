@@ -6,12 +6,13 @@ import { YELLOW, DARK_RED } from '../colors';
 
 class QueueCard extends React.Component {
     renderButton() {
-        if (this.props.status > 1) {
+        const { status, onPress, onCancelPress } = this.props;
+        if (status > 1) {
             return (
                 <Row>
                     <TouchableOpacity 
                         style={styles.fullDetailButton} 
-                        onPress={() => console.log('error')}
+                        onPress={onPress}
                     >
                         <FontText color={'white'}>ดูรายละเอียด</FontText>
                     </TouchableOpacity>
@@ -22,13 +23,13 @@ class QueueCard extends React.Component {
             <Row>
                 <TouchableOpacity 
                     style={styles.cancelButton} 
-                    onPress={this.props.onCancelPress}
+                    onPress={onCancelPress}
                 >
                     <FontText color={'white'}>ยกเลิก</FontText>
                 </TouchableOpacity>
                 <TouchableOpacity 
                     style={styles.halfDetailButton} 
-                    onPress={() => console.log('error')}
+                    onPress={onPress}
                 >
                     <FontText color={'white'}>ดูรายละเอียด</FontText>
                 </TouchableOpacity>

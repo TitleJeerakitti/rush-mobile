@@ -1,8 +1,10 @@
 import React from 'react';
 import { TouchableOpacity, View, } from 'react-native';
 import { connect } from 'react-redux';
-import { Rating, Icon } from 'react-native-elements';
-import { restaurantSelected } from '../actions';
+import { Icon } from 'react-native-elements';
+import StarRating from 'react-native-star-rating';
+// import { Actions } from 'react-native-router-flux';
+import { restaurantSelected, reviewSelected } from '../actions';
 import {
     Card,
     CardSection,
@@ -12,12 +14,19 @@ import {
     ShopDistance,
     ShopStatus,
 } from './common';
+import { YELLOW } from './common/colors';
 
 class RestaurantCard extends React.Component {
 
     onClick() {
         if (!this.props.disabled) {
             this.props.restaurantSelected(this.props.data);
+        }
+    }
+
+    onReviewSelect() {
+        if (!this.props.disabledStar) {
+            this.props.reviewSelected(this.props.data);
         }
     }
 
@@ -64,12 +73,17 @@ class RestaurantCard extends React.Component {
                                     {name}
                                 </FontText>
                                 <Row>
-                                    <TouchableOpacity onPress={() => console.log('click rate')}>
+                                    <TouchableOpacity 
+                                        onPress={this.onReviewSelect.bind(this)}
+                                        activeOpacity={this.props.disabledStar ? 1 : 0.2}
+                                    >
                                         <Row>
-                                            <Rating
-                                                startingValue={rating}
-                                                readonly
-                                                imageSize={12}
+                                            <StarRating
+                                                disabled
+                                                maxStars={5}
+                                                rating={rating}
+                                                starSize={14}
+                                                fullStarColor={YELLOW}
                                             />
                                             <FontText
                                                 size={16}
@@ -114,4 +128,4 @@ const styles = {
     }
 };
 
-export default connect(null, { restaurantSelected })(RestaurantCard);
+export default connect(null, { restaurantSelected, reviewSelected })(RestaurantCard);

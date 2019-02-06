@@ -3,7 +3,7 @@ import {
     RESTAURANT_SELECTED, 
     ADD_MENU, SUB_MENU, 
     RESTAURANT_GET_MENU, 
-    CHANGE_CURRENT_CATEGORY 
+    CHANGE_CURRENT_CATEGORY, 
 } from '../actions/types';
 
 const INITIAL_STATE = {
