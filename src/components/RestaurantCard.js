@@ -84,6 +84,7 @@ class RestaurantCard extends React.Component {
                                                 rating={rating}
                                                 starSize={14}
                                                 fullStarColor={YELLOW}
+                                                emptyStarColor={YELLOW}
                                             />
                                             <FontText
                                                 size={16}

@@ -3,7 +3,7 @@ import { View, Text } from 'react-native';
 import { Card, Row, FontText } from '../../common';
 import { ORANGE } from '../colors';
 
-const RowQueue = ({ amount, queue }) => {
+const RowQueue = ({ amount, queue, color }) => {
     const { amountContainer, queueContainer, queueText } = styles;
     return (
         <Card>
@@ -16,7 +16,7 @@ const RowQueue = ({ amount, queue }) => {
                         {amount.toFixed(2)} บาท
                     </FontText>
                 </View>
-                <View style={queueContainer} >
+                <View style={[queueContainer, { backgroundColor: color || ORANGE }]} >
                     <Text style={queueText}>{queue}</Text>
                 </View>
             </Row>
@@ -38,7 +38,6 @@ const styles = {
     },
     queueContainer: {
         flex: 2,
-        backgroundColor: ORANGE, 
         marginRight: -10, 
         paddingVertical: 10, 
         alignItems: 'center', 
