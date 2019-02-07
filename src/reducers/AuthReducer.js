@@ -20,13 +20,13 @@ import {
 const INITIAL_STATE = {
     email: 'customer',
     password: 'eiei1234',
-    user: null,
+    user: undefined,
     error: '',
     loading: false,
     name: '',
     phone: '',
     token: '',
-    userInfo: null,
+    userInfo: undefined,
 };
 
 export default (state = INITIAL_STATE, action) => {

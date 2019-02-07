@@ -1,5 +1,6 @@
 import { Actions } from 'react-native-router-flux';
 import { 
+    // REVIEW_SELECTED,
     RESTAURANT_SELECTED,
     RESTAURANT_GET_MENU,
     CHANGE_CURRENT_CATEGORY,
@@ -10,9 +11,16 @@ import {
 export const restaurantSelected = (data) => {
     return (dispatch) => {
         dispatch({ type: RESTAURANT_SELECTED, payload: data });
-        Actions.restaurant_menu({ onBack: () => Actions.pop() });
+        Actions.restaurant_menu();
     };
 };
+
+// export const reviewSelected = (data) => {
+//     return (dispatch) => {
+//         dispatch({ type: REVIEW_SELECTED, payload: data });
+//         Actions.review();
+//     };
+// };
 
 export const restaurantGetMenu = (data) => {
     return (dispatch) => { 

@@ -50,6 +50,7 @@ export const authLogin = (username, password) => {
         })
             .then((response) => response.json())
             .then((responseData) => {
+                console.log(responseData);
                 if (responseData.role === 'customer') {
                     authLoginSuccess(dispatch, responseData);
                 } else {
@@ -134,14 +135,11 @@ export const authForgetRequest = (email) => {
 export const authLogout = (token) => {
     return (dispatch) => {
         fetch('http://10.66.10.222:8000/auth/logout/', {
-            method: 'POST',
             headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                Token: token,
-            }),
+                // Accept: 'application/json',
+                // 'Content-Type': 'application/json',
+                Authorization: `Token ${token}`,
+            }
         })
         .then(() => {
             dispatch({ type: LOGOUT_USER });

@@ -14,6 +14,8 @@ import MenuRemain from './MenuRemain';
 import Queue from './Queue';
 import { NavHamberger, IconTab, NavBack } from './common';
 import { fontLoader } from '../actions';
+import Receipt from './Receipt';
+import Review from './Review';
 
 class RouterComponent extends React.Component {
 
@@ -51,12 +53,20 @@ class RouterComponent extends React.Component {
                     </Scene>
 
                     <Scene key='profile'>
-                        <Scene key='edit_profile' component={HomeScreen} navBar={NavHamberger} />
+                        <Scene key='edit_profile' component={HomeScreen} navBar={NavBack} />
+                    </Scene>
+
+                    <Scene key='review'>
+                        <Scene 
+                            key='review_page' 
+                            component={Review} 
+                            navBar={NavBack} 
+                            title='รีวิวร้านอาหาร'
+                            disabled 
+                        />
                     </Scene>
                     
-                    <Drawer key='app' contentComponent={SideMenu} 
-                    initial
-                    >
+                    <Drawer key='app' contentComponent={SideMenu} initial>
                         <Scene key='container' hideNavBar>
                             <Tabs key='tabber' tabBarStyle={tabBarStyle} showLabel={false}>
                                 <Scene key='homepage' icon={IconTab} iconName='home' initial>
@@ -115,6 +125,12 @@ class RouterComponent extends React.Component {
                                         title='Q U E U E' 
                                         navBar={NavHamberger}
                                         initial
+                                    />
+                                    <Scene 
+                                        key='receipt' 
+                                        component={Receipt} 
+                                        title='รายการอาหารของคุณ' 
+                                        navBar={NavBack}
                                     />
                                 </Scene>
                                 <Scene key='sale' icon={IconTab} iconName='sale'>
