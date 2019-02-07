@@ -1,12 +1,16 @@
 import React from 'react';
 import { Image } from 'react-native';
 
-const ImageRound = ({ source, rounded }) => {
+const ImageRound = ({ source, small }) => {
     const { container } = styles;
 
     return (
         <Image 
-            style={[container, { borderRadius: rounded !== undefined ? 40 : 15 }]}
+            style={[container, { 
+                borderRadius: small ? 30 : 15,
+                width: small ? 60 : 80,
+                height: small ? 60 : 80,
+            }]}
             source={source}
         />
     );
@@ -14,8 +18,6 @@ const ImageRound = ({ source, rounded }) => {
 
 const styles = {
     container: {
-        width: 80,
-        height: 80,
         marginRight: 20,
     },
 };

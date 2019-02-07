@@ -98,8 +98,8 @@ const styles = {
         right: '-10%', 
         top: '-10%', 
         backgroundColor: 'red',
-        borderColor: 'white',
-        borderWidth: 1,
+        // borderColor: 'white',
+        // borderWidth: 1,
         borderRadius: 11,
         paddingHorizontal: 5,
     }

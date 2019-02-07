@@ -31,3 +31,4 @@ export * from './TextLineFont';
 export * from './RemainMenu';
 export * from './Modal';
 export * from './Queue';
+export * from './ReviewCard';

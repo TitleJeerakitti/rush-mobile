@@ -1,74 +1,92 @@
 import React from 'react';
 import { View, ScrollView } from 'react-native';
-import StarRating from 'react-native-star-rating';
 import { connect } from 'react-redux';
 import { getBottomSpace } from 'react-native-iphone-x-helper';
-import { TextLineFont, Card, CardSection, ImageRound, Row, FontText } from './common';
-import { YELLOW } from './common/colors';
+import { TextLineFont, FontText, ReviewCard } from './common';
 import RestaurantCard from './RestaurantCard';
 
 class ReviewPage extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            canReview: false,
+            reviewData: [],
+        };
+    }
+
     componentDidMount() {
         // fetch('http://10.66.10.222:8000/testing/datetime')
-        //     .then(response => response.json())
-        //     .then(responseData => {
-        //         const newDate = responseData.toISOString();
-        //         console.log(newDate)
-        //     });
+        fetch('http://localhost:3000/reviewAPI', {
+            headers: {
+                'Cache-Control': 'no-cache',
+            }
+        })
+            .then(response => response.json())
+            .then(responseData => {
+                this.setState({ 
+                    reviewData: responseData.reviews,
+                    canReview: responseData.can_review,
+                });
+            })
+            .catch(error => console.log(error));
+    }
 
-        // const dateTime = Date.now();
-        // const dateTime = Date();
+    renderReview() {
+        return this.state.reviewData.map((review, index) => 
+            <ReviewCard
+                key={index}
+                disabled
+                data={review}
+            />
+        );
+    }
 
-        // const formattedTimestamp = dateTime.toISOString();
-
-        // console.log(dateTime.toISOString());
+    renderView() {
+        if (this.state.reviewData.length > 0) {
+            return (
+                <ScrollView style={{ flex: 1 }}>
+                    {this.renderReview()}
+                </ScrollView>
+            );
+        }
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <FontText>{this.props.data.name}</FontText>
+                <FontText>ยังไม่มีรีวิว</FontText>
+            </View>
+        );
     }
 
     render() {
+        const { data, userInfo } = this.props;
         return (
-            <View style={{ flex: 1 }}>
+            <View style={{ flex: 1, marginBottom: getBottomSpace() + 10 }}>
                 <RestaurantCard
-                    data={this.props.data}
+                    data={data}
                     disabled
-                    disabledStar={this.props.data}
+                    disabledStar
                 />
                 <TextLineFont title='ความคิดเห็นทั้งหมด' />
-                <ScrollView style={{ flex: 1, marginBottom: getBottomSpace() }}>
-                    <Card>
-                        <CardSection>
-                            <View style={{ backgroundColor: 'white', padding: 10, borderRadius: 15 }}>
-                                <Row style={{ alignItems: 'flex-start' }}>
-                                    <ImageRound 
-                                        source={{ uri: 'https://secure.gravatar.com/avatar/446036d58468747c85040777c7597973?s=400&d=mm&r=g' }} 
-                                        rounded
-                                    />
-                                    <View style={{ flex: 1 }}>
-                                        <Row>
-                                            <FontText style={{ flex: 1 }} size={24}>Aranya Kawaii</FontText>
-                                            <StarRating
-                                                disabled
-                                                maxStars={5}
-                                                rating={4.5}
-                                                starSize={14}
-                                                fullStarColor={YELLOW}
-                                            />
-                                        </Row>
-                                        <FontText>อร่อยมากค่ะ แซ่บเวอร์ ทำไว แถมใกล้ออฟฟิศ อยากให้เพื่อนๆไปลองกันนะคะ</FontText>
-                                        <FontText style={{ alignSelf: 'flex-end' }}>08.30 12-02-2019</FontText>
-                                    </View>
-                                </Row>
-                            </View>
-                        </CardSection>
-                    </Card>
-                </ScrollView>
+                {this.renderView()}
+                <View style={{ borderBottomWidth: 1, marginTop: 10, marginHorizontal: 10 }} />
+                <ReviewCard 
+                    disabled={!this.state.canReview}
+                    data={{
+                        customer_detail: {
+                            name: userInfo ? userInfo.name : 'Guest',
+                            picture: userInfo ? userInfo.picture : 'http://pluspng.com/img-png/user-png-icon-male-user-icon-512.png'
+                        }
+                    }}
+                />
             </View>
         );
     }
 }
 
-const mapStateToProps = ({ global }) => {
+const mapStateToProps = ({ global, auth }) => {
     const { data, supplier_id } = global;
-    return { data, supplier_id };
+    const { userInfo } = auth;
+    return { data, supplier_id, userInfo };
 };
 
 const Review = connect(mapStateToProps)(ReviewPage);
