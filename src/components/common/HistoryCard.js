@@ -1,6 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import StarRating from 'react-native-star-rating';
+import { Actions } from 'react-native-router-flux';
 import { 
     Card, 
     CardSection, 
@@ -22,7 +23,12 @@ class HistoryCard extends React.Component {
                     onFirstPress={() => console.log('first')}
                     firstText='ให้คะแนนรีวิว'
                     firstColor={GRAY}
-                    onSecondPress={() => console.log('second')}
+                    onSecondPress={() => {
+                        Actions.jump('homepage');
+                        Actions.reset('home_homepage');
+                        Actions.push('restaurant_menu');
+                        Actions.push('menu_remaining');
+                    }}
                     secondText='สั่งอีกครั้ง'
                     secondColor={YELLOW}
                 />

@@ -1,22 +1,59 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { connect } from 'react-redux';
+import update from 'immutability-helper';
 import { Card, CardSection, ImageRound, FontText, QuantityButton } from '../../common';
-import { addMenu, subMenu } from '../../../actions/';
+import { editMenu } from '../../../actions/';
 import { ORANGE } from '../colors';
 
 class MenuContainer extends React.Component {
 
     subtractAmount() {
-        const { subIndex, data, index, currentCategory } = this.props;
-        if (data.quantity > 0) {
-            this.props.subMenu(subIndex, data.id, index, currentCategory);
+        const { subIndex, index, currentCategory, menuData } = this.props;
+        const menu = menuData.main_categories[currentCategory]
+                    .sub_categories[subIndex].menus[index];
+        const quantity = menu.quantity;
+        if (quantity > 0) {
+            const payload = update(menuData, {
+                main_categories: {
+                    [currentCategory]: {
+                        sub_categories: {
+                            [subIndex]: {
+                                menus: {
+                                    [index]: {
+                                        quantity: { $set: quantity - 1 }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            this.props.editMenu(payload);
         }
     }
 
     additionAmount() {
-        const { subIndex, data, index, currentCategory } = this.props;
-        this.props.addMenu(subIndex, data.id, index, currentCategory);
+        const { subIndex, index, currentCategory, menuData } = this.props;
+        const menu = menuData.main_categories[currentCategory]
+                    .sub_categories[subIndex].menus[index];
+        const quantity = menu.quantity;
+        const payload = update(menuData, {
+            main_categories: {
+                [currentCategory]: {
+                    sub_categories: {
+                        [subIndex]: {
+                            menus: {
+                                [index]: {
+                                    quantity: { $set: quantity + 1 }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        this.props.editMenu(payload);
     }
 
     renderQuantity() {
@@ -87,5 +124,10 @@ const styles = {
     }
 };
 
-const MenuCard = connect(null, { addMenu, subMenu })(MenuContainer);
+const mapStateToProps = ({ restaurant }) => {
+    const { menuData } = restaurant;
+    return { menuData };
+};
+
+const MenuCard = connect(mapStateToProps, { editMenu })(MenuContainer);
 export { MenuCard };

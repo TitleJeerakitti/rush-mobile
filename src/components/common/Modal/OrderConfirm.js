@@ -7,25 +7,13 @@ class OrderConfirm extends React.Component {
     
     renderItem() {
         if (this.props.total > 0) {
-            const mainCategories = this.props.menuData.main_categories;
-            return mainCategories.map((mainCategory) => {
-                const subCategories = mainCategory.sub_categories;
-                return subCategories.map((subCategory) => {
-                    const menus = subCategory.menus;
-                    return menus.map((menu, index) => {
-                        if (menu.quantity > 0) {
-                            return (
-                                <Row
-                                    key={menu.id} 
-                                >
-                                    <FontText style={{ flex: 1 }}>{menu.name}</FontText>
-                                    <FontText>{menu.price.toFixed(2)} x {menu.quantity}</FontText>
-                                </Row>
-                            );
-                        }
-                        return <View key={index} />;
-                    });
-                });
+            return this.props.menuData.map(menu => {
+                return (
+                    <Row key={menu.id} >
+                        <FontText style={{ flex: 1 }}>{menu.name}</FontText>
+                        <FontText>{menu.price.toFixed(2)} x {menu.quantity}</FontText>
+                    </Row>
+                );
             });
         }
     }
@@ -77,7 +65,7 @@ const styles = {
         marginBottom: 40
     },
     containerChild: {
-        maxHeight: '40%',
+        maxHeight: '60%',
         width: '80%',
         backgroundColor: '#FFF',
         padding: 20,

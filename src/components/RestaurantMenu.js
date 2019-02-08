@@ -29,8 +29,17 @@ class RestaurantMenu extends React.Component {
         };
     }
 
-    componentWillMount() {
-        this.props.restaurantGetMenu(this.props.restaurantId);
+    componentDidMount() {
+        fetch(`http://10.66.10.222:8000/restaurant/restaurant_detail/?id=${this.props.restaurantId}`, {
+            headers: {
+                'Cache-Control': 'no-cache'
+            }
+        })
+            .then(response => response.json())
+            .then(responseData => {
+                this.props.restaurantGetMenu(responseData);
+            })
+            .catch(() => console.log('error'));
     }
 
     renderItem() {

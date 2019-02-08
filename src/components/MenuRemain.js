@@ -26,61 +26,112 @@ class MainRemain extends React.Component {
         };
     }
 
-    shouldBuy() {
-        if (this.props.total > 0) {
-            this.confirmData();
-            this.setState({ visible: true });
+    componentDidMount() {
+        const { menuData } = this.props;
+        this.getMenus(menuData);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const menuList = this.makeMenuList(nextProps.menuData);
+        if (menuList.length !== this.state.menus.length) {
+            return this.getMenus(nextProps.menuData);
+        }
+        for (let i = 0; i < menuList.length; i++) {
+            if (menuList[i].id !== this.state.menus[i].id || 
+                menuList[i].quantity !== this.state.menus[i].quantity) {
+                    return this.getMenus(nextProps.menuData);
+            }
         }
     }
 
-    confirmData() {
-        if (this.props.total > 0) {
-            const mainCategories = this.props.menuData.main_categories;
-            mainCategories.forEach(mainCategory => {
-                const subCategories = mainCategory.sub_categories;
-                subCategories.forEach(subCategory => {
-                    const menus = subCategory.menus;
-                    menus.forEach(menu => {
-                        if (menu.quantity > 0) {
-                            this.setState(prevState => ({
-                                menus: [...prevState.menus, { id: menu.id, qty: menu.quantity }]
-                            }));
-                        }
-                    });
+    getMenus(menuData) {
+        const menuList = this.makeMenuList(menuData);
+        this.setState({ menus: menuList });
+    }
+
+    makeMenuList(menuData) {
+        return menuData.main_categories.reduce((list, mainCategory, mainIndex) => {
+            mainCategory.sub_categories.forEach((subCategory, subIndex) => {
+                subCategory.menus.forEach((menu, index) => {
+                    if (menu.quantity > 0) {
+                        list.push({ 
+                            ...menu,
+                            mainIndex,
+                            subIndex,
+                            index,
+                        });
+                    }
                 });
             });
+            return list;
+        }, []);
+    }
+
+    makeMenuSentAPI(menuData) {
+        return menuData.reduce((list, menu) => {
+                list.push({ 
+                    menu_id: menu.id,
+                    amount: menu.quantity,
+                });
+            return list;
+        }, []);
+    }
+
+    shouldBuy() {
+        if (this.state.menus.length > 0) {
+            this.setState({ visible: true });
         }
     }
 
     placeOrder() {
         this.setState({ visible: false, menus: [] });
-        this.props.loadData();
-        Actions.popTo('home_homepage');
-        Actions.queue();
+        fetch('http://10.66.10.222:8000/order/create_new_order/', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                customer_id: this.props.userInfo.id,
+                supplier_id: this.props.restaurantId,
+                menus: this.makeMenuSentAPI(this.state.menus),
+                total: this.computeSubtotal(),
+                special_request: '',
+                discount: 0,
+            }),
+        })
+            .then(response => response.json())
+            .then(responseData => console.log(responseData))
+            .catch(error => console.log(error));
+        // this.props.loadData();
+        // Actions.popTo('home_homepage');
+        // Actions.queue();
+    }
+
+    computeSubtotal() {
+        const { menus } = this.state;
+        if (menus.length > 0) {
+            return menus.reduce((subtotal, menu) => {
+                subtotal += menu.price * menu.quantity;
+                return subtotal;
+            }, 0);
+        }
+        return 0;
     }
 
     renderMenu() {
-        if (this.props.total > 0) {
-            const mainCategories = this.props.menuData.main_categories;
-            return mainCategories.map((mainCategory, mainIndex) => {
-                const subCategories = mainCategory.sub_categories;
-                return subCategories.map((subCategory, subIndex) => {
-                    const menus = subCategory.menus;
-                    return menus.map((menu, index) => {
-                        if (menu.quantity > 0) {
-                            return (
-                                <MenuCard 
-                                    key={menu.id} 
-                                    data={menu}
-                                    subIndex={subIndex}
-                                    index={index}
-                                    currentCategory={mainIndex}
-                                />
-                            );
-                        }
-                        return <View key={index} />;
-                    });
-                });
+        const { menus } = this.state;
+        if (menus.length > 0) {
+            return menus.map(menu => {
+                return (
+                    <MenuCard 
+                        key={menu.id} 
+                        data={menu}
+                        index={menu.index}
+                        currentCategory={menu.mainIndex}
+                        subIndex={menu.subIndex}
+                    />
+                );
             });
         }
         return (
@@ -90,23 +141,33 @@ class MainRemain extends React.Component {
         );
     }
 
+    renderSubtotal() {
+        const { menuData } = this.props;
+        const subtotal = this.computeSubtotal();
+        return (
+            <Subtotal 
+                price={subtotal} 
+                time={menuData.estimate_time} 
+                onPress={() => this.shouldBuy()} 
+            />
+        );
+    }
+
     renderConfirmPopup() {
         return (
             <OrderConfirm 
-                price={this.props.subTotal} 
-                total={this.props.total}
-                menuData={this.props.menuData}
+                price={this.computeSubtotal()} 
+                total={this.state.menus.length}
+                menuData={this.state.menus}
                 visible={this.state.visible} 
-                onCancel={() => this.setState({ visible: !this.state.visible, menus: [] })} 
+                onCancel={() => this.setState({ visible: !this.state.visible })} 
                 onConfirm={() => this.placeOrder()}
             />
         );
     }
 
     render() {
-        const { data, menuData, subTotal } = this.props;
-        // console.log(this.state.menus);
-
+        const { data } = this.props;
         return (
             <View style={{ flex: 1 }}>
                 <RestaurantCard 
@@ -122,11 +183,7 @@ class MainRemain extends React.Component {
                     <Divider style={{ height: 10, backgroundColor: 'transparent' }} />
                 </ScrollView>
                 <DiscountCode onPress={() => console.log('code')} />
-                <Subtotal 
-                    price={subTotal} 
-                    time={menuData.estimate_time} 
-                    onPress={() => this.shouldBuy()} 
-                />
+                {this.renderSubtotal()}
                 {this.renderConfirmPopup()}
             </View>
         );
@@ -142,9 +199,10 @@ const styles = {
     }
 };
 
-const mapStateToProps = ({ restaurant }) => {
-    const { data, total, menuData, subTotal } = restaurant;
-    return { data, total, menuData, subTotal }; 
+const mapStateToProps = ({ restaurant, auth }) => {
+    const { data, menuData, restaurantId } = restaurant;
+    const { userInfo } = auth;
+    return { data, menuData, userInfo, restaurantId }; 
 };
 
 export default connect(mapStateToProps, { loadData })(MainRemain);

@@ -28,23 +28,34 @@ class NavBackComponent extends React.Component {
     }
 
     renderNotify() {
-        const { total } = this.props;
-        if (total > 99) {
-            return (
-                <View style={styles.notifyBox} >
-                    <Text style={{ color: 'white' }}>
-                        99+
-                    </Text>
-                </View>
-            );
-        } else if (total > 0) {
-            return (
-                <View style={styles.notifyBox} >
-                    <Text style={{ color: 'white' }}>
-                        {this.props.total}
-                    </Text>
-                </View>
-            );
+        const { menuData } = this.props;
+        // console.log(menuData);
+        if (menuData.main_categories !== undefined) {
+            const total = menuData.main_categories.reduce((amount, mainCategory) => {
+                mainCategory.sub_categories.forEach(subCategory => {
+                    subCategory.menus.forEach(menu => {
+                        amount += menu.quantity;
+                    });
+                });
+                return amount;
+            }, 0);
+            if (total > 99) {
+                return (
+                    <View style={styles.notifyBox} >
+                        <Text style={{ color: 'white' }}>
+                            99+
+                        </Text>
+                    </View>
+                );
+            } else if (total > 0) {
+                return (
+                    <View style={styles.notifyBox} >
+                        <Text style={{ color: 'white' }}>
+                            {total}
+                        </Text>
+                    </View>
+                );
+            }
         }
     }
 
@@ -84,8 +95,8 @@ class NavBackComponent extends React.Component {
 }
 
 const mapStateToProps = ({ restaurant }) => {
-    const { currentRestaurant, total } = restaurant;
-    return { currentRestaurant, total };
+    const { currentRestaurant, menuData } = restaurant;
+    return { currentRestaurant, menuData };
 };
 
 const styles = {
@@ -98,8 +109,6 @@ const styles = {
         right: '-10%', 
         top: '-10%', 
         backgroundColor: 'red',
-        // borderColor: 'white',
-        // borderWidth: 1,
         borderRadius: 11,
         paddingHorizontal: 5,
     }
