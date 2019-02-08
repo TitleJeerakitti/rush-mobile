@@ -4,8 +4,7 @@ import {
     RESTAURANT_SELECTED,
     RESTAURANT_GET_MENU,
     CHANGE_CURRENT_CATEGORY,
-    ADD_MENU,
-    SUB_MENU,
+    EDIT_MENU,
 } from './types';
 
 export const restaurantSelected = (data) => {
@@ -23,34 +22,16 @@ export const restaurantSelected = (data) => {
 // };
 
 export const restaurantGetMenu = (data) => {
-    return (dispatch) => { 
-        fetch(`http://10.66.10.222:8000/restaurant/restaurantDetail/?id=${data}`, {
-            headers: {
-                'Cache-Control': 'no-cache'
-            }
-        })
-            .then(response => response.json())
-            .then(responseData => {
-                dispatch({ type: RESTAURANT_GET_MENU, payload: responseData });
-            })
-            .catch(() => console.log('error'));
-    };
+    return { type: RESTAURANT_GET_MENU, payload: data };
 };
 
 export const currentCategoryChange = (index) => {
     return { type: CHANGE_CURRENT_CATEGORY, payload: index };
 };
 
-export const addMenu = (id, qty, index, currentCategory) => {
+export const editMenu = (data) => {
     return {
-        type: ADD_MENU,
-        payload: { id, qty, index, currentCategory },
-    };
-};
-
-export const subMenu = (id, qty, index, currentCategory) => {
-    return {
-        type: SUB_MENU,
-        payload: { id, qty, index, currentCategory },
+        type: EDIT_MENU,
+        payload: data,
     };
 };

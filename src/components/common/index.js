@@ -32,3 +32,4 @@ export * from './RemainMenu';
 export * from './Modal';
 export * from './Queue';
 export * from './ReviewCard';
+export * from './HistoryCard';

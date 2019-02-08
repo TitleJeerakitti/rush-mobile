@@ -1,6 +1,11 @@
 import React from 'react';
-import { TouchableOpacity } from 'react-native';
-import { FontText, Card, Row, RowQueue, QueueProgress } from '../../common';
+import { 
+    ButtonBottomCard,
+    RowQueue, 
+    QueueProgress, 
+    TwoButton,
+    OneButton,
+} from '../../common';
 import RestaurantCard from '../../RestaurantCard';
 import { YELLOW, DARK_RED } from '../colors';
 
@@ -9,31 +14,22 @@ class QueueCard extends React.Component {
         const { status, onPress, onCancelPress } = this.props;
         if (status > 1) {
             return (
-                <Row>
-                    <TouchableOpacity 
-                        style={styles.fullDetailButton} 
-                        onPress={onPress}
-                    >
-                        <FontText color={'white'}>ดูรายละเอียด</FontText>
-                    </TouchableOpacity>
-                </Row>
+                <OneButton 
+                    onPress={onPress}
+                    color={YELLOW}
+                    text='ดูรายละเอียด'
+                />
             );
         }
         return (
-            <Row>
-                <TouchableOpacity 
-                    style={styles.cancelButton} 
-                    onPress={onCancelPress}
-                >
-                    <FontText color={'white'}>ยกเลิก</FontText>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                    style={styles.halfDetailButton} 
-                    onPress={onPress}
-                >
-                    <FontText color={'white'}>ดูรายละเอียด</FontText>
-                </TouchableOpacity>
-            </Row>
+            <TwoButton 
+                onFirstPress={onCancelPress}
+                onSecondPress={onPress}
+                firstColor={DARK_RED}
+                secondColor={YELLOW}
+                firstText='ยกเลิก'
+                secondText='ดูรายละเอียด'
+            />
         );
     }
 
@@ -43,45 +39,12 @@ class QueueCard extends React.Component {
             <RestaurantCard data={data} disabled >
                 <RowQueue amount={amount} queue={queue} />
                 <QueueProgress status={status} />
-                <Card style={styles.buttonContainer}>
-                    <Row>
-                        {this.renderButton()}
-                    </Row>
-                </Card>
+                <ButtonBottomCard>
+                    {this.renderButton()}
+                </ButtonBottomCard>
             </RestaurantCard>
         );
     }
 }
-
-const styles = {
-    buttonContainer: {
-        marginHorizontal: -10, 
-        marginBottom: -10, 
-        borderBottomLeftRadius: 10, 
-        borderBottomRightRadius: 10,
-    },
-    cancelButton: {
-        flex: 1,
-        padding: 10, 
-        backgroundColor: DARK_RED, 
-        borderBottomLeftRadius: 10, 
-        alignItems: 'center'
-    },
-    halfDetailButton: {
-        flex: 1,
-        padding: 10, 
-        backgroundColor: YELLOW, 
-        borderBottomRightRadius: 10, 
-        alignItems: 'center'
-    },
-    fullDetailButton: {
-        flex: 1,
-        padding: 10, 
-        backgroundColor: YELLOW, 
-        borderBottomRightRadius: 10, 
-        borderBottomLeftRadius: 10, 
-        alignItems: 'center'
-    }
-};
 
 export { QueueCard };

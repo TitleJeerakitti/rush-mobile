@@ -16,6 +16,8 @@ import { NavHamberger, IconTab, NavBack } from './common';
 import { fontLoader } from '../actions';
 import Receipt from './Receipt';
 import Review from './Review';
+import History from './History';
+import Promotion from './Promotion';
 
 class RouterComponent extends React.Component {
 
@@ -112,7 +114,7 @@ class RouterComponent extends React.Component {
                                 <Scene key='history' icon={IconTab} iconName='history'>
                                     <Scene 
                                         key='home_history' 
-                                        component={HomeScreen} 
+                                        component={History} 
                                         title='H I S T O R Y' 
                                         navBar={NavHamberger}
                                         initial
@@ -136,7 +138,7 @@ class RouterComponent extends React.Component {
                                 <Scene key='sale' icon={IconTab} iconName='sale'>
                                     <Scene 
                                         key='home_sale' 
-                                        component={HomeScreen} 
+                                        component={Promotion} 
                                         title='P R O M O T I O N' 
                                         navBar={NavHamberger}
                                         initial
