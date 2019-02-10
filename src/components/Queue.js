@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { QueueCard, CancelConfirm, FontText } from './common';
 import { loadData } from '../actions';
+import { SERVER } from './common/config';
 
 class Queue extends React.Component {
     constructor(props) {
@@ -14,28 +15,30 @@ class Queue extends React.Component {
         };
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         this.mount = true;
-        fetch('http://localhost:3000/queue_detail', {
-            headers: {
-                'Cache-Control': 'no-cache',
-            }
-        })
-        .then(response => response.json())
-        .then(responseData => {
+        try { 
+            const response = await fetch(`${SERVER}/order/get_queue/?customer_id=${this.props.userInfo.id}`, {
+                headers: {
+                    'Cache-Control': 'no-cache',
+                    Authorization: `Token ${this.props.token}`,
+                },
+            });
+            const responseData = await response.json();
             if (this.mount) {
-                this.setState({ 
+                await this.setState({ 
                     data: responseData, 
                 });
+                this.props.loadData();
             }
-        })
-        .catch(error => console.log(error));
+        } catch (error) {
+            console.log(error);
+        }
     }
-    // componentDidMount() {
-    //     setTimeout(() => {
-    //         this.props.loadData();
-    //     }, 3000);
-    // }
+
+    componentWillUnmount() {
+        this.mounted = false;
+    }
 
     renderCancelConfirm() {
         return (
@@ -71,6 +74,7 @@ class Queue extends React.Component {
 
     render() {
         const { containerLoading, containerEmpty, imageEmpty } = styles;
+        console.log(this.props.dataLoad);
         if (this.props.dataLoad) {
             return (
                 <View 
@@ -133,9 +137,10 @@ const styles = {
 //     }
 // };
 
-const mapStateToProps = ({ global }) => {
+const mapStateToProps = ({ global, auth }) => {
     const { dataLoad } = global;
-    return { dataLoad };
+    const { userInfo, token } = auth;
+    return { dataLoad, userInfo, token };
 };
 
 export default connect(mapStateToProps, { loadData })(Queue);

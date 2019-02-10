@@ -7,7 +7,7 @@ import {
     OneButton,
 } from '../../common';
 import RestaurantCard from '../../RestaurantCard';
-import { YELLOW, DARK_RED } from '../colors';
+import { YELLOW, DARK_RED } from '../config';
 
 class QueueCard extends React.Component {
     renderButton() {

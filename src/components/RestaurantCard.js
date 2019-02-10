@@ -14,7 +14,7 @@ import {
     ShopDistance,
     ShopStatus,
 } from './common';
-import { YELLOW } from './common/colors';
+import { YELLOW } from './common/config';
 
 class RestaurantCard extends React.Component {
 

@@ -12,7 +12,7 @@ import {
     CardSection,
     CategoryItem,
 } from './common';
-import { DARK_RED, } from './common/colors';
+import { DARK_RED, } from './common/config';
 
 
 export default class HomeScreen extends React.Component {

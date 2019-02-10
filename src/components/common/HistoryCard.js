@@ -13,7 +13,7 @@ import {
     TwoButton,
     OneButton,
 } from '../common';
-import { YELLOW, GRAY, GREEN, DARK_RED } from './colors';
+import { YELLOW, GRAY, GREEN, DARK_RED } from './config';
 
 class HistoryCard extends React.Component {
     renderButton() {

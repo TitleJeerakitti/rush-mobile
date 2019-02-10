@@ -12,6 +12,7 @@ import {
     MainCategoryItem,
 } from './common';
 import { restaurantGetMenu, currentCategoryChange } from '../actions';
+import { SERVER } from './common/config';
 
 class RestaurantMenu extends React.Component {
     constructor(props) {
@@ -30,16 +31,21 @@ class RestaurantMenu extends React.Component {
     }
 
     componentDidMount() {
-        fetch(`http://10.66.10.222:8000/restaurant/restaurant_detail/?id=${this.props.restaurantId}`, {
-            headers: {
-                'Cache-Control': 'no-cache'
-            }
-        })
-            .then(response => response.json())
-            .then(responseData => {
-                this.props.restaurantGetMenu(responseData);
-            })
-            .catch(() => console.log('error'));
+        this.getRestaurantMenu();
+    }
+
+    async getRestaurantMenu() {
+        try {
+            const response = await fetch(`${SERVER}/restaurant/restaurant_detail/?id=${this.props.restaurantId}`, {
+                headers: {
+                    'Cache-Control': 'no-cache',
+                }
+            });
+            const responseData = await response.json();
+            this.props.restaurantGetMenu(responseData);
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     renderItem() {

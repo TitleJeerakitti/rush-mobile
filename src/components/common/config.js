@@ -5,3 +5,5 @@ export const YELLOW = '#FFA80D';
 export const LIGHT_RED = '#EF4036';
 export const DARK_ORANGE = '#FF7E2F';
 export const GRAY = '#5F5F5F';
+
+export const SERVER = 'http://10.66.10.222:8000';

@@ -3,6 +3,7 @@ import { ScrollView, RefreshControl, } from 'react-native';
 import { Divider } from 'react-native-elements';
 import RestaurantCard from './RestaurantCard';
 import { FilterCard, FilterItem, FilterButton } from './common';
+import { SERVER } from './common/config';
 
 class SearchNearby extends React.Component {
 
@@ -29,29 +30,29 @@ class SearchNearby extends React.Component {
         this.getRestaurantAPI();
     }
 
-    getRestaurantAPI() {
-        this.setState({ refreshing: true });
-        fetch(this.selectAPI(), {
-            headers: {
-                'Cache-Control': 'no-cache'
-            }
-        })
-            .then(response => response.json())
-            .then(responseData => {
-                this.setState({
-                    restaurants: responseData,
-                    refreshing: false
-                });
-            })
-            .catch(() => {
-                console.log('error connect!');
+    async getRestaurantAPI() {
+        await this.setState({ refreshing: true });
+        try {
+            const response = await fetch(this.selectAPI(), {
+                headers: {
+                    'Cache-Control': 'no-cache'
+                }
             });
+            const responseData = await response.json();
+            await this.setState({
+                restaurants: responseData,
+                refreshing: false
+            });
+        } catch (error) {
+            console.log(error);
+            await this.setState({ refreshing: false });
+        }
     }
 
     selectAPI() {
         if (this.state.sortType === 'ระยะทาง') { 
             // return ('http://localhost:3000/restaurants?_sort=distance&_order=asc');
-            return ('http://10.66.10.222:8000/restaurant/nearby_restaurant');
+            return (`${SERVER}/restaurant/nearby_restaurant`);
         } else if (this.state.sortType === 'ความนิยม') {
             return ('http://localhost:3000/restaurants?_sort=rating&_order=desc');
         }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, TextInput, TouchableOpacity } from 'react-native';
 import { Row, FontText } from '../../common';
-import { ORANGE } from '../colors';
+import { ORANGE } from '../config';
 
 const DiscountCode = ({ onPress }) => {
     const { container, inputText } = styles;

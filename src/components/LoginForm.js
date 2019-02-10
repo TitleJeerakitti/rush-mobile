@@ -19,7 +19,7 @@ import {
     Spinner,
     AuthBg,
 } from './common';
-import { YELLOW, LIGHT_RED } from './common/colors';
+import { YELLOW, LIGHT_RED } from './common/config';
 import { 
     authEmailChange,
     authPasswordChange,
