@@ -1,7 +1,9 @@
 import React from 'react';
 import { View, ScrollView } from 'react-native';
+import { connect } from 'react-redux';
 import RestaurantCard from './RestaurantCard';
 import { TextLineFont, MenuCard, Card, CardSection, FontText, Row } from './common';
+import { SERVER } from './common/config';
 
 class Receipt extends React.Component {
     constructor(props) {
@@ -14,24 +16,27 @@ class Receipt extends React.Component {
         };
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         this.mounted = true;
-        fetch('http://localhost:3000/receipt', {
-            headers: {
-                'Cache-Control': 'no-cache',
-            }
-        })
-        .then(response => response.json())
-        .then(responseData => {
+        try {
+            const response = await fetch(`${SERVER}/order/get_order/?order_id=${this.props.orderId}`, {
+                headers: {
+                    'Cache-Control': 'no-cache',
+                    Authorization: `Token ${this.props.token}`,
+                }
+            });
+            const responseData = await response.json();
+            // console.log(responseData);
             if (this.mounted) {
-                this.setState({
+                await this.setState({
                     data: responseData.supplier_detail,
                     menus: responseData.menus,
                     total: responseData.total
                 });
             }
-        })
-        .catch(error => console.log(error));
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     componentWillUnmount() {
@@ -47,7 +52,6 @@ class Receipt extends React.Component {
     }
 
     render() {
-        console.log(this.mounted);
         return (
             <View style={{ flex: 1 }}>
                 <RestaurantCard
@@ -81,4 +85,10 @@ const styles = {
     }
 };
 
-export default Receipt;
+const mapStateToProps = ({ queue, auth }) => {
+    const { orderId } = queue;
+    const { token } = auth;
+    return { orderId, token };
+};
+
+export default connect(mapStateToProps)(Receipt);

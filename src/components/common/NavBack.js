@@ -60,7 +60,7 @@ class NavBackComponent extends React.Component {
     }
 
     renderTitle() {
-        const { reduxTitle, title } = this.props;
+        const { reduxTitle, title, } = this.props;
         if (reduxTitle) {
             return (
                 <NavTitle>{this.props.currentRestaurant}</NavTitle>

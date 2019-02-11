@@ -1,12 +1,16 @@
 import { Actions } from 'react-native-router-flux';
-import { FONT_LOADED, DATA_LOAD, REVIEW_SELECTED } from './types';
+import { FONT_LOADED, DATA_LOADED, REVIEW_SELECTED, DATA_LOADING } from './types';
 
 export const fontLoader = () => {
     return { type: FONT_LOADED };
 };
 
 export const loadData = () => {
-    return { type: DATA_LOAD };
+    return { type: DATA_LOADING };
+};
+
+export const loadDataFinish = () => {
+    return { type: DATA_LOADED };
 };
 
 export const reviewSelected = (data) => {

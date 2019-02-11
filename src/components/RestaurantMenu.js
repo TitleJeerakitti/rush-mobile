@@ -39,6 +39,7 @@ class RestaurantMenu extends React.Component {
             const response = await fetch(`${SERVER}/restaurant/restaurant_detail/?id=${this.props.restaurantId}`, {
                 headers: {
                     'Cache-Control': 'no-cache',
+                    Authorization: `Token ${this.props.token}`,
                 }
             });
             const responseData = await response.json();
@@ -121,9 +122,10 @@ class RestaurantMenu extends React.Component {
     }
 }
 
-const mapStateToProps = ({ restaurant }) => {
+const mapStateToProps = ({ restaurant, auth }) => {
     const { menuData, currentCategory, restaurantId } = restaurant;
-    return { menuData, currentCategory, restaurantId };
+    const { token } = auth;
+    return { menuData, currentCategory, restaurantId, token };
 };
 
 export default connect(mapStateToProps, { 

@@ -18,6 +18,7 @@ import Receipt from './Receipt';
 import Review from './Review';
 import History from './History';
 import Promotion from './Promotion';
+import EditProfile from './EditProfile';
 
 class RouterComponent extends React.Component {
 
@@ -54,8 +55,8 @@ class RouterComponent extends React.Component {
                         <Scene key='forget' component={ForgetPassword} title='ลืมรหัสผ่าน' onLeft />
                     </Scene>
 
-                    <Scene key='profile'>
-                        <Scene key='edit_profile' component={HomeScreen} navBar={NavBack} />
+                    <Scene key='profile' initial>
+                        <Scene key='edit_profile' component={EditProfile} navBar={NavBack} title='แก้ไขโปรไฟล์' />
                     </Scene>
 
                     <Scene key='review'>
@@ -68,7 +69,7 @@ class RouterComponent extends React.Component {
                         />
                     </Scene>
                     
-                    <Drawer key='app' contentComponent={SideMenu} initial>
+                    <Drawer key='app' contentComponent={SideMenu}>
                         <Scene key='container' hideNavBar>
                             <Tabs key='tabber' tabBarStyle={tabBarStyle} showLabel={false}>
                                 <Scene key='homepage' icon={IconTab} iconName='home' initial>
@@ -126,6 +127,7 @@ class RouterComponent extends React.Component {
                                         component={Queue} 
                                         title='Q U E U E' 
                                         navBar={NavHamberger}
+                                        onEnter={() => Actions.refresh({ canLoad: true })}
                                         initial
                                     />
                                     <Scene 
