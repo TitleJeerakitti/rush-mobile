@@ -55,7 +55,9 @@ class RouterComponent extends React.Component {
                         <Scene key='forget' component={ForgetPassword} title='ลืมรหัสผ่าน' onLeft />
                     </Scene>
 
-                    <Scene key='profile' initial>
+                    <Scene key='profile' 
+                    initial
+                    >
                         <Scene key='edit_profile' component={EditProfile} navBar={NavBack} title='แก้ไขโปรไฟล์' />
                     </Scene>
 

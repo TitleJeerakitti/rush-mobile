@@ -16,9 +16,10 @@ class ReviewPage extends React.Component {
 
     componentDidMount() {
         // fetch('http://10.66.10.222:8000/testing/datetime')
-        fetch('http://localhost:3000/reviewAPI', {
+        fetch(`/review/get_review/?customer_id=$`, {
             headers: {
                 'Cache-Control': 'no-cache',
+                Authorization: `Token ${this.props.token}`,
             }
         })
             .then(response => response.json())
@@ -85,8 +86,8 @@ class ReviewPage extends React.Component {
 
 const mapStateToProps = ({ global, auth }) => {
     const { data, supplier_id } = global;
-    const { userInfo } = auth;
-    return { data, supplier_id, userInfo };
+    const { userInfo, token } = auth;
+    return { data, supplier_id, userInfo, token };
 };
 
 const Review = connect(mapStateToProps)(ReviewPage);
