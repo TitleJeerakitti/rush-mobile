@@ -1,6 +1,9 @@
 from django.db import models
-from account.models import User
+
 from phonenumber_field.modelfields import PhoneNumberField
+
+from account.models import User
+
 
 # Create your models here.
 
@@ -35,8 +38,6 @@ class Supplier(models.Model):
     def __str__(self):
         return self.name
 
-        
-
 
 class Telephone(models.Model):
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
@@ -55,7 +56,7 @@ class ExtraPicture(models.Model):
 
 
 class MainCategory(models.Model):
-    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
+    supplier = models.ForeignKey(Supplier,related_name='main_category', on_delete=models.CASCADE)
     name = models.CharField(max_length=30)
     description = models.CharField(blank=True, max_length=150)
 
@@ -82,3 +83,27 @@ class Menu(models.Model):
 
     def __str__(self):
         return self.supplier.name+' '+self.name
+
+
+class SupplierQueueIndex(models.Model):
+    supplier = models.OneToOneField(
+        Supplier, on_delete=models.CASCADE, primary_key=True)
+    category = models.CharField(default='A',max_length=1)
+    index = models.CharField(default='000',max_length=3)
+
+    def __str__(self):
+        return self.supplier.name
+
+    def reset_by_day(self):
+        self.index = '000'
+        self.save(update_fields=['index'])
+        return self.category+self.index
+
+    def new_queue(self):
+        temp = int(self.index)+1
+        self.index = '{0:03}'.format(temp)
+        self.save(update_fields=['index'])
+        return self.category+self.index
+    
+    def get_queue_number(self):
+        return self.category+self.index

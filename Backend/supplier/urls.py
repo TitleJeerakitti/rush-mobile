@@ -3,10 +3,10 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
-    path('nearbyRestaurant/',
+    path('nearby_restaurant/',
         SupplierNearbyView.as_view(),
         name='nearby_restaurant'),
-    path('restaurantDetail/',
+    path('restaurant_detail/',
         SupplierMenuView.as_view(),
         name='restuarant_menu'),
 

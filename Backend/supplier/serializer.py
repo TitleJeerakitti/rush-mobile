@@ -1,7 +1,8 @@
 from rest_framework import serializers
 
 from .models import *
-from account.models import User
+from order.models import Order,OrderMenu
+from customer.models import User
 from account.serializer import UserSupplierSerializer
 
 
@@ -19,7 +20,7 @@ class SupplierSerializer(serializers.ModelSerializer):
         supplier = Supplier.objects.create(user=user, **validated_data)
 
 
-class SupplierNearbySerializer(serializers.ModelSerializer):
+class SupplierCardSerializers(serializers.ModelSerializer):
     id = serializers.SerializerMethodField('get_supplier_id')
     rating = serializers.FloatField(default=5.0)
     reviewCount = serializers.IntegerField(default=500)
@@ -49,7 +50,7 @@ class ExtraPictureSerializer(serializers.ModelSerializer):
 
 class MenusSerializers(serializers.ModelSerializer):
     picture = serializers.SerializerMethodField('get_image_url')
-    quantity = serializers.IntegerField(default=0)
+    quantity = serializers.SerializerMethodField('get_amount_history')
 
     class Meta:
         model = Menu
@@ -60,58 +61,39 @@ class MenusSerializers(serializers.ModelSerializer):
         image_url = obj.image.url
         return request.build_absolute_uri(image_url)
 
+    def get_amount_history(self, obj):
+        if self.context.get('order_id'):
+            order = Order.objects.get(id=self.context.get('order_id'))
+            order_menu_obj = OrderMenu.objects.filter(order=order)
+            for order_menu in order_menu_obj:
+                if obj == order_menu.menu:
+                    return order_menu.amount
+        return 0
+
 
 class SubCategoriesSerializer(serializers.ModelSerializer):
-    menus = serializers.SerializerMethodField('get_menu')
+    menus = MenusSerializers(source='menu_set',many=True)
 
     class Meta:
         model = SubCategory
         fields = ('name', 'menus')
 
-    def get_menu(self, obj):
-        request = self.context.get('request')
-        menus = Menu.objects.filter(
-            supplier=obj.supplier, sub_category=obj)
-        menus_serializer = MenusSerializers(
-            menus, many=True, context={'request': request})
-        return menus_serializer.data
-
 
 class MainCategoriesSerializer(serializers.ModelSerializer):
-    sub_categories = serializers.SerializerMethodField('get_sub_category')
-
+    # sub_categories = serializers.SerializerMethodField('get_sub_category')
+    sub_categories = SubCategoriesSerializer(source='subcategory_set',many=True)
     class Meta:
         model = MainCategory
         fields = ('name', 'sub_categories', )
 
-    def get_sub_category(self, obj):
-        request = self.context.get('request')
-        sub_category = SubCategory.objects.filter(
-            supplier=obj.supplier, main_category=obj)
-        sub_category_serializer = SubCategoriesSerializer(
-            sub_category, many=True, context={'request': request})
-        return sub_category_serializer.data
-
 
 class RestaurantDetailSerializer(serializers.ModelSerializer):
-    extra_pictures = serializers.SerializerMethodField('get_extra_picture')
+    # extra_pictures = serializers.SerializerMethodField('get_extra_picture')
+    extra_pictures = ExtraPictureSerializer(source='extrapicture_set',many=True)
     estimate_time = serializers.IntegerField(default=20)
-    main_categories = serializers.SerializerMethodField('get_main_category')
+    main_categories = MainCategoriesSerializer(
+        source='main_category', many=True)
 
     class Meta:
-        model = ExtraPicture
+        model = Supplier
         fields = ('extra_pictures', 'estimate_time', 'main_categories')
-
-    def get_extra_picture(self, obj):
-        request = self.context.get('request')
-        picture = ExtraPicture.objects.filter(supplier=obj)
-        picture_serializer = ExtraPictureSerializer(
-            picture, many=True, context={'request': request})
-        return picture_serializer.data
-
-    def get_main_category(self, obj):
-        request = self.context.get('request')
-        main_categories = MainCategory.objects.filter(supplier=obj)
-        main_categories_serializer = MainCategoriesSerializer(
-            main_categories, many=True, context={'request': request})
-        return main_categories_serializer.data

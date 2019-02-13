@@ -15,4 +15,5 @@ class Customer(models.Model):
     def __str__(self):
         return self.user.email
 
-
+    def get_name(self):
+        return self.user.first_name+' '+self.user.last_name

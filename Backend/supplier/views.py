@@ -10,7 +10,6 @@ from .serializer import *
 
 
 class SupplierRecordView(APIView):
-    permission_classes = [AllowAny]
 
     def get(self, format=None):
         supplier = Supplier.objects.filter(user__is_supplier=True)
@@ -28,7 +27,6 @@ class SupplierRecordView(APIView):
 
 
 class SupplierDetailView(APIView):
-    permission_classes = [AllowAny]
 
     def get(self, formant=None):
         supplier = Supplier.objects.filter(user__is_supplier=True)
@@ -37,24 +35,33 @@ class SupplierDetailView(APIView):
 
 
 class SupplierNearbyView(APIView):
-    permission_classes = [AllowAny]
 
     def get(self, request):
         supplier = Supplier.objects.filter(user__is_supplier=True)
-        serializers = SupplierNearbySerializer(
-                supplier, many=True, context={'request': request})
+        serializers = SupplierCardSerializers(
+            supplier, many=True, context={'request': request})
         return Response(serializers.data)
 
 
 class SupplierMenuView(APIView):
-    permission_classes = [AllowAny]
 
     def get(self, request):
-        if request.GET.get('id'):
-            user_id = request.GET['id']
-        supplier = Supplier.objects.get(user__id=user_id)
-        serializers = RestaurantDetailSerializer(
-            supplier, context={'request': request})
+        try: 
+            supplier_id = request.GET['supplier_id']
+        except:
+            return Response(status.HTTP_400_BAD_REQUEST)
+        try:
+            order_id = request.GET['order_id']
+        except:
+            order_id = None
+        supplier = Supplier.objects.get(user__id=supplier_id)
+
+        if order_id is not None:
+            serializers = RestaurantDetailSerializer(
+                supplier, context={'request': request, 'order_id': order_id})
+        else:
+            serializers = RestaurantDetailSerializer(
+                supplier, context={'request': request})
 
         # Telephone_Serializer
         return Response(serializers.data)

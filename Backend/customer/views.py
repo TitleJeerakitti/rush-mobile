@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny
 
 from .models import Customer
-from .serializer import CustomerSerializer
+from .serializer import CustomerSerializer,GetHistorySerializer
 
 
 class CustomerRecordView(APIView):
@@ -24,3 +24,11 @@ class CustomerRecordView(APIView):
             return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
         return Response(serializer.error_messages,
                         status=status.HTTP_400_BAD_REQUEST)
+
+class CustomerHistoryView(APIView):
+    permission_classes= ()
+    
+    def get(self, request):
+        serializer = GetHistorySerializer(data=request.GET)
+        if serializer.is_valid(raise_exception=ValueError):
+            return Response(serializer.get_method(validate_data=request.GET,request=request))
