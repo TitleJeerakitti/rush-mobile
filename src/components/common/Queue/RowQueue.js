@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { Card, Row, FontText } from '../../common';
-import { ORANGE } from '../colors';
+import { ORANGE } from '../config';
 
 const RowQueue = ({ amount, queue, color }) => {
     const { amountContainer, queueContainer, queueText } = styles;

@@ -50,7 +50,7 @@ export const authLogin = (username, password) => {
         })
             .then((response) => response.json())
             .then((responseData) => {
-                console.log(responseData);
+                // console.log(responseData);
                 if (responseData.role === 'customer') {
                     authLoginSuccess(dispatch, responseData);
                 } else {

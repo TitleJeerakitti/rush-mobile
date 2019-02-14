@@ -1,9 +1,14 @@
 import React from 'react';
 import { View, Image, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
-import { Actions } from 'react-native-router-flux';
-import { QueueCard, CancelConfirm, FontText } from './common';
-import { loadData } from '../actions';
+// import { Actions } from 'react-native-router-flux';
+import { QueueCard, CancelConfirm, FontText, LoadingImage } from './common';
+import { 
+    loadData, 
+    loadDataFinish,
+    getOrderId,
+} from '../actions';
+import { SERVER } from './common/config';
 
 class Queue extends React.Component {
     constructor(props) {
@@ -11,31 +16,46 @@ class Queue extends React.Component {
         this.state = {
             data: [],
             visible: false,
+            canLoad: true
         };
     }
 
     componentDidMount() {
-        this.mount = true;
-        fetch('http://localhost:3000/queue_detail', {
-            headers: {
-                'Cache-Control': 'no-cache',
-            }
-        })
-        .then(response => response.json())
-        .then(responseData => {
-            if (this.mount) {
-                this.setState({ 
+        this.mounted = true;
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (((nextProps.dataLoaded !== this.props.dataLoaded) && this.state.canLoad) 
+            || nextProps.canLoad) {
+            this.setState({ canLoad: false });
+            this.getQueueAPI();
+        }
+    }
+
+    componentWillUnmount() {
+        this.mounted = false;
+    }
+
+    async getQueueAPI() {
+        try { 
+            const response = await fetch(`${SERVER}/order/get_queue/?customer_id=${this.props.userInfo.id}`, {
+                headers: {
+                    'Cache-Control': 'no-cache',
+                    Authorization: `Token ${this.props.token}`,
+                },
+            });
+            const responseData = await response.json();
+            if (this.mounted) {
+                await this.setState({ 
                     data: responseData, 
                 });
+                this.props.loadDataFinish();
+                this.setState({ canLoad: true });
             }
-        })
-        .catch(error => console.log(error));
+        } catch (error) {
+            console.log(error);
+        }
     }
-    // componentDidMount() {
-    //     setTimeout(() => {
-    //         this.props.loadData();
-    //     }, 3000);
-    // }
 
     renderCancelConfirm() {
         return (
@@ -60,7 +80,7 @@ class Queue extends React.Component {
                             amount={queue.order_detail.total} 
                             queue={queue.queue_number} 
                             onCancelPress={() => this.setState({ visible: !this.state.visible })} 
-                            onPress={() => Actions.receipt()}
+                            onPress={() => this.props.getOrderId(queue.order_detail.order_id)}
                         />
                     );
                 }
@@ -70,18 +90,10 @@ class Queue extends React.Component {
     }
 
     render() {
-        const { containerLoading, containerEmpty, imageEmpty } = styles;
-        if (this.props.dataLoad) {
+        const { containerEmpty, imageEmpty } = styles;
+        if (!this.props.dataLoaded) {
             return (
-                <View 
-                    style={containerLoading}
-                >
-                    {/* <Text>{this.props.dataLoad}</Text> */}
-                    <Image
-                        style={{ width: '50%', height: '50%' }}
-                        source={require('../images/Tuuf.gif')}
-                    />
-                </View>
+                <LoadingImage />
             );
         }
         if (this.state.data.length === 0) {
@@ -115,27 +127,17 @@ const styles = {
         flex: 1, 
         justifyContent: 'center', 
         alignItems: 'center'
-    },
-    containerLoading: { 
-        flex: 1, 
-        backgroundColor: '#F5F5F5', 
-        justifyContent: 'center', 
-        alignItems: 'center' 
     }
 };
-//     card: {
-//         backgroundColor: '#fefefe',
-//         padding: 10,
-//         borderRadius: 15,
-//         shadowOpacity: 0.1,
-//         shadowColor: 'black',
-//         shadowOffset: { width: 10, height: 5 },
-//     }
-// };
 
-const mapStateToProps = ({ global }) => {
-    const { dataLoad } = global;
-    return { dataLoad };
+const mapStateToProps = ({ global, auth }) => {
+    const { dataLoaded } = global;
+    const { userInfo, token } = auth;
+    return { dataLoaded, userInfo, token };
 };
 
-export default connect(mapStateToProps, { loadData })(Queue);
+export default connect(mapStateToProps, { 
+    loadData, 
+    loadDataFinish,
+    getOrderId,
+})(Queue);

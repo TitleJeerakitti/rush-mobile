@@ -1,7 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { Row, FontText } from '../../common';
-import { DARK_RED, GREEN } from '../colors';
+import { DARK_RED, GREEN } from '../config';
 
 const CancelConfirmButton = ({ onCancel, onConfirm }) => {
     return (

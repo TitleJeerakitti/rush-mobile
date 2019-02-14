@@ -1,8 +1,10 @@
 import React from 'react';
-import { ScrollView, RefreshControl, } from 'react-native';
+import { ScrollView, RefreshControl, View } from 'react-native';
 import { Divider } from 'react-native-elements';
+import { connect } from 'react-redux';
 import RestaurantCard from './RestaurantCard';
-import { FilterCard, FilterItem, FilterButton } from './common';
+import { FilterCard, FilterItem, FilterButton, FontText } from './common';
+import { SERVER } from './common/config';
 
 class SearchNearby extends React.Component {
 
@@ -22,36 +24,46 @@ class SearchNearby extends React.Component {
     }
 
     componentDidMount() {
+        this.mounted = true;
         this.getRestaurantAPI();
+    }
+
+    componentWillUnmount() {
+        this.mounted = false;
     }
 
     onRefresh = () => {
         this.getRestaurantAPI();
     }
 
-    getRestaurantAPI() {
-        this.setState({ refreshing: true });
-        fetch(this.selectAPI(), {
-            headers: {
-                'Cache-Control': 'no-cache'
-            }
-        })
-            .then(response => response.json())
-            .then(responseData => {
-                this.setState({
+    async getRestaurantAPI() {
+        await this.setState({ refreshing: true });
+        try {
+            // console.log(this.props.token)
+            const response = await fetch(this.selectAPI(), {
+                headers: {
+                    'Cache-Control': 'no-cache',
+                    Authorization: `Token ${this.props.token}`,
+                }
+            });
+            const responseData = await response.json();
+            if (this.mounted) {
+                await this.setState({
                     restaurants: responseData,
                     refreshing: false
                 });
-            })
-            .catch(() => {
-                console.log('error connect!');
-            });
+                // console.log(this.state.restaurants);
+            }
+        } catch (error) {
+            console.log(error);
+            await this.setState({ refreshing: false });
+        }
     }
 
     selectAPI() {
         if (this.state.sortType === 'ระยะทาง') { 
             // return ('http://localhost:3000/restaurants?_sort=distance&_order=asc');
-            return ('http://10.66.10.222:8000/restaurant/nearby_restaurant');
+            return (`${SERVER}/restaurant/nearby_restaurant/`);
         } else if (this.state.sortType === 'ความนิยม') {
             return ('http://localhost:3000/restaurants?_sort=rating&_order=desc');
         }
@@ -60,14 +72,14 @@ class SearchNearby extends React.Component {
     }
 
     renderRestaurant() {
-        return this.state.restaurants.map(restaurant =>
-            <RestaurantCard 
-                key={restaurant.id} 
-                data={restaurant}
-                // onCardPress={console.log(restaurant.name, ' was clicked!')}
-                // onRatePress={console.log(restaurant.name, '\'s rate was clicked!')}
-            />
-        );
+        if (this.state.restaurants.length > 0) {
+            return this.state.restaurants.map(restaurant =>
+                <RestaurantCard 
+                    key={restaurant.id} 
+                    data={restaurant}
+                />
+            );
+        }
     }
 
     renderItem() {
@@ -94,24 +106,31 @@ class SearchNearby extends React.Component {
     }
 
     render() {
-        const { container, space } = styles;
+        const { container, space, containerNone } = styles;
+        if (this.state.restaurants.length > 0) {
+            return (
+                <ScrollView
+                    style={container}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={this.state.refreshing}
+                            onRefresh={this.onRefresh}
+                        />
+                    }
+                >
+                    <FilterButton onPress={() => this.setState({ visible: true })} >
+                        {this.state.sortType}
+                    </FilterButton>
+                    {this.renderRestaurant()}
+                    {this.renderFilter()}
+                    <Divider style={space} />
+                </ScrollView>
+            );
+        }
         return (
-            <ScrollView
-                style={container}
-                refreshControl={
-                    <RefreshControl
-                        refreshing={this.state.refreshing}
-                        onRefresh={this.onRefresh}
-                    />
-                }
-            >
-                <FilterButton onPress={() => this.setState({ visible: true })} >
-                    {this.state.sortType}
-                </FilterButton>
-                {this.renderRestaurant()}
-                {this.renderFilter()}
-                <Divider style={space} />
-            </ScrollView>
+            <View style={containerNone}>
+                <FontText>ไม่มีร้านอาหารบริเวณใกล้เคียง</FontText>
+            </View>
         );
     }
 }
@@ -120,10 +139,21 @@ const styles = {
     container: {
         flex: 1,
     },
+    containerNone: {
+        flex: 1, 
+        justifyContent: 'center', 
+        alignItems: 'center'
+    },
     space: {
         height: 10,
         backgroundColor: 'transparent',
     }
 };
 
-export default SearchNearby;
+const mapStateToProps = ({ auth }) => {
+    const { token } = auth;
+    // console.log(token)
+    return { token }; 
+};
+
+export default connect(mapStateToProps)(SearchNearby);

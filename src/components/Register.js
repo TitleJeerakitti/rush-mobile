@@ -15,7 +15,7 @@ import {
     AuthBg, 
     AuthCard 
 } from './common';
-import { LIGHT_RED } from './common/colors';
+import { LIGHT_RED } from './common/config';
 import {
     authNameChange,
     authPhoneChange,

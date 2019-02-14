@@ -2,7 +2,7 @@ import React from 'react';
 import {
     View,
 } from 'react-native';
-import { YELLOW } from './colors';
+import { YELLOW } from './config';
 
 const AuthCard = ({ children }) => {
     const { cardStyle } = styles;

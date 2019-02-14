@@ -14,7 +14,7 @@ import {
     OrderConfirm,
 } from './common';
 import { loadData } from '../actions';
-import { GREEN } from './common/colors';
+import { GREEN, SERVER } from './common/config';
 import RestaurantCard from './RestaurantCard';
 
 class MainRemain extends React.Component {
@@ -45,26 +45,34 @@ class MainRemain extends React.Component {
     }
 
     getMenus(menuData) {
-        const menuList = this.makeMenuList(menuData);
-        this.setState({ menus: menuList });
+        console.log(menuData)
+        if (menuData !== undefined) {
+            const menuList = this.makeMenuList(menuData);
+            this.setState({ menus: menuList });
+        } else {
+            this.setState({ menus: [] });
+        }
     }
 
     makeMenuList(menuData) {
-        return menuData.main_categories.reduce((list, mainCategory, mainIndex) => {
-            mainCategory.sub_categories.forEach((subCategory, subIndex) => {
-                subCategory.menus.forEach((menu, index) => {
-                    if (menu.quantity > 0) {
-                        list.push({ 
-                            ...menu,
-                            mainIndex,
-                            subIndex,
-                            index,
-                        });
-                    }
+        if (menuData.main_categories !== undefined) {
+            return menuData.main_categories.reduce((list, mainCategory, mainIndex) => {
+                mainCategory.sub_categories.forEach((subCategory, subIndex) => {
+                    subCategory.menus.forEach((menu, index) => {
+                        if (menu.quantity > 0) {
+                            list.push({ 
+                                ...menu,
+                                mainIndex,
+                                subIndex,
+                                index,
+                            });
+                        }
+                    });
                 });
-            });
-            return list;
-        }, []);
+                return list;
+            }, []);
+        }
+        return [];
     }
 
     makeMenuSentAPI(menuData) {
@@ -83,26 +91,34 @@ class MainRemain extends React.Component {
         }
     }
 
-    placeOrder() {
-        this.setState({ visible: false, menus: [] });
-        fetch('http://10.66.10.222:8000/order/create_new_order/', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                customer_id: this.props.userInfo.id,
-                supplier_id: this.props.restaurantId,
-                menus: this.makeMenuSentAPI(this.state.menus),
-                total: this.computeSubtotal(),
-                special_request: '',
-                discount: 0,
-            }),
-        })
-            .then(response => response.json())
-            .then(responseData => console.log(responseData))
-            .catch(error => console.log(error));
+    async placeOrder() {
+        try {
+            const response = await fetch(`${SERVER}/order/create_new_order/`, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: `Token ${this.props.token}`,
+                },
+                body: JSON.stringify({
+                    customer_id: this.props.userInfo.id,
+                    supplier_id: this.props.restaurantId,
+                    menus: this.makeMenuSentAPI(this.state.menus),
+                    total: this.computeSubtotal(),
+                    special_request: '',
+                    discount: 0,
+                }),
+            });
+            const { success } = await response.json();
+            await this.setState({ visible: false, menus: [] });
+            if (success === 'Successful Create Order') {
+                this.props.loadData();
+                Actions.popTo('home_homepage');
+                Actions.queue();
+            }
+        } catch (error) {
+            console.log(error);
+        }
         // this.props.loadData();
         // Actions.popTo('home_homepage');
         // Actions.queue();
@@ -201,8 +217,8 @@ const styles = {
 
 const mapStateToProps = ({ restaurant, auth }) => {
     const { data, menuData, restaurantId } = restaurant;
-    const { userInfo } = auth;
-    return { data, menuData, userInfo, restaurantId }; 
+    const { userInfo, token } = auth;
+    return { data, menuData, userInfo, restaurantId, token }; 
 };
 
 export default connect(mapStateToProps, { loadData })(MainRemain);

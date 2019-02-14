@@ -1,5 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
+import { connect } from 'react-redux';
 import StarRating from 'react-native-star-rating';
 import { Actions } from 'react-native-router-flux';
 import { 
@@ -13,22 +14,27 @@ import {
     TwoButton,
     OneButton,
 } from '../common';
-import { YELLOW, GRAY, GREEN, DARK_RED } from './colors';
+import { YELLOW, GRAY, GREEN, DARK_RED } from './config';
+import { getOrderAgain } from '../../actions';
 
-class HistoryCard extends React.Component {
+class History extends React.Component {
+    orderAgain() {
+        const { order_detail, supplier_detail } = this.props.data;
+        this.props.getOrderAgain(supplier_detail, order_detail.order_id);
+        Actions.jump('homepage');
+        Actions.reset('home_homepage');
+        Actions.push('restaurant_menu');
+    }
+
     renderButton() {
-        if (this.props.data.status === 5) {
+        const { order_detail } = this.props.data;
+        if (order_detail.status === 5) {
             return (
                 <TwoButton 
                     onFirstPress={() => console.log('first')}
                     firstText='ให้คะแนนรีวิว'
                     firstColor={GRAY}
-                    onSecondPress={() => {
-                        Actions.jump('homepage');
-                        Actions.reset('home_homepage');
-                        Actions.push('restaurant_menu');
-                        Actions.push('menu_remaining');
-                    }}
+                    onSecondPress={() => this.orderAgain()}
                     secondText='สั่งอีกครั้ง'
                     secondColor={YELLOW}
                 />
@@ -36,7 +42,7 @@ class HistoryCard extends React.Component {
         }
         return (
             <OneButton 
-                onPress={() => console.log('press')}
+                onPress={() => this.orderAgain()}
                 text='สั่งอีกครั้ง'
                 color={YELLOW}
             />
@@ -44,34 +50,35 @@ class HistoryCard extends React.Component {
     }
 
     renderStatus() {
-        if (this.props.data.status === 5) {
-            return <RowQueue queue='SUCCESS' amount={240} color={GREEN} />;
+        const { status, total } = this.props.data.order_detail;
+        if (status === 5) {
+            return <RowQueue queue='SUCCESS' amount={total} color={GREEN} />;
         }
-        return <RowQueue queue='CANCEL' amount={240} color={DARK_RED} />;
+        return <RowQueue queue='CANCEL' amount={total} color={DARK_RED} />;
     }
 
     render() {
         const { data } = this.props;
-        const { image, name, rating, reviewCount, orderId, timestamp, } = data;
+        const { order_detail, supplier_detail } = data;
         return (
             <Card>
                 <CardSection>
                     <View style={styles.card}>
                         <Row>
-                            <ImageRound source={{ uri: image }} />
+                            <ImageRound source={{ uri: supplier_detail.image }} />
                             <View style={{ flex: 1 }}>
                                 <FontText 
                                     size={26}
                                     style={{ lineHeight: 30 }}
                                     numberOfLines={1}
                                 >
-                                    {name}
+                                    {supplier_detail.name}
                                 </FontText>
                                 <Row>
                                     <StarRating
                                         disabled
                                         maxStars={5}
-                                        rating={rating}
+                                        rating={supplier_detail.rating}
                                         starSize={14}
                                         fullStarColor={YELLOW}
                                         emptyStarColor={YELLOW}
@@ -80,14 +87,14 @@ class HistoryCard extends React.Component {
                                         size={16}
                                         style={{ marginLeft: 10, flex: 1 }}
                                     >
-                                        {reviewCount} รีวิว
+                                        {supplier_detail.reviewCount} รีวิว
                                     </FontText>
                                     <FontText size={16}>
-                                        Order ID: {orderId}
+                                        Order ID: {order_detail.order_id}
                                     </FontText>
                                 </Row>
                                 <FontText size={16} style={{ alignSelf: 'flex-end' }}>
-                                    {timestamp}
+                                    {order_detail.timestamp}
                                 </FontText>
                             </View>
                         </Row>
@@ -116,4 +123,5 @@ const styles = {
     }
 };
 
+const HistoryCard = connect(null, { getOrderAgain })(History);
 export { HistoryCard };

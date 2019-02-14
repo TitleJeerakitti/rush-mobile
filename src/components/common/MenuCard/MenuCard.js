@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import update from 'immutability-helper';
 import { Card, CardSection, ImageRound, FontText, QuantityButton } from '../../common';
 import { editMenu } from '../../../actions/';
-import { ORANGE } from '../colors';
+import { ORANGE } from '../config';
 
 class MenuContainer extends React.Component {
 

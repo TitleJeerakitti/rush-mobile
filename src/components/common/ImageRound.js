@@ -1,7 +1,7 @@
 import React from 'react';
 import { Image } from 'react-native';
 
-const ImageRound = ({ source, small }) => {
+const ImageRound = ({ source, small, style }) => {
     const { container } = styles;
 
     return (
@@ -10,6 +10,7 @@ const ImageRound = ({ source, small }) => {
                 borderRadius: small ? 30 : 15,
                 width: small ? 60 : 80,
                 height: small ? 60 : 80,
+                ...style
             }]}
             source={source}
         />

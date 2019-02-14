@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { Row, FontText } from '../../common';
-import { ORANGE } from '../colors';
+import { ORANGE } from '../config';
 
 const Subtotal = ({ price, time, onPress }) => {
     const { 

@@ -16,7 +16,7 @@ import {
     AuthBg,
     AuthCard,
 } from './common';
-import { LIGHT_RED } from './common/colors';
+import { LIGHT_RED } from './common/config';
 
 class ForgetPassword extends React.Component {
     onEmailChange(text) {
