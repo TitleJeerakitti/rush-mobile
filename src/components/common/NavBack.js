@@ -75,7 +75,7 @@ class NavBackComponent extends React.Component {
             <NavContainer>
                 <NavCard>
                     <TouchableWithoutFeedback 
-                        onPress={() => Actions.pop()}
+                        onPress={this.props.onLeft}
                     >
                         <Icon 
                             name='chevron-left'

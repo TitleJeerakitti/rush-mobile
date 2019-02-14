@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Image, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 // import { Actions } from 'react-native-router-flux';
-import { QueueCard, CancelConfirm, FontText } from './common';
+import { QueueCard, CancelConfirm, FontText, LoadingImage } from './common';
 import { 
     loadData, 
     loadDataFinish,
@@ -90,17 +90,10 @@ class Queue extends React.Component {
     }
 
     render() {
-        const { containerLoading, containerEmpty, imageEmpty } = styles;
+        const { containerEmpty, imageEmpty } = styles;
         if (!this.props.dataLoaded) {
             return (
-                <View 
-                    style={containerLoading}
-                >
-                    <Image
-                        style={{ width: '50%', height: '50%' }}
-                        source={require('../images/Tuuf.gif')}
-                    />
-                </View>
+                <LoadingImage />
             );
         }
         if (this.state.data.length === 0) {
@@ -134,12 +127,6 @@ const styles = {
         flex: 1, 
         justifyContent: 'center', 
         alignItems: 'center'
-    },
-    containerLoading: { 
-        flex: 1, 
-        backgroundColor: '#F5F5F5', 
-        justifyContent: 'center', 
-        alignItems: 'center' 
     }
 };
 

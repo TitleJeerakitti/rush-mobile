@@ -2,7 +2,7 @@ import React from 'react';
 import { View, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import RestaurantCard from './RestaurantCard';
-import { TextLineFont, MenuCard, Card, CardSection, FontText, Row } from './common';
+import { TextLineFont, MenuCard, Card, CardSection, FontText, Row, LoadingImage } from './common';
 import { SERVER } from './common/config';
 
 class Receipt extends React.Component {
@@ -52,18 +52,20 @@ class Receipt extends React.Component {
     }
 
     render() {
-        return (
-            <View style={{ flex: 1 }}>
-                <RestaurantCard
-                    data={this.state.data}
-                    disabled
-                />
-                <TextLineFont title='รายการอาหารที่สั่ง' />
-                <ScrollView style={{ flex: 1 }}>
-                    {this.renderMenu()}
-                    <View style={{ marginTop: 10 }} />
+        if (this.state.menus.length > 0) {
+            return (
+                <View style={{ flex: 1 }}>
+                    <RestaurantCard
+                        data={this.state.data}
+                        disabled
+                    />
+                    <TextLineFont title='รายการอาหารที่สั่ง' />
+                    <ScrollView style={{ flex: 1 }}>
+                        {this.renderMenu()}
+                        <View style={{ marginTop: 10 }} />
+                    </ScrollView>
                     <Card style={styles.line} />
-                    <Card>
+                    <Card style={{ marginBottom: 10 }}>
                         <CardSection>
                             <Row>
                                 <FontText style={{ flex: 1 }} size={24}>ราคาสุทธิ</FontText>
@@ -71,9 +73,10 @@ class Receipt extends React.Component {
                             </Row>
                         </CardSection>
                     </Card>
-                </ScrollView>
-            </View>
-        );
+                </View>
+            );
+        }
+        return <LoadingImage />;
     }
 }
 

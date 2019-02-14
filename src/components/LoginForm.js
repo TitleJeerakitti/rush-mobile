@@ -19,7 +19,7 @@ import {
     Spinner,
     AuthBg,
 } from './common';
-import { YELLOW, LIGHT_RED } from './common/config';
+import { YELLOW, LIGHT_RED, SERVER, CLIENT_ID, CLIENT_SECRET } from './common/config';
 import { 
     authEmailChange,
     authPasswordChange,
@@ -77,6 +77,25 @@ class LoginForm extends React.Component {
         this.props.authLogin(email, password);
     }
 
+    async getAccessTokenFacebook(token) {
+        const response = await fetch(`${SERVER}/customer/facebook_customer`, {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                client_id: CLIENT_ID,
+                client_secret: CLIENT_SECRET,
+                grant_type: 'convert_token',
+                backend: 'facebook',
+                token,
+            }),
+        });
+        const responseData = response.json();
+        console.log(responseData);
+    }
+
     async logInFB() {
         try {
           const {
@@ -93,11 +112,12 @@ class LoginForm extends React.Component {
             const response = await fetch(`https://graph.facebook.com/me?access_token=${token}&fields=id,name,email,birthday,gender,picture.type(large)`);
             const responseJson = await response.json();
             // console.log(response);
-            // console.log(token);
-            console.log(responseJson);
+            console.log(token);
+            // console.log(responseJson);
             // console.log('success with ', `Hi ${responseJson.name}!`);
-            this.props.authFacebookLogin(token, responseJson);
+            /* this.props.authFacebookLogin(token, responseJson); */
             // Actions.app();
+            this.getAccessTokenFacebook(token);
           } else {
             // type === 'cancel'
           }
@@ -105,7 +125,7 @@ class LoginForm extends React.Component {
           alert(`Facebook Login Error: ${message}`);
         }
     }
-
+    
     renderLoginButton() {
         const { loading, error } = this.props;
         const { maxWidth, errorText, marginTop10 } = styles;

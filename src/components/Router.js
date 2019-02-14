@@ -13,7 +13,7 @@ import RestaurantMenu from './RestaurantMenu';
 import MenuRemain from './MenuRemain';
 import Queue from './Queue';
 import { NavHamberger, IconTab, NavBack } from './common';
-import { fontLoader } from '../actions';
+import { fontLoader, resetRestaurant } from '../actions';
 import Receipt from './Receipt';
 import Review from './Review';
 import History from './History';
@@ -48,7 +48,7 @@ class RouterComponent extends React.Component {
                         titleStyle={{ color: 'white' }}
                         navBarButtonColor='white'
                         navigationBarStyle={{ backgroundColor: 'black', borderBottomWidth: 0 }}
-                        // initial
+                        initial
                     >
                         <Scene key='login' component={LoginForm} hideNavBar initial />
                         <Scene key='register' component={Register} title='สมัครสมาชิก' onLeft />
@@ -56,9 +56,15 @@ class RouterComponent extends React.Component {
                     </Scene>
 
                     <Scene key='profile' 
-                    initial
+                    // initial
                     >
-                        <Scene key='edit_profile' component={EditProfile} navBar={NavBack} title='แก้ไขโปรไฟล์' />
+                        <Scene 
+                            key='edit_profile' 
+                            component={EditProfile} 
+                            navBar={NavBack} 
+                            title='แก้ไขโปรไฟล์' 
+                            onLeft={() => Actions.pop()}
+                        />
                     </Scene>
 
                     <Scene key='review'>
@@ -67,6 +73,7 @@ class RouterComponent extends React.Component {
                             component={Review} 
                             navBar={NavBack} 
                             title='รีวิวร้านอาหาร'
+                            onLeft={() => Actions.pop()}
                             disabled 
                         />
                     </Scene>
@@ -88,7 +95,7 @@ class RouterComponent extends React.Component {
                                         component={SearchByName} 
                                         title='ค้นหา' 
                                         navBar={NavBack}
-                                        // onRight={() => Actions.pop()}
+                                        onLeft={() => Actions.pop()}
                                         // initial
                                     />
                                     <Scene 
@@ -96,22 +103,23 @@ class RouterComponent extends React.Component {
                                         component={SearchNearby}
                                         title='ค้นหาร้านอาหารใกล้คุณ'
                                         navBar={NavBack}
-                                        // onRight={() => console.log('click')}
+                                        onLeft={() => Actions.pop()}
                                         // initial
                                     />
                                     <Scene 
                                         key='restaurant_menu'
                                         component={RestaurantMenu}
                                         reduxTitle
-                                        onRight={() => Actions.menu_remaining()}
-                                        // title={this.props.currentRestaurant}
                                         navBar={NavBack}
+                                        onRight={() => Actions.menu_remaining()}
+                                        onLeft={() => this.props.resetRestaurant()}
                                     />
                                     <Scene 
                                         key='menu_remaining'
                                         component={MenuRemain}
                                         navBar={NavBack}
                                         title='รายการอาหารของคุณ'
+                                        onLeft={() => Actions.pop()}
                                     />
                                 </Scene>
                                 <Scene key='history' icon={IconTab} iconName='history'>
@@ -120,6 +128,7 @@ class RouterComponent extends React.Component {
                                         component={History} 
                                         title='H I S T O R Y' 
                                         navBar={NavHamberger}
+                                        onEnter={() => Actions.refresh({ canLoad: true })}
                                         initial
                                     />
                                 </Scene>
@@ -137,6 +146,7 @@ class RouterComponent extends React.Component {
                                         component={Receipt} 
                                         title='รายการอาหารของคุณ' 
                                         navBar={NavBack}
+                                        onLeft={() => Actions.pop()}
                                     />
                                 </Scene>
                                 <Scene key='sale' icon={IconTab} iconName='sale'>
@@ -168,4 +178,5 @@ const styles = {
 
 export default connect(null, {
     fontLoader,
+    resetRestaurant,
 })(RouterComponent);

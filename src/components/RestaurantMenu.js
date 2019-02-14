@@ -10,6 +10,7 @@ import {
     MainCategory,
     MenuList,
     MainCategoryItem,
+    LoadingImage,
 } from './common';
 import { restaurantGetMenu, currentCategoryChange } from '../actions';
 import { SERVER } from './common/config';
@@ -36,7 +37,7 @@ class RestaurantMenu extends React.Component {
 
     async getRestaurantMenu() {
         try {
-            const response = await fetch(`${SERVER}/restaurant/restaurant_detail/?id=${this.props.restaurantId}`, {
+            const response = await fetch(this.getRestaurantAPI(), {
                 headers: {
                     'Cache-Control': 'no-cache',
                     Authorization: `Token ${this.props.token}`,
@@ -47,6 +48,13 @@ class RestaurantMenu extends React.Component {
         } catch (error) {
             console.log(error);
         }
+    }
+
+    getRestaurantAPI() {
+        if (this.props.orderId !== '') {
+            return `${SERVER}/restaurant/restaurant_detail/?supplier_id=${this.props.restaurantId}&order_id=${this.props.orderId}`;
+        }
+        return `${SERVER}/restaurant/restaurant_detail/?supplier_id=${this.props.restaurantId}`;
     }
 
     renderItem() {
@@ -102,30 +110,45 @@ class RestaurantMenu extends React.Component {
         );
     }
 
-    render() {
-        return (
-            <ScrollView style={{ flex: 1 }}>
+    renderSlickItem() {
+        const { extra_pictures } = this.props.menuData;
+        if (extra_pictures !== undefined) {
+            return (
                 <Slick>
-                    <SlickItem source={require('../images/promotion_mockup.png')} />
-                    <SlickItem source={require('../images/promotion_2.png')} />
+                    { 
+                        extra_pictures.map((item, index) => 
+                        <SlickItem key={index} source={{ uri: item.image }} />) 
+                    }
                 </Slick>
-                <FilterButton onPress={() => this.setState({ visible: true })} >
-                    {this.state.sortType}
-                </FilterButton>
-                <MainCategory>
-                    {this.renderMainCategoryItem()}
-                </MainCategory>
-                {this.renderMenuList()}
-                {this.renderFilter()}
-            </ScrollView>
-        );
+            );
+        }
+        return null;
+    }
+
+    render() {
+        if (this.props.menuData.main_categories !== undefined) {
+            return (
+                <ScrollView style={{ flex: 1 }}>
+                    {this.renderSlickItem()}
+                    <FilterButton onPress={() => this.setState({ visible: true })} >
+                        {this.state.sortType}
+                    </FilterButton>
+                    <MainCategory>
+                        {this.renderMainCategoryItem()}
+                    </MainCategory>
+                    {this.renderMenuList()}
+                    {this.renderFilter()}
+                </ScrollView>
+            );
+        }
+        return <LoadingImage />;
     }
 }
 
 const mapStateToProps = ({ restaurant, auth }) => {
-    const { menuData, currentCategory, restaurantId } = restaurant;
+    const { menuData, currentCategory, restaurantId, orderId } = restaurant;
     const { token } = auth;
-    return { menuData, currentCategory, restaurantId, token };
+    return { menuData, currentCategory, restaurantId, token, orderId };
 };
 
 export default connect(mapStateToProps, { 

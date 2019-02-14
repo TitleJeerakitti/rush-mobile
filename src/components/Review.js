@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { getBottomSpace } from 'react-native-iphone-x-helper';
 import { TextLineFont, FontText, ReviewCard } from './common';
 import RestaurantCard from './RestaurantCard';
+import { SERVER } from './common/config';
 
 class ReviewPage extends React.Component {
     constructor(props) {
@@ -14,22 +15,31 @@ class ReviewPage extends React.Component {
         };
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         // fetch('http://10.66.10.222:8000/testing/datetime')
-        fetch(`/review/get_review/?customer_id=$`, {
-            headers: {
-                'Cache-Control': 'no-cache',
-                Authorization: `Token ${this.props.token}`,
-            }
-        })
-            .then(response => response.json())
-            .then(responseData => {
-                this.setState({ 
+        this.mounted = true;
+        const { userInfo, supplier_id } = this.props;
+        try {
+            const response = await fetch(`${SERVER}/review/get_review/?customer_id=${userInfo.id}&supplier_id=${supplier_id}`, {
+                headers: {
+                    'Cache-Control': 'no-cache',
+                    Authorization: `Token ${this.props.token}`,
+                }
+            });
+            const responseData = await response.json();
+            if (this.mounted) {
+                await this.setState({
                     reviewData: responseData.reviews,
                     canReview: responseData.can_review,
                 });
-            })
-            .catch(error => console.log(error));
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    componentWillUnmount() {
+        this.mounted = false;
     }
 
     renderReview() {

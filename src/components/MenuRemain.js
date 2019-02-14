@@ -45,26 +45,34 @@ class MainRemain extends React.Component {
     }
 
     getMenus(menuData) {
-        const menuList = this.makeMenuList(menuData);
-        this.setState({ menus: menuList });
+        console.log(menuData)
+        if (menuData !== undefined) {
+            const menuList = this.makeMenuList(menuData);
+            this.setState({ menus: menuList });
+        } else {
+            this.setState({ menus: [] });
+        }
     }
 
     makeMenuList(menuData) {
-        return menuData.main_categories.reduce((list, mainCategory, mainIndex) => {
-            mainCategory.sub_categories.forEach((subCategory, subIndex) => {
-                subCategory.menus.forEach((menu, index) => {
-                    if (menu.quantity > 0) {
-                        list.push({ 
-                            ...menu,
-                            mainIndex,
-                            subIndex,
-                            index,
-                        });
-                    }
+        if (menuData.main_categories !== undefined) {
+            return menuData.main_categories.reduce((list, mainCategory, mainIndex) => {
+                mainCategory.sub_categories.forEach((subCategory, subIndex) => {
+                    subCategory.menus.forEach((menu, index) => {
+                        if (menu.quantity > 0) {
+                            list.push({ 
+                                ...menu,
+                                mainIndex,
+                                subIndex,
+                                index,
+                            });
+                        }
+                    });
                 });
-            });
-            return list;
-        }, []);
+                return list;
+            }, []);
+        }
+        return [];
     }
 
     makeMenuSentAPI(menuData) {
