@@ -10,7 +10,7 @@ from .models import Queue, Order
 # Create your views here.
 
 
-class CreateOrderAPI(APIView):
+class CreateOrderAPIView(APIView):
 
     def post(self, request):
         serializer = CreateOrderSerializer(data=request.data)
@@ -20,21 +20,20 @@ class CreateOrderAPI(APIView):
         return Response({'error':'Unauthorized access'},status=status.HTTP_200_OK)
 
 
-class QueueAPI(APIView):
+class QueueAPIView(APIView):
 
     def get(self, request):
         if request.GET.get('customer_id'):
             customer_id = request.GET.get('customer_id')
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        queue = Queue.objects.filter(
-            order__customer__user__id=customer_id, status=1)
+        queue = Queue.objects.filter(order__customer__user__id=customer_id, status=1).order_by('-timestamp')
         serializer = QueueDetailSerializer(
             queue, many=True, context={'request': request})
         return Response(serializer.data)
 
 
-class OrderAPI(APIView):
+class OrderAPIView(APIView):
 
     def get(self, request):
         if request.GET.get('order_id'):

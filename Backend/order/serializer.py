@@ -31,7 +31,7 @@ class CreateOrderSerializer(serializers.Serializer):
 
 
 class OrderDetailSerializer(serializers.ModelSerializer):
-    order_id = serializers.IntegerField(source='id')
+    order_id = serializers.SerializerMethodField('get_order_id_format')
     timestamp = serializers.SerializerMethodField('get_date_timestamp')
 
     class Meta:
@@ -40,6 +40,9 @@ class OrderDetailSerializer(serializers.ModelSerializer):
 
     def get_date_timestamp(self, obj):
         return obj.get_timestamp()
+
+    def get_order_id_format(self, obj):
+        return obj.get_order_id()
 
 
 class QueueDetailSerializer(serializers.ModelSerializer):

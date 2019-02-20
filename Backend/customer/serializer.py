@@ -1,3 +1,4 @@
+import os
 from rest_framework import serializers
 from rest_framework import status
 from rest_framework.response import Response
@@ -20,9 +21,10 @@ class CustomerSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user_data = validated_data.pop('user')
         user = User.objects.create_user(**user_data)
+        user.is_customer = True
+        user.save()
         customer = Customer.objects.create(user=user, **validated_data)
         return Response(status=status.HTTP_200_OK)
-
 
 class UserSerializer(serializers.ModelSerializer):
 
@@ -39,7 +41,7 @@ class HomeCustomerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Customer
-        fields = ('id', 'name', 'email', 'birthday', 'picture', 'tel_number')
+        fields = ('id', 'name', 'email', 'birthday', 'picture', 'tel_number',)
 
     def get_user_name(self, obj):
         return obj.user.first_name+' '+obj.user.last_name
@@ -74,7 +76,9 @@ class GetHistorySerializer(serializers.Serializer):
 
     def get_method(self, validate_data, request):
         order = Order.objects.filter(
-            customer__user__id=validate_data['customer_id'])
+            customer__user__id=validate_data['customer_id'], status=5) | Order.objects.filter(
+            customer__user__id=validate_data['customer_id'], status=4)
+        order = order.order_by('-timestamp')
         serializers = HistorydetailSerializer(
             order, many=True, context={'request': request})
         return {'histories': serializers.data}

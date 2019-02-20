@@ -1,40 +1,45 @@
-from django.shortcuts import render
+from django.shortcuts import render,get_object_or_404
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
+from rest_framework.exceptions import ParseError
 
 from .models import *
 from .serializer import *
 
 
-class SupplierRecordView(APIView):
+# class SupplierRecordView(APIView):
 
-    def get(self, format=None):
-        supplier = Supplier.objects.filter(user__is_supplier=True)
-        serializer = SupplierSerializer(
-            supplier, many=True, context={'request': request})
-        return Response(serializer.data)
+#     def get(self, format=None):
+#         supplier = Supplier.objects.filter(user__is_supplier=True)
+#         serializer = SupplierSerializer(
+#             supplier, many=True, context={'request': request})
+#         return Response(serializer.data)
 
-    def post(self, request):
-        serializer = SupplierSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=ValueError):
-            serializer.create(validated_data=request.data)
-            return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
-        return Response(serializer.error_messages,
-                        status=status.HTTP_400_BAD_REQUEST)
-
-
-class SupplierDetailView(APIView):
-
-    def get(self, formant=None):
-        supplier = Supplier.objects.filter(user__is_supplier=True)
-        serializers = SupplierSerializer(supplier, many=True)
-        return Response(serializers.data)
+#     def post(self, request):
+#         serializer = SupplierSerializer(data=request.data)
+#         if serializer.is_valid(raise_exception=ValueError):
+#             serializer.create(validated_data=request.data)
+#             return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.error_messages,
+#                         status=status.HTTP_400_BAD_REQUEST)
 
 
-class SupplierNearbyView(APIView):
+# class SupplierDetailView(APIView):
+
+#     def get(self, formant=None):
+#         supplier = Supplier.objects.filter(user__is_supplier=True)
+#         serializers = SupplierSerializer(supplier, many=True)
+#         return Response(serializers.data)
+# def sort_supplier(supplier,sort_by):
+
+#         if sort_by == 'popular':
+#             return supplier
+
+
+class SupplierDetailAPIView(APIView):
 
     def get(self, request):
         supplier = Supplier.objects.filter(user__is_supplier=True)
@@ -43,19 +48,18 @@ class SupplierNearbyView(APIView):
         return Response(serializers.data)
 
 
-class SupplierMenuView(APIView):
+class SupplierMenuAPIView(APIView):
 
     def get(self, request):
         try: 
             supplier_id = request.GET['supplier_id']
-        except:
-            return Response(status.HTTP_400_BAD_REQUEST)
+        except KeyError:
+            raise ParseError('Request has no supplier_id')
         try:
             order_id = request.GET['order_id']
         except:
             order_id = None
-        supplier = Supplier.objects.get(user__id=supplier_id)
-
+        supplier = get_object_or_404(Supplier,user__id=supplier_id)
         if order_id is not None:
             serializers = RestaurantDetailSerializer(
                 supplier, context={'request': request, 'order_id': order_id})
@@ -65,3 +69,9 @@ class SupplierMenuView(APIView):
 
         # Telephone_Serializer
         return Response(serializers.data)
+
+
+# class SupplierTypeAPIView(APIView):
+    
+#     def get(self, request):
+        

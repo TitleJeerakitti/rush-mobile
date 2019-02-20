@@ -1,3 +1,5 @@
+from django.shortcuts import get_object_or_404
+
 from rest_framework import serializers
 
 from .models import *
@@ -63,7 +65,7 @@ class MenusSerializers(serializers.ModelSerializer):
 
     def get_amount_history(self, obj):
         if self.context.get('order_id'):
-            order = Order.objects.get(id=self.context.get('order_id'))
+            order = get_object_or_404(Order,id=self.context.get('order_id'))
             order_menu_obj = OrderMenu.objects.filter(order=order)
             for order_menu in order_menu_obj:
                 if obj == order_menu.menu:

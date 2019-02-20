@@ -1,73 +1,102 @@
-from rest_framework import parsers, renderers
+from django.contrib.auth.forms import PasswordResetForm
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.exceptions import ParseError
 from rest_framework import status
-from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework.authtoken.models import Token
-from rest_framework.authtoken.serializers import AuthTokenSerializer
-from rest_framework.compat import coreapi, coreschema
-from rest_framework.schemas import ManualSchema
+from rest_framework_social_oauth2.views import TokenView, RevokeTokenView, ConvertTokenView
+from oauth2_provider.models import AccessToken
 
 from .models import User
 from customer.models import Customer
-from customer.serializer import HomeCustomerSerializer
+from customer.serializer import HomeCustomerSerializer, CustomerSerializer
 
-class LoginUserAPIView(APIView):
-    throttle_classes = ()
-    permission_classes = ()
-    parser_classes = (parsers.FormParser, parsers.MultiPartParser, parsers.JSONParser,)
-    renderer_classes = (renderers.JSONRenderer,)
-    serializer_class = AuthTokenSerializer
-    if coreapi is not None and coreschema is not None:
-        schema = ManualSchema(
-            fields=[
-                coreapi.Field(
-                    name="username",
-                    required=True,
-                    location='form',
-                    schema=coreschema.String(
-                        title="Username",
-                        description="Valid username for authentication",
-                    ),
-                ),
-                coreapi.Field(
-                    name="password",
-                    required=True,
-                    location='form',
-                    schema=coreschema.String(
-                        title="Password",
-                        description="Valid password for authentication",
-                    ),
-                ),
-            ],
-            encoding="application/json",
-        )
+
+class LoginUserTokenView(TokenView):
 
     def post(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data,
-                                           context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
-        user_model = User.objects.get(username=user.username)
-        user_status = 'admin'
-        if user_model.is_customer :
-            user_status = 'customer'
-            customer = Customer.objects.get(user=user_model)
-            serializers = HomeCustomerSerializer(customer,context={'request':request})  
-            token, created = Token.objects.get_or_create(user=user)
-            return Response({'user_info': serializers.data,'token': token.key,'role':user_status})
-        elif user_model.is_supplier :
-            user_status = 'supplier'
-            token, created = Token.objects.get_or_create(user=user)
-            return Response({'user_info': None,'token': token.key,'role':user_status})
-        return Response({'user_info': None,'token': None,'role':user_status})
+        response = super(LoginUserTokenView, self).post(request, *args, **kwargs)
+        try:
+            user = AccessToken.objects.get(
+                token=response.data['access_token']).user
+            user_status = 'admin'
+            serializers = None
+            if user.is_customer == True:
+                user_status = 'customer'
+                serializers = HomeCustomerSerializer(
+                    user.get_customer(), context={'request': request}).data
+            elif user.is_supplier == True:
+                user_status = 'supplier'
+            return Response({
+                'user_info': serializers,
+                'token': response.data,
+                'role': user_status
+            }, status=status.HTTP_200_OK)
+        except:
+            return Response(response.data)
 
-class LogoutUserAPIView(APIView):
-    queryset = User.objects.all()
-    
-    def get(self, request):
-        # simply delete the token to force a login
-        request.user.auth_token.delete()
-        return Response({"success": ("Successfully logged out.")},
-                    status=status.HTTP_200_OK)
 
+class LogoutUserRevokeTokenView(RevokeTokenView):
+
+    def post(self, request, *args, **kwargs):
+        response = super(LogoutUserRevokeTokenView, self).post(
+            request, *args, **kwargs)
+        return Response(response.data)
+
+
+class LoginFacebookConvertTokenView(ConvertTokenView):
+
+    def post(self, request, *args, **kwargs):
+        response = super(LoginFacebookConvertTokenView, self).post(
+            request, *args, **kwargs)
+        try:
+            user = AccessToken.objects.get(
+                token=response.data['access_token']).user
+            serializers = HomeCustomerSerializer(
+                user.get_customer(), context={'request': request}).data
+            return Response({
+                'user_info': serializers,
+                'token': response.data,
+                'role': 'customer'
+            }, status=status.HTTP_200_OK)
+        except:
+            return Response(response.data)
+
+
+class RegisterCustomerAPIView(APIView):
+    permission_classes = ()
+
+    def post(self, request):
+        serializer = CustomerSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=ValueError):
+            serializer.create(validated_data=request.data)
+            return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
+        return Response(serializer.error_messages,
+                        status=status.HTTP_400_BAD_REQUEST)
+
+
+class UploadCustomerProfileAPIView(APIView):
+
+    def post(self, request):
+        customer = Customer.objects.get(user=request.user)
+        try:
+            image = request.data['profile_picture']
+        except KeyError:
+            raise ParseError('Request has no resource file attached')
+        customer.profile_picture.save(image.name, image, save=True)
+        return Response(status=status.HTTP_200_OK)
+
+
+class ResetPasswordAPIVIew(APIView):
+    permission_classes = ()
+
+    def post(self, request):
+        try:
+            email = request.data['email']
+        except KeyError:
+            raise ParseError('Request has no email')
+        form = PasswordResetForm({'email': email})
+        if form.is_valid():
+            form.save(request=request, email_template_name='registration/password_reset_email.html')
+            return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_400_BAD_REQUEST)

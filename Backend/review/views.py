@@ -7,9 +7,18 @@ from .serializer import *
 
 # Create your views here.
 
-class ReveiewDetailView(APIView):
+class ReviewDetailAPIView(APIView):
 
     def get(self, request):
         serializer = GetReviewSerializer(data=request.GET)
         if serializer.is_valid(raise_exception=ValueError):
-            return Response(serializer.get_method(validate_data=request.GET,request=request))
+            return Response(serializer.get_method(validated_data=request.GET,request=request))
+
+
+class CreateReviewAPIView(APIView):
+
+    def post(self ,request):
+        serializer = ReviewDetailSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=ValueError):
+           create_response = serializer.create(validated_data=request.data,request=request)
+        return create_response

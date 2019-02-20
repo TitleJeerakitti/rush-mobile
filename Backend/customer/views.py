@@ -1,15 +1,12 @@
-from django.shortcuts import render
-
-from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 
 from .models import Customer
 from .serializer import CustomerSerializer,GetHistorySerializer
 
-
-class CustomerRecordView(APIView):
+class CustomerRecordAPIView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, format=None):
@@ -25,10 +22,11 @@ class CustomerRecordView(APIView):
         return Response(serializer.error_messages,
                         status=status.HTTP_400_BAD_REQUEST)
 
-class CustomerHistoryView(APIView):
+class CustomerHistoryAPIView(APIView):
     permission_classes= ()
     
     def get(self, request):
         serializer = GetHistorySerializer(data=request.GET)
         if serializer.is_valid(raise_exception=ValueError):
             return Response(serializer.get_method(validate_data=request.GET,request=request))
+
