@@ -33,45 +33,16 @@ export const authPasswordChange = (text) => {
     };
 };
 
-export const authLogin = (username, password) => {
-    return (dispatch) => {
-        dispatch({ type: LOGIN_USER });
-
-        fetch('http://10.66.10.222:8000/auth/login/', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                username,
-                password,
-            }),
-        })
-            .then((response) => response.json())
-            .then((responseData) => {
-                // console.log(responseData);
-                if (responseData.role === 'customer') {
-                    authLoginSuccess(dispatch, responseData);
-                } else {
-                    authLoginFailed(dispatch, 'error');
-                }
-            }).catch(() => authLoginFailed(dispatch, 'error'));
-        // firebase.auth().signInWithEmailAndPassword(email, password)
-        //     .then((user) => authLoginSuccess(dispatch, user))
-        //     .catch(
-        //         (error) => authLoginFailed(dispatch, error.message)
-        //     );
-    };
+export const authLogin = () => {
+        return { type: LOGIN_USER };
 };
 
-export const authLoginFailed = (dispatch, error) => {
-    dispatch({ type: LOGIN_FAILED, payload: error });
+export const authLoginFailed = (error) => {
+    return { type: LOGIN_FAILED, payload: error };
 };
 
-export const authLoginSuccess = (dispatch, user) => {
-    dispatch({ type: GET_TOKEN, payload: user });
-    Actions.app();
+export const authLoginSuccess = (user) => {
+    return { type: GET_TOKEN, payload: user };
 };
 
 export const authToRegister = () => {

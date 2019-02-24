@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import { Divider } from 'react-native-elements';
+import { Actions } from 'react-native-router-flux';
 import Expo from 'expo';
 import { 
     InputIcon, 
@@ -27,6 +28,8 @@ import {
     authToRegister,
     authForgetPassword,
     authFacebookLogin,
+    authLoginSuccess,
+    authLoginFailed,
 } from '../actions';
 
 class LoginForm extends React.Component {
@@ -73,8 +76,7 @@ class LoginForm extends React.Component {
     }
 
     onUserLogin() {
-        const { email, password } = this.props;
-        this.props.authLogin(email, password);
+        this.logInUser();
     }
 
     async getAccessTokenFacebook(token) {
@@ -92,9 +94,32 @@ class LoginForm extends React.Component {
                 token,
             }),
         });
-        const responseData = response.json();
+        const responseData = await response.json();
         console.log(responseData);
+        // this.refreshToken(responseData);
     }
+
+    // async refreshToken(token) {
+    //     try {
+    //         const response = await fetch(`${SERVER}/auth/login/`, {
+    //             method: 'POST',
+    //             headers: {
+    //                 Accept: 'application/json',
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify({
+    //                 client_id: CLIENT_ID,
+    //                 client_secret: CLIENT_SECRET,
+    //                 grant_type: 'refresh_token',
+    //                 refresh_token: token,
+    //             }),
+    //         });
+    //         const responseData = await response.json();
+    //         console.log(responseData);
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // }
 
     async logInFB() {
         try {
@@ -123,6 +148,34 @@ class LoginForm extends React.Component {
           }
         } catch ({ message }) {
           alert(`Facebook Login Error: ${message}`);
+        }
+    }
+
+    async logInUser() {
+        try {
+            const response = await fetch(`${SERVER}/auth/login/`, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    client_id: CLIENT_ID,
+                    client_secret: CLIENT_SECRET,
+                    grant_type: 'password',
+                    username: this.props.email,
+                    password: this.props.password,
+                }),
+            });
+            const responseData = await response.json();
+            if (responseData.role === 'customer') {
+                this.props.authLoginSuccess(responseData);
+                Actions.app();
+            } else {
+                this.props.authLoginFailed('error');
+            }
+        } catch (error) {
+            this.props.authLoginFailed('error');
         }
     }
     
@@ -274,4 +327,6 @@ export default connect(mapStateToProps, {
     authToRegister,
     authForgetPassword,
     authFacebookLogin,
+    authLoginSuccess,
+    authLoginFailed,
 })(LoginForm);
