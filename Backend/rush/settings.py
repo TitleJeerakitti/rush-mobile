@@ -47,6 +47,9 @@ INSTALLED_APPS = [
     'customer.apps.CustomerConfig',
     'order.apps.OrderConfig',
     'review.apps.ReviewConfig',
+    'promotion.apps.PromotionConfig',
+    'activity.apps.ActivityConfig',
+    'api.apps.ApiConfig',
 ]
 
 MIDDLEWARE = [

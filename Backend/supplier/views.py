@@ -1,11 +1,13 @@
-from django.shortcuts import render,get_object_or_404
+from django.shortcuts import render, get_object_or_404
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ParseError
 
+from activity.models import ViewActivity
+from account.permission import IsCustomer
 from .models import *
 from .serializer import *
 
@@ -40,6 +42,7 @@ from .serializer import *
 
 
 class SupplierDetailAPIView(APIView):
+    permission_classes = [IsAuthenticated, IsCustomer]
 
     def get(self, request):
         supplier = Supplier.objects.filter(user__is_supplier=True)
@@ -49,9 +52,10 @@ class SupplierDetailAPIView(APIView):
 
 
 class SupplierMenuAPIView(APIView):
+    permission_classes = [IsAuthenticated, IsCustomer]
 
     def get(self, request):
-        try: 
+        try:
             supplier_id = request.GET['supplier_id']
         except KeyError:
             raise ParseError('Request has no supplier_id')
@@ -59,7 +63,7 @@ class SupplierMenuAPIView(APIView):
             order_id = request.GET['order_id']
         except:
             order_id = None
-        supplier = get_object_or_404(Supplier,user__id=supplier_id)
+        supplier = get_object_or_404(Supplier, user__id=supplier_id)
         if order_id is not None:
             serializers = RestaurantDetailSerializer(
                 supplier, context={'request': request, 'order_id': order_id})
@@ -67,11 +71,11 @@ class SupplierMenuAPIView(APIView):
             serializers = RestaurantDetailSerializer(
                 supplier, context={'request': request})
 
+        ViewActivity.push(request.user, supplier, 500, 'View Supplier')
         # Telephone_Serializer
         return Response(serializers.data)
 
 
 # class SupplierTypeAPIView(APIView):
-    
+
 #     def get(self, request):
-        

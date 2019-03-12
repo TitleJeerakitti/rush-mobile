@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
 from .models import *
-from order.models import Order,OrderMenu
+from order.models import Order, OrderMenu
 from customer.models import User
 from account.serializer import UserSupplierSerializer
 
@@ -22,12 +22,20 @@ class SupplierSerializer(serializers.ModelSerializer):
         supplier = Supplier.objects.create(user=user, **validated_data)
 
 
+class CategorySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Category
+        fields = ('name', 'image')
+
+
 class SupplierCardSerializers(serializers.ModelSerializer):
     id = serializers.SerializerMethodField('get_supplier_id')
     rating = serializers.FloatField(default=5.0)
     reviewCount = serializers.IntegerField(default=500)
     distance = serializers.IntegerField(default=1000)
     image = serializers.SerializerMethodField('get_profile_picture')
+    category = CategorySerializer()
 
     class Meta:
         model = Supplier
@@ -65,7 +73,7 @@ class MenusSerializers(serializers.ModelSerializer):
 
     def get_amount_history(self, obj):
         if self.context.get('order_id'):
-            order = get_object_or_404(Order,id=self.context.get('order_id'))
+            order = get_object_or_404(Order, id=self.context.get('order_id'))
             order_menu_obj = OrderMenu.objects.filter(order=order)
             for order_menu in order_menu_obj:
                 if obj == order_menu.menu:
@@ -74,7 +82,7 @@ class MenusSerializers(serializers.ModelSerializer):
 
 
 class SubCategoriesSerializer(serializers.ModelSerializer):
-    menus = MenusSerializers(source='menu_set',many=True)
+    menus = MenusSerializers(source='menu_set', many=True)
 
     class Meta:
         model = SubCategory
@@ -83,7 +91,9 @@ class SubCategoriesSerializer(serializers.ModelSerializer):
 
 class MainCategoriesSerializer(serializers.ModelSerializer):
     # sub_categories = serializers.SerializerMethodField('get_sub_category')
-    sub_categories = SubCategoriesSerializer(source='subcategory_set',many=True)
+    sub_categories = SubCategoriesSerializer(
+        source='subcategory_set', many=True)
+
     class Meta:
         model = MainCategory
         fields = ('name', 'sub_categories', )
@@ -91,7 +101,8 @@ class MainCategoriesSerializer(serializers.ModelSerializer):
 
 class RestaurantDetailSerializer(serializers.ModelSerializer):
     # extra_pictures = serializers.SerializerMethodField('get_extra_picture')
-    extra_pictures = ExtraPictureSerializer(source='extrapicture_set',many=True)
+    extra_pictures = ExtraPictureSerializer(
+        source='extrapicture_set', many=True)
     estimate_time = serializers.IntegerField(default=20)
     main_categories = MainCategoriesSerializer(
         source='main_category', many=True)

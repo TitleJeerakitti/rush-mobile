@@ -1,13 +1,14 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated
 
+from account.permission import IsCustomer
 from .models import Customer
 from .serializer import CustomerSerializer,GetHistorySerializer
 
 class CustomerRecordAPIView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = ()
 
     def get(self, format=None):
         customer = Customer.objects.filter(user__is_customer=True)
@@ -23,10 +24,9 @@ class CustomerRecordAPIView(APIView):
                         status=status.HTTP_400_BAD_REQUEST)
 
 class CustomerHistoryAPIView(APIView):
-    permission_classes= ()
+    permission_classes= [IsAuthenticated,IsCustomer]
     
     def get(self, request):
-        serializer = GetHistorySerializer(data=request.GET)
-        if serializer.is_valid(raise_exception=ValueError):
-            return Response(serializer.get_method(validate_data=request.GET,request=request))
+        serializer = GetHistorySerializer()
+        return Response(serializer.get_method(request=request))
 

@@ -26,4 +26,5 @@ urlpatterns = [
     path('order/',include('order.urls')),
     path('review/',include('review.urls')),
     path('social_auth/',include('rest_framework_social_oauth2.urls')),
+    path('api/',include('api.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

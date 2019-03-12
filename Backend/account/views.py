@@ -10,7 +10,7 @@ from oauth2_provider.models import AccessToken
 from .models import User
 from customer.models import Customer
 from customer.serializer import HomeCustomerSerializer, CustomerSerializer
-
+from activity.models import Activity
 
 class LoginUserTokenView(TokenView):
 
@@ -27,6 +27,7 @@ class LoginUserTokenView(TokenView):
                     user.get_customer(), context={'request': request}).data
             elif user.is_supplier == True:
                 user_status = 'supplier'
+            Activity.push(user,100,user.username+' log in as '+user_status+'.')
             return Response({
                 'user_info': serializers,
                 'token': response.data,
@@ -39,6 +40,7 @@ class LoginUserTokenView(TokenView):
 class LogoutUserRevokeTokenView(RevokeTokenView):
 
     def post(self, request, *args, **kwargs):
+        Activity.push(request.user,300,request.user.username+'log out.')
         response = super(LogoutUserRevokeTokenView, self).post(
             request, *args, **kwargs)
         return Response(response.data)

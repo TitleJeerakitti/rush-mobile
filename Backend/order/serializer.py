@@ -4,7 +4,52 @@ from rest_framework import status
 
 from supplier.models import Menu
 from supplier.serializer import SupplierCardSerializers, MenusSerializers
+from promotion.models import PromotionUsage, Promotion
 from .models import *
+
+
+class ConfirmOrderSerializer(serializers.Serializer):
+    total = serializers.FloatField()
+    promotion_code = serializers.CharField(max_length=8)
+
+    def check_can_used(self, validated_data, customer):
+        if not(self.check_exist(validated_data['promotion_code'])):
+            return Response({"status": 500}, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
+        elif self.check_used(validated_data['promotion_code'], customer):
+            return Response({"status": 300}, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
+        elif not(self.pass_condition(validated_data=validated_data)):
+            return Response({"status": 400}, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
+        return self.discount(validated_data=validated_data)
+
+    def discount(self, validated_data):
+        promotion = Promotion.objects.get(
+            promotion_code=validated_data['promotion_code'])
+        total = float(validated_data['total'])
+        if promotion.discount_percent == 0:
+            total = total - promotion.discount_price
+            discount_price = promotion.discount_price
+        else:
+            discount_price = total*promotion.discount_percent/100
+            total = total - discount_price
+        return Response({"status": 200, "total": total, "discount_price": discount_price}, status=status.HTTP_200_OK)
+
+    def check_exist(self, promotion_code):
+        try:
+            Promotion.objects.get(promotion_code=promotion_code)
+        except:
+            return False
+        return True
+
+    def check_used(self, promotion_code, customer):
+        return PromotionUsage.check_used(self, promotion_code, customer)
+
+    def pass_condition(self, validated_data):
+        promotion = Promotion.objects.get(
+            promotion_code=validated_data['promotion_code'])
+        total = float(validated_data['total'])
+        if total < promotion.minimum_price:
+            return False
+        return True
 
 
 class MenuSerializer(serializers.ModelSerializer):
@@ -17,16 +62,24 @@ class MenuSerializer(serializers.ModelSerializer):
 
 
 class CreateOrderSerializer(serializers.Serializer):
-    customer_id = serializers.IntegerField()
     supplier_id = serializers.IntegerField()
+    promotion_code = serializers.CharField(required=False)
     menus = MenuSerializer(many=True)
     total = serializers.FloatField()
     special_request = serializers.CharField(allow_blank=True)
     discount = serializers.FloatField()
+    category = serializers.CharField()
 
-    def create(self, validated_data):
-        order = Order.create_order(self, **validated_data)
+    def create(self, validated_data, customer_id):
+        try:
+            promotion_code = validated_data.pop('promotion_code')
+        except:
+            promotion_code = None
+        order = Order.create_order(self, customer_id, **validated_data)
         queue = Queue.create_queue(self, order)
+        if promotion_code is not None:
+            promotion = PromotionUsage.create_usage(
+                self, order, promotion_code)
         return Response(status=status.HTTP_200_OK)
 
 

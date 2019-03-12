@@ -12,4 +12,7 @@ urlpatterns = [
     path('get_order/',
          OrderAPIView.as_view(),
          name='get_order'),
+     path('check_promotion/',
+          CheckPromotionAPIView.as_view(),
+          name='check_promotion'),
 ]

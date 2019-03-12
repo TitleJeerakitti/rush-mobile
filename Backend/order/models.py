@@ -13,6 +13,7 @@ class Order(models.Model):
     DONE = 3
     CANCEL = 4
     SUCCESS = 5
+    TIMEOUT = 6
 
     STATUS_CHOICE = (
         (DEFAULT, 'Default'),
@@ -21,7 +22,17 @@ class Order(models.Model):
         (DONE, 'Done'),
         (CANCEL, 'Cancel'),
         (SUCCESS, 'Success'),
+        (TIMEOUT, 'Timeout'),
     )
+
+    ONLINE = 'R'
+    WALKIN = 'A'
+
+    CATEGORY_CHOICE = (
+        (WALKIN, 'Walk in'),
+        (ONLINE, 'Online')
+    )
+
     id = models.AutoField(primary_key=True)
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
@@ -31,15 +42,17 @@ class Order(models.Model):
     estimate_time = models.IntegerField(default=0)
     timestamp = models.DateTimeField(auto_now_add=True, blank=True)
     discount = models.FloatField(default=0.0)
+    category = models.CharField(
+        choices=CATEGORY_CHOICE, default=ONLINE, max_length=1)
 
     def __str__(self):
         return str(self.id)
 
-    def create_order(self, customer_id, supplier_id, total, special_request, discount, menus):
+    def create_order(self, customer_id, supplier_id, total, special_request, discount, menus, category):
         customer = Customer.objects.get(user__id=customer_id)
         supplier = Supplier.objects.get(user__id=supplier_id)
         order = Order.objects.create(customer=customer, supplier=supplier, total=total,
-                                     special_request=special_request, discount=discount, status=1)
+                                     special_request=special_request, discount=discount, status=1, category=category)
         order.save()
         order_menu = []
         for menu in menus:
@@ -92,9 +105,11 @@ class Queue(models.Model):
         return self.timestamp.strftime("%H:%M %d-%B-%Y")
 
     def create_queue(self, order):
+
         supplier_queue, create = SupplierQueueIndex.objects.get_or_create(
-            supplier=order.supplier)
+            supplier=order.supplier, category=order.category)
         supplier_queue.save()
-        queue = Queue.objects.create(order=order,queue_number=supplier_queue.new_queue(),status=1)
+        queue = Queue.objects.create(
+            order=order, queue_number=supplier_queue.new_queue(), status=1)
         queue.save()
         return queue.queue_number
