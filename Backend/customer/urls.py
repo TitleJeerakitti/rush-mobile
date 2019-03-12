@@ -1,9 +1,13 @@
 from django.urls import path
 
-from .views import CustomerRecordView
+from .views import *
 
 urlpatterns = [
     path('register/',
-        CustomerRecordView.as_view(),
+        CustomerRecordAPIView.as_view(),
         name='register_customer'),
+    path('customer_history/',
+        CustomerHistoryAPIView.as_view(),
+        name='get_history'),
+
 ]
