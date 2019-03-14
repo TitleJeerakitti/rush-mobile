@@ -8,6 +8,8 @@ from account.models import User
 class Category(models.Model):
     name = models.CharField(max_length=25)
     image = models.ImageField(upload_to='supplier/category')
+    is_display = models.BooleanField(default=False)
+    is_home = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -42,7 +44,7 @@ class Supplier(models.Model):
     address = models.CharField(blank=True, max_length=150)
     description = models.CharField(blank=True, max_length=300)
     isOpen = models.BooleanField('open status', default=False)
-
+    
     def __str__(self):
         return self.name
 
@@ -68,6 +70,7 @@ class MainCategory(models.Model):
         Supplier, related_name='main_category', on_delete=models.CASCADE)
     name = models.CharField(max_length=30)
     description = models.CharField(blank=True, max_length=150)
+    is_display = models.BooleanField(default=True)
 
     def __str__(self):
         return self.supplier.name+' '+self.name
@@ -78,6 +81,7 @@ class SubCategory(models.Model):
     main_category = models.ForeignKey(MainCategory, on_delete=models.CASCADE)
     name = models.CharField(max_length=30)
     description = models.CharField(blank=True, max_length=150)
+    is_display = models.BooleanField(default=True)
 
     def __str__(self):
         return self.supplier.name+' '+self.name
@@ -88,7 +92,9 @@ class Menu(models.Model):
     sub_category = models.ForeignKey(SubCategory, on_delete=models.CASCADE)
     name = models.CharField(max_length=30)
     price = models.FloatField(null=True, blank=True, default=None)
-    image = models.ImageField(upload_to='supplier/menu')
+    image = models.ImageField(null=True, blank=True, upload_to='supplier/menu')
+    is_display = models.BooleanField(default=True)
+    is_out_of_stock = models.BooleanField(default=False)
 
     def __str__(self):
         return self.supplier.name+' '+self.name

@@ -60,7 +60,7 @@ class OrderAPIView(APIView):
         return Response(serializer.data)
 
 
-# class UpdateOrderAPIView(APIView):
+class UpdateOrderAPIView(APIView):
     
-#     def post(self, request):
-        
+    def post(self, request):
+        pass

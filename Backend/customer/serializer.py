@@ -3,13 +3,14 @@ from rest_framework import serializers
 from rest_framework import status
 from rest_framework.response import Response
 
-from .models import Customer, User
 from account.serializer import UserCustomerSerializer
 from supplier.models import Supplier
 from supplier.serializer import SupplierCardSerializers
 from order.models import Order
 from order.serializer import OrderDetailSerializer
 from activity.models import Activity
+
+from .models import Customer, User
 
 class CustomerSerializer(serializers.ModelSerializer):
     user = UserCustomerSerializer(required=True)

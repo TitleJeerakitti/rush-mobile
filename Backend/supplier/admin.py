@@ -8,7 +8,6 @@ from .models import *
 class SupplierAdmin(admin.ModelAdmin):
     pass
 
-
 @admin.register(Telephone)
 class TelephoneAdmin(admin.ModelAdmin):
     pass

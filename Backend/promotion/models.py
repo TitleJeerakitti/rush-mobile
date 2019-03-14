@@ -13,7 +13,9 @@ class Promotion(models.Model):
     discount_price = models.FloatField(default=0)
     discount_percent = models.IntegerField(default=0)
     is_display = models.BooleanField(default=False)
-
+    is_banner = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(auto_now_add=True, blank=True)
+    
     def __str__(self):
         return self.supplier.name + self.name
 
