@@ -1,60 +1,81 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import ParseError
 
+from activity.models import ViewActivity
+from account.permission import IsCustomer
 from .models import *
 from .serializer import *
 
 
-class SupplierRecordView(APIView):
-    permission_classes = [AllowAny]
+# class SupplierRecordView(APIView):
 
-    def get(self, format=None):
+#     def get(self, format=None):
+#         supplier = Supplier.objects.filter(user__is_supplier=True)
+#         serializer = SupplierSerializer(
+#             supplier, many=True, context={'request': request})
+#         return Response(serializer.data)
+
+#     def post(self, request):
+#         serializer = SupplierSerializer(data=request.data)
+#         if serializer.is_valid(raise_exception=ValueError):
+#             serializer.create(validated_data=request.data)
+#             return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.error_messages,
+#                         status=status.HTTP_400_BAD_REQUEST)
+
+
+# class SupplierDetailView(APIView):
+
+#     def get(self, formant=None):
+#         supplier = Supplier.objects.filter(user__is_supplier=True)
+#         serializers = SupplierSerializer(supplier, many=True)
+#         return Response(serializers.data)
+# def sort_supplier(supplier,sort_by):
+
+#         if sort_by == 'popular':
+#             return supplier
+
+
+class SupplierDetailAPIView(APIView):
+    permission_classes = [IsAuthenticated, IsCustomer]
+
+    def get(self, request):
         supplier = Supplier.objects.filter(user__is_supplier=True)
-        serializer = SupplierSerializer(
+        serializers = SupplierCardSerializers(
             supplier, many=True, context={'request': request})
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = SupplierSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=ValueError):
-            serializer.create(validated_data=request.data)
-            return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
-        return Response(serializer.error_messages,
-                        status=status.HTTP_400_BAD_REQUEST)
-
-
-class SupplierDetailView(APIView):
-    permission_classes = [AllowAny]
-
-    def get(self, formant=None):
-        supplier = Supplier.objects.filter(user__is_supplier=True)
-        serializers = SupplierSerializer(supplier, many=True)
         return Response(serializers.data)
 
 
-class SupplierNearbyView(APIView):
-    permission_classes = [AllowAny]
+class SupplierMenuAPIView(APIView):
+    permission_classes = [IsAuthenticated, IsCustomer]
 
     def get(self, request):
-        supplier = Supplier.objects.filter(user__is_supplier=True)
-        serializers = SupplierNearbySerializer(
-                supplier, many=True, context={'request': request})
-        return Response(serializers.data)
+        try:
+            supplier_id = request.GET['supplier_id']
+        except KeyError:
+            raise ParseError('Request has no supplier_id')
+        try:
+            order_id = request.GET['order_id']
+        except:
+            order_id = None
+        supplier = get_object_or_404(Supplier, user__id=supplier_id)
+        if order_id is not None:
+            serializers = RestaurantDetailSerializer(
+                supplier, context={'request': request, 'order_id': order_id})
+        else:
+            serializers = RestaurantDetailSerializer(
+                supplier, context={'request': request})
 
-
-class SupplierMenuView(APIView):
-    permission_classes = [AllowAny]
-
-    def get(self, request):
-        if request.GET.get('id'):
-            user_id = request.GET['id']
-        supplier = Supplier.objects.get(user__id=user_id)
-        serializers = RestaurantDetailSerializer(
-            supplier, context={'request': request})
-
+        ViewActivity.push(request.user, supplier, 500, 'View Supplier')
         # Telephone_Serializer
         return Response(serializers.data)
+
+
+# class SupplierTypeAPIView(APIView):
+
+#     def get(self, request):
