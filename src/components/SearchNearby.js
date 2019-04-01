@@ -4,7 +4,7 @@ import { Divider } from 'react-native-elements';
 import { connect } from 'react-redux';
 import RestaurantCard from './RestaurantCard';
 import { FilterCard, FilterItem, FilterButton, FontText } from './common';
-import { SERVER } from './common/config';
+import { SERVER, SEARCH_NEARBY } from './common/config';
 
 class SearchNearby extends React.Component {
 
@@ -39,11 +39,11 @@ class SearchNearby extends React.Component {
     async getRestaurantAPI() {
         await this.setState({ refreshing: true });
         try {
-            // console.log(this.props.token)
+            const { token_type, access_token } = this.props.token;
             const response = await fetch(this.selectAPI(), {
                 headers: {
                     'Cache-Control': 'no-cache',
-                    Authorization: `Token ${this.props.token}`,
+                    Authorization: `${token_type} ${access_token}`,
                 }
             });
             const responseData = await response.json();
@@ -63,7 +63,7 @@ class SearchNearby extends React.Component {
     selectAPI() {
         if (this.state.sortType === 'ระยะทาง') { 
             // return ('http://localhost:3000/restaurants?_sort=distance&_order=asc');
-            return (`${SERVER}/restaurant/nearby_restaurant/`);
+            return (`${SERVER}${SEARCH_NEARBY}`);
         } else if (this.state.sortType === 'ความนิยม') {
             return ('http://localhost:3000/restaurants?_sort=rating&_order=desc');
         }

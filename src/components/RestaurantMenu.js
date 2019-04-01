@@ -13,7 +13,7 @@ import {
     LoadingImage,
 } from './common';
 import { restaurantGetMenu, currentCategoryChange } from '../actions';
-import { SERVER } from './common/config';
+import { SERVER, GET_RESTAURANT_MENU } from './common/config';
 
 class RestaurantMenu extends React.Component {
     constructor(props) {
@@ -37,10 +37,11 @@ class RestaurantMenu extends React.Component {
 
     async getRestaurantMenu() {
         try {
+            const { token_type, access_token } = this.props.token;
             const response = await fetch(this.getRestaurantAPI(), {
                 headers: {
                     'Cache-Control': 'no-cache',
-                    Authorization: `Token ${this.props.token}`,
+                    Authorization: `${token_type} ${access_token}`,
                 }
             });
             const responseData = await response.json();
@@ -54,7 +55,7 @@ class RestaurantMenu extends React.Component {
         if (this.props.orderId !== '') {
             return `${SERVER}/restaurant/restaurant_detail/?supplier_id=${this.props.restaurantId}&order_id=${this.props.orderId}`;
         }
-        return `${SERVER}/restaurant/restaurant_detail/?supplier_id=${this.props.restaurantId}`;
+        return `${SERVER}${GET_RESTAURANT_MENU}?supplier_id=${this.props.restaurantId}`;
     }
 
     renderItem() {
@@ -128,7 +129,7 @@ class RestaurantMenu extends React.Component {
     render() {
         if (this.props.menuData.main_categories !== undefined) {
             return (
-                <ScrollView style={{ flex: 1 }}>
+                <ScrollView style={{ flex: 1, }}>
                     {this.renderSlickItem()}
                     <FilterButton onPress={() => this.setState({ visible: true })} >
                         {this.state.sortType}

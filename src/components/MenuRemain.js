@@ -7,14 +7,13 @@ import { Divider } from 'react-native-elements';
 import { 
     TextLineFont, 
     Button, 
-    FontText, 
-    DiscountCode, 
+    FontText,
     Subtotal, 
     MenuCard, 
     OrderConfirm,
 } from './common';
 import { loadData } from '../actions';
-import { GREEN, SERVER } from './common/config';
+import { GREEN, SERVER, CREATE_NEW_ORDER, CHECK_PROMO_CODE } from './common/config';
 import RestaurantCard from './RestaurantCard';
 
 class MainRemain extends React.Component {
@@ -23,6 +22,8 @@ class MainRemain extends React.Component {
         this.state = {
             visible: false,
             menus: [],
+            discountCode: null,
+            errorMessage: '',
         };
     }
 
@@ -44,8 +45,35 @@ class MainRemain extends React.Component {
         }
     }
 
+    async getAPI(body) {
+        try {
+            const { access_token, token_type, } = this.props.token;
+            const response = await fetch(`${SERVER}${body}`, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: `${token_type} ${access_token}`,
+                },
+                body: JSON.stringify({
+                    supplier_id: this.props.restaurantId,
+                    menus: this.makeMenuSentAPI(this.state.menus),
+                    total: this.computeSubtotal(),
+                    special_request: '',
+                    discount: 0,
+                    category: 'R',
+                    promotion_code: this.state.discountCode === '' ? null : this.state.discountCode,
+                }),
+            });
+            const responseData = await response.json();
+            return responseData;
+        } catch (err) {
+            console.log(err);
+            return undefined;
+        }
+    }
+
     getMenus(menuData) {
-        console.log(menuData)
         if (menuData !== undefined) {
             const menuList = this.makeMenuList(menuData);
             this.setState({ menus: menuList });
@@ -93,25 +121,9 @@ class MainRemain extends React.Component {
 
     async placeOrder() {
         try {
-            const response = await fetch(`${SERVER}/order/create_new_order/`, {
-                method: 'POST',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                    Authorization: `Token ${this.props.token}`,
-                },
-                body: JSON.stringify({
-                    customer_id: this.props.userInfo.id,
-                    supplier_id: this.props.restaurantId,
-                    menus: this.makeMenuSentAPI(this.state.menus),
-                    total: this.computeSubtotal(),
-                    special_request: '',
-                    discount: 0,
-                }),
-            });
-            const { success } = await response.json();
-            await this.setState({ visible: false, menus: [] });
-            if (success === 'Successful Create Order') {
+            const { status } = await this.getAPI(CREATE_NEW_ORDER);
+            if (status === 200) {
+                await this.setState({ visible: false, menus: [] });
                 this.props.loadData();
                 Actions.popTo('home_homepage');
                 Actions.queue();
@@ -119,17 +131,33 @@ class MainRemain extends React.Component {
         } catch (error) {
             console.log(error);
         }
-        // this.props.loadData();
-        // Actions.popTo('home_homepage');
-        // Actions.queue();
+    }
+
+    async checkPromo() {
+        try {
+            const { status } = await this.getAPI(CHECK_PROMO_CODE);
+            if (status === 200) {
+                await this.setState({ errorMessage: 'Can use!' });
+            } else if (status === 600) {
+                await this.setState({ errorMessage: 'Invalid Promotion Code' });
+            } else if (status === 601) {
+                await this.setState({ errorMessage: 'Promotion already used' });
+            } else if (status === 602) {
+                await this.setState({ errorMessage: 'Your price is below for this code' });
+            } else if (status === 603) {
+                await this.setState({ errorMessage: 'Invalid code for this restaurant' });
+            }
+        } catch (err) {
+            console.log(err);
+        }
     }
 
     computeSubtotal() {
         const { menus } = this.state;
         if (menus.length > 0) {
             return menus.reduce((subtotal, menu) => {
-                subtotal += menu.price * menu.quantity;
-                return subtotal;
+                const total = subtotal + (menu.price * menu.quantity);
+                return total;
             }, 0);
         }
         return 0;
@@ -176,8 +204,11 @@ class MainRemain extends React.Component {
                 total={this.state.menus.length}
                 menuData={this.state.menus}
                 visible={this.state.visible} 
-                onCancel={() => this.setState({ visible: !this.state.visible })} 
-                onConfirm={() => this.placeOrder()}
+                onCancel={() => this.setState({ visible: !this.state.visible, errorMessage: '', discountCode: null })} 
+                onConfirm={() => this.state.discountCode && this.state.discountCode !== '' ? this.checkPromo() : this.placeOrder()}
+                discountCode={this.state.discountCode}
+                onChangeCode={(text) => this.setState({ discountCode: text, errorMessage: '' })}
+                errorMessage={this.state.errorMessage}
             />
         );
     }
@@ -198,7 +229,7 @@ class MainRemain extends React.Component {
                     </Button>
                     <Divider style={{ height: 10, backgroundColor: 'transparent' }} />
                 </ScrollView>
-                <DiscountCode onPress={() => console.log('code')} />
+                {/* <DiscountCode onPress={() => console.log('code')} /> */}
                 {this.renderSubtotal()}
                 {this.renderConfirmPopup()}
             </View>

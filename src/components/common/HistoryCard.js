@@ -107,7 +107,7 @@ class History extends React.Component {
             </Card>
         );
     }
-};
+}
 
 const styles = {
     card: {

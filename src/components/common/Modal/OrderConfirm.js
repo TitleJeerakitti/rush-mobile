@@ -1,7 +1,9 @@
 import React from 'react';
-import { Modal, View, ScrollView } from 'react-native';
+import { Modal, View, ScrollView, Text } from 'react-native';
 import { Divider } from 'react-native-elements';
 import { FontText, Row, CancelConfirmButton, } from '../../common';
+import { DiscountCode } from '../RemainMenu';
+import { DARK_RED } from '../config';
 
 class OrderConfirm extends React.Component {
     
@@ -19,7 +21,7 @@ class OrderConfirm extends React.Component {
     }
 
     render() {
-        const { visible, onConfirm, onCancel, price } = this.props;
+        const { visible, onConfirm, onCancel, price, discountCode, onChangeCode, } = this.props;
         
         return (
             <Modal
@@ -45,6 +47,12 @@ class OrderConfirm extends React.Component {
                             <FontText style={{ flex: 1 }} size={24}>ราคาสุทธิ</FontText>
                             <FontText size={24}>{price.toFixed(2)} บาท</FontText>
                         </Row>
+                        <View style={styles.line} />
+                        <DiscountCode 
+                            value={discountCode}
+                            onChangeText={onChangeCode}
+                        />
+                        <Text style={{ textAlign: 'center', color: DARK_RED }}>{this.props.errorMessage}</Text>
                         <Divider style={{ height: 10, backgroundColor: 'transparent' }} />
                         <CancelConfirmButton 
                             onConfirm={onConfirm}

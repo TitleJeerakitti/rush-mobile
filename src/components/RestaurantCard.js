@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, View, } from 'react-native';
+import { TouchableOpacity, View, Text, } from 'react-native';
 import { connect } from 'react-redux';
 import { Icon } from 'react-native-elements';
 import StarRating from 'react-native-star-rating';
@@ -97,7 +97,7 @@ class RestaurantCard extends React.Component {
                                     <Row style={{ flex: 1, justifyContent: 'flex-end' }}>
                                         <Icon name='tag' type='evilicon' size={16} color='gray' />
                                         <FontText style={{ color: 'gray' }} numberOfLines={1} >
-                                            {category}
+                                            {category.name}
                                         </FontText>
                                     </Row>
                                 </Row>
