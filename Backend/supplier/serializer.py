@@ -5,6 +5,7 @@ from rest_framework import serializers
 from .models import *
 from order.models import Order, OrderMenu
 from customer.models import User
+from supplier.models import ExtraPicture
 from account.serializer import UserSupplierSerializer
 
 
@@ -68,8 +69,13 @@ class MenusSerializers(serializers.ModelSerializer):
 
     def get_image_url(self, obj):
         request = self.context.get('request')
-        image_url = obj.image.url
+        if obj.image:
+            image_url = obj.image.url
+        else:
+            image_url = '/media/default/food_default.png'
         return request.build_absolute_uri(image_url)
+
+        return None
 
     def get_amount_history(self, obj):
         if self.context.get('order_id'):
@@ -100,9 +106,9 @@ class MainCategoriesSerializer(serializers.ModelSerializer):
 
 
 class RestaurantDetailSerializer(serializers.ModelSerializer):
-    # extra_pictures = serializers.SerializerMethodField('get_extra_picture')
-    extra_pictures = ExtraPictureSerializer(
-        source='extrapicture_set', many=True)
+    extra_pictures = serializers.SerializerMethodField('get_extra_picture')
+    # extra_pictures = ExtraPictureSerializer(
+    #     source='extrapicture_set', many=True)
     estimate_time = serializers.IntegerField(default=20)
     main_categories = MainCategoriesSerializer(
         source='main_category', many=True)
@@ -110,3 +116,13 @@ class RestaurantDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Supplier
         fields = ('extra_pictures', 'estimate_time', 'main_categories')
+
+    def get_extra_picture(self, obj):
+        request = self.context.get('request')
+        extra_picture = ExtraPicture.objects.filter(supplier=obj)
+        if extra_picture:
+            serializers = ExtraPictureSerializer(
+                extra_picture, many=True, context={'request': request})
+        else:
+            return [{'image': request.build_absolute_uri('/media/default/extra_picture.png')},]
+        return serializers.data
