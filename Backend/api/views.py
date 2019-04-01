@@ -17,6 +17,7 @@ class HomeAPIView(APIView):
     permission_classes = [IsAuthenticated, IsCustomer]
 
     def get(self, request):
+        print(request.user.social_auth.values_list('provider'))
         slide_banner = Promotion.objects.filter(
             is_banner=True, is_display=True)
         slide_banner_serializer = SlideBannerSerializer(

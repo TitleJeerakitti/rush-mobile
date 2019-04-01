@@ -95,6 +95,7 @@ class ResetPasswordAPIVIew(APIView):
     def post(self, request):
         try:
             email = request.data['email']
+            
         except KeyError:
             raise ParseError('Request has no email')
         form = PasswordResetForm({'email': email})
