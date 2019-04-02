@@ -3,7 +3,7 @@ import { View, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import RestaurantCard from './RestaurantCard';
 import { TextLineFont, MenuCard, Card, CardSection, FontText, Row, LoadingImage } from './common';
-import { SERVER } from './common/config';
+import { SERVER, GET_ORDER_DETAIL } from './common/config';
 
 class Receipt extends React.Component {
     constructor(props) {
@@ -19,10 +19,11 @@ class Receipt extends React.Component {
     async componentDidMount() {
         this.mounted = true;
         try {
-            const response = await fetch(`${SERVER}/order/get_order/?order_id=${this.props.orderId}`, {
+            const { access_token, token_type, } = this.props.token;
+            const response = await fetch(`${SERVER}${GET_ORDER_DETAIL}?order_id=${this.props.orderId}`, {
                 headers: {
                     'Cache-Control': 'no-cache',
-                    Authorization: `Token ${this.props.token}`,
+                    Authorization: `${token_type} ${access_token}`,
                 }
             });
             const responseData = await response.json();

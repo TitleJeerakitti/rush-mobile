@@ -1,15 +1,14 @@
 import React from 'react';
 import { View, TextInput, TouchableOpacity } from 'react-native';
 import { Row, FontText } from '../../common';
-import { ORANGE } from '../config';
+import { ORANGE, GREEN } from '../config';
 
-const DiscountCode = ({ onChangeText, value }) => {
-    const { container, inputText, } = styles;
+const DiscountCode = ({ onChangeText, value, editable, onPress }) => {
+    const { container, inputText, buttonStyle, } = styles;
 
     return (
         <View style={container}>
             <Row>
-                <FontText style={{ color: ORANGE }}>Code ส่วนลด</FontText>
                 <TextInput 
                     value={value}
                     onChangeText={onChangeText}
@@ -17,11 +16,17 @@ const DiscountCode = ({ onChangeText, value }) => {
                     autoCapitalize='characters'
                     autoCorrect={false}
                     underlineColorAndroid='transparent'
-                    style={inputText} 
+                    style={{ 
+                        ...inputText, 
+                        color: editable ? 'black' : GREEN, 
+                        borderColor: editable ? '#F0F0F0' : GREEN,
+                        backgroundColor: editable ? '#F0F0F0' : '#FFF',
+                    }} 
+                    editable={editable}
                 />
-                {/* <TouchableOpacity onPress={onPress}>
-                    <FontText color={ORANGE}>ยืนยัน</FontText>
-                </TouchableOpacity> */}
+                <TouchableOpacity onPress={onPress} style={buttonStyle}>
+                    <FontText color={'white'}>Check</FontText>
+                </TouchableOpacity>
             </Row>
         </View>
     );
@@ -30,22 +35,24 @@ const DiscountCode = ({ onChangeText, value }) => {
 const styles = {
     container: {
         marginBottom: 10,
-        // backgroundColor: 'white',
-        // padding: 10,
-        // shadowOffset: { width: 0, height: 1 },
-        // shadowOpacity: 0.2,
-        // shadowRadius: 10,
     },
     inputText: {
         paddingVertical: 5, 
         paddingHorizontal: 10,
         borderRadius: 13.5, 
         flex: 1, 
-        marginLeft: 10,
+        marginRight: 10,
         backgroundColor: '#F0F0F0',
-        // borderWidth: 0.5,
         fontFamily: 'thaisans',
-        fontSize: 20
+        fontSize: 20,
+        textAlign: 'center',
+        borderWidth: 1,
+    },
+    buttonStyle: {
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        backgroundColor: ORANGE,
+        borderRadius: 13
     }
 };
 

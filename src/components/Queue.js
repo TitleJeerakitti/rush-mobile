@@ -8,7 +8,7 @@ import {
     loadDataFinish,
     getOrderId,
 } from '../actions';
-import { SERVER } from './common/config';
+import { SERVER, GET_QUEUE } from './common/config';
 
 class Queue extends React.Component {
     constructor(props) {
@@ -38,10 +38,11 @@ class Queue extends React.Component {
 
     async getQueueAPI() {
         try { 
-            const response = await fetch(`${SERVER}/order/get_queue/?customer_id=${this.props.userInfo.id}`, {
+            const { access_token, token_type, } = this.props.token;
+            const response = await fetch(`${SERVER}${GET_QUEUE}`, {
                 headers: {
                     'Cache-Control': 'no-cache',
-                    Authorization: `Token ${this.props.token}`,
+                    Authorization: `${token_type} ${access_token}`,
                 },
             });
             const responseData = await response.json();

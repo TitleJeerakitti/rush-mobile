@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { getBottomSpace } from 'react-native-iphone-x-helper';
 import { TextLineFont, FontText, ReviewCard } from './common';
 import RestaurantCard from './RestaurantCard';
-import { SERVER } from './common/config';
+import { SERVER, GET_REVIEW } from './common/config';
 
 class ReviewPage extends React.Component {
     constructor(props) {
@@ -20,10 +20,11 @@ class ReviewPage extends React.Component {
         this.mounted = true;
         const { userInfo, supplier_id } = this.props;
         try {
-            const response = await fetch(`${SERVER}/review/get_review/?customer_id=${userInfo.id}&supplier_id=${supplier_id}`, {
+            const { access_token, token_type, } = this.props.token;
+            const response = await fetch(`${SERVER}${GET_REVIEW}?customer_id=${userInfo.id}&supplier_id=${supplier_id}`, {
                 headers: {
                     'Cache-Control': 'no-cache',
-                    Authorization: `Token ${this.props.token}`,
+                    Authorization: `${token_type} ${access_token}`,
                 }
             });
             const responseData = await response.json();
