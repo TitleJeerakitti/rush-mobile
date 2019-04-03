@@ -1,33 +1,93 @@
 import React from 'react';
-import { View, TextInput, Dimensions, ImageBackground, KeyboardAvoidingView } from 'react-native';
+import { 
+    TextInput, 
+    Dimensions, 
+    ImageBackground, 
+    KeyboardAvoidingView, 
+    TouchableOpacity, 
+} from 'react-native';
 import { Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
+import { Permissions, ImagePicker, } from 'expo';
 import { Row, ImageRound, FontText, Card, CardSection, Button } from './common';
-import { YELLOW, ORANGE } from './common/config';
+import { YELLOW, ORANGE, SERVER } from './common/config';
 
 class EditProfile extends React.Component {
-    // constructor(props) {
-    //     super(props);
-    //     this.state = {
-    //         pictureLength: Dimensions.get('window').width * 0.3,
-    //     };
-    // }
+    constructor(props) {
+        super(props);
+        const { birthday, email, name, picture, tel_number = '' } = this.props.userInfo;
+        this.state = {
+            birthday,
+            email,
+            name,
+            picture,
+            tel_number,
+            imageURL: null,
+        };
+    }
+
+    async getLocationAsync() {
+        const { status, permissions } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+        if (status === 'granted') {
+        //   return Location.getCurrentPositionAsync({enableHighAccuracy: true});
+            this.selectPhoto();
+        } else {
+          throw new Error('Location permission not granted');
+        }
+    }
+
+    async selectPhoto() {
+        const result = await ImagePicker.launchImageLibraryAsync({
+            base64: true,
+            allowsEditing: true,
+            aspect: [1, 1],
+        });
+        const imageUri = `data:image/jpg;base64,${result.base64}`;
+        await this.setState({ imageURL: imageUri, });
+        await this.uploadImage();
+    }
+
+    async uploadImage() {
+        try {
+            const { access_token, token_type, } = this.props.token;
+
+            const response = await fetch(`${SERVER}/auth/upload-customer-profile-picture/`, {
+                method: 'POST',
+                headers: {
+                    Authorization: `${token_type} ${access_token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    profile_picture: this.state.imageURL,
+                }),
+            });
+            const responseData = await response.json();
+            console.log(responseData);
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     render() {
-        // console.log(this.props.userInfo);
         const { imageStyle, containerDetail, containerBackground, textInputStyle } = styles;
-        const { birthday, email, name, picture, tel_number } = this.props.userInfo;
+        const { birthday, email, name, picture, tel_number } = this.state;
         return (
             <KeyboardAvoidingView behavior='position' style={{ flex: 1 }} enabled>
                 <ImageBackground source={{ uri: 'https://png.pngtree.com/thumb_back/fw800/back_pic/04/51/79/17585f3a4b4b691.jpg' }} style={containerBackground}>
+                    <TouchableOpacity onPress={() => this.getLocationAsync()}>
                     <ImageRound
-                        source={{ uri: picture }} 
+                        source={{ uri: this.state.imageURL ? this.state.imageURL : picture }} 
                         style={imageStyle}
                     />
+                    </TouchableOpacity>
                     <Card style={containerDetail}>
                         <FontText size={24}>{email}</FontText>
                         <Row>
-                            <Icon name='cake' type='material' containerStyle={{ marginRight: 10 }} />
+                            <Icon 
+                                name='cake' 
+                                type='material' 
+                                containerStyle={{ marginRight: 10 }} 
+                            />
                             <FontText size={20}>{birthday}</FontText>
                         </Row>
                     </Card>
@@ -62,12 +122,6 @@ class EditProfile extends React.Component {
                             />
                         </Row>
                     </CardSection>
-                    {/* <CardSection style={{ paddingBottom: 10 }}>
-                        <Row>
-                            <FontText style={{ flex: 1 }}>ที่อยู่</FontText>
-                            <TextInput placeholder='ที่อยู่ปัจจุบัน' style={{ flex: 4, borderColor: '#CCC', borderWidth: 1, borderRadius: 10, padding: 10 }} />
-                        </Row>
-                    </CardSection> */}
                 </Card>
                 <Button onPress={() => console.log('here')} color={YELLOW}>
                     <FontText color='white'>บันทึกการเปลี่ยนแปลง</FontText>
@@ -113,8 +167,8 @@ const styles = {
 };
 
 const mapStateToProps = ({ auth }) => {
-    const { userInfo } = auth;
-    return { userInfo };
+    const { userInfo, token } = auth;
+    return { userInfo, token };
 };
 
 export default connect(mapStateToProps)(EditProfile);
