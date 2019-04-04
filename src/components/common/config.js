@@ -11,6 +11,8 @@ export const CLIENT_ID = '55lYZd3VS5vcHGFvm2KpUKB0tdiBET8gLAXC8TSX';
 export const CLIENT_SECRET = '20gLSwtsfYqqsamMYLj7GGYxziYRaoQXzCcdIARLY1XkQ7tzpv0pJQXxqzMIi5f3kIxgMkLeJKfoEBmOUda8Dj7RmysnwU4yUOL4CZgqVI9gtkwfqS1cqEs2evvgpmla';
 
 //API
+export const LOGIN_APP = '/auth/login/';
+export const REGISTER = '/auth/register-customer/';
 export const SEARCH_NEARBY = '/restaurant/restaurant-card/';
 export const GET_RESTAURANT_MENU = '/restaurant/restaurant_detail/';
 export const CREATE_NEW_ORDER = '/order/create_new_order/';

@@ -53,7 +53,7 @@ class RestaurantCard extends React.Component {
             category,
         } = this.props.data;
         return (
-            <Card style={{ marginTop: 10 }}>
+            <Card>
                 <CardSection>
                     <TouchableOpacity
                         style={card}
@@ -124,8 +124,7 @@ const styles = {
         shadowColor: 'black',
         shadowOffset: { width: 0, height: 0 },
         shadowRadius: 10,
-        elevation: 4
-        ,
+        elevation: 4,
     }
 };
 

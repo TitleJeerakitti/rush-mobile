@@ -28,10 +28,15 @@ const styles = {
     container: {
         alignItems: 'flex-end',
         marginRight: 10,
+        marginBottom: 10,
     },
     contentStyle: {
         alignItems: 'center',
         flexDirection: 'row',
+        padding: 5,
+        paddingLeft: 10,
+        borderRadius: 100,
+        backgroundColor: '#F6F6F6'
     },
     sortStyle: {
         borderWidth: 1,

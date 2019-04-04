@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Image, ScrollView } from 'react-native';
+import { View, Image, ScrollView, ListView, Text } from 'react-native';
 import { connect } from 'react-redux';
 // import { Actions } from 'react-native-router-flux';
 import { QueueCard, CancelConfirm, FontText, LoadingImage } from './common';
@@ -14,7 +14,7 @@ class Queue extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            data: [],
+            data: this.listViewCloneWithRows(),
             visible: false,
             canLoad: true
         };
@@ -48,7 +48,7 @@ class Queue extends React.Component {
             const responseData = await response.json();
             if (this.mounted) {
                 await this.setState({ 
-                    data: responseData, 
+                    data: this.listViewCloneWithRows(responseData), 
                 });
                 this.props.loadDataFinish();
                 this.setState({ canLoad: true });
@@ -56,6 +56,11 @@ class Queue extends React.Component {
         } catch (error) {
             console.log(error);
         }
+    }
+
+    listViewCloneWithRows(data = []) {
+        const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+        return ds.cloneWithRows(data);
     }
 
     renderCancelConfirm() {
@@ -68,36 +73,31 @@ class Queue extends React.Component {
         );
     }
 
-    renderQueueCard() {
-        const { data } = this.state;
-        if (data.length > 0) {
-            return data.map(queue => {
-                if (queue.order_detail.status < 4) {
-                    return (
-                        <QueueCard
-                            key={queue.queue_id} 
-                            status={queue.order_detail.status} 
-                            data={queue.supplier_detail} 
-                            amount={queue.order_detail.total} 
-                            queue={queue.queue_number} 
-                            onCancelPress={() => this.setState({ visible: !this.state.visible })} 
-                            onPress={() => this.props.getOrderId(queue.order_detail.order_id)}
-                        />
-                    );
-                }
-                return <View key={queue.queue_id} />;
-            });
+    renderQueue(queue) {
+        if (queue.order_detail.status < 4) {
+            return (
+                <QueueCard
+                    status={queue.order_detail.status} 
+                    data={queue.supplier_detail} 
+                    amount={queue.order_detail.total} 
+                    queue={queue.queue_number} 
+                    onCancelPress={() => this.setState({ visible: !this.state.visible })} 
+                    onPress={() => this.props.getOrderId(queue.order_detail.order_id)}
+                />
+            );
         }
+        return <View />;
     }
 
     render() {
         const { containerEmpty, imageEmpty } = styles;
+        const { data } = this.state;
         if (!this.props.dataLoaded) {
             return (
                 <LoadingImage />
             );
         }
-        if (this.state.data.length === 0) {
+        if (data._chachedRowCount === 0) {
             return (
                 <View style={containerEmpty}>
                     <Image
@@ -109,11 +109,14 @@ class Queue extends React.Component {
             );
         }
         return (
-            <ScrollView style={{ flex: 1 }} >
-                {this.renderQueueCard()}
-                <View style={{ marginTop: 10 }} />
+            <View style={{ flex: 1 }} >
+                <ListView 
+                    style={{ flex: 1 }}
+                    dataSource={data}
+                    renderRow={(item) => this.renderQueue(item)} 
+                />
                 {this.renderCancelConfirm()}
-            </ScrollView>
+            </View>
         );
     }
 }

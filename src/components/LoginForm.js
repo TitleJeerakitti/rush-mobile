@@ -8,6 +8,7 @@ import {
     LayoutAnimation,
     Platform,
     UIManager,
+    AsyncStorage,
 } from 'react-native';
 import { connect } from 'react-redux';
 import { Divider } from 'react-native-elements';
@@ -20,7 +21,7 @@ import {
     Spinner,
     AuthBg,
 } from './common';
-import { YELLOW, LIGHT_RED, SERVER, CLIENT_ID, CLIENT_SECRET } from './common/config';
+import { YELLOW, LIGHT_RED, SERVER, CLIENT_ID, CLIENT_SECRET, LOGIN_APP } from './common/config';
 import { 
     authEmailChange,
     authPasswordChange,
@@ -33,34 +34,12 @@ import {
 } from '../actions';
 
 class LoginForm extends React.Component {
-    state = {
-        secureTextEntry: true,
-    }
-
-    componentWillMount() {
-        const { appName } = styles;
-        const { width } = Dimensions.get('window');
-
-        // Responsive Condition
-        if (width > 375) {
-            this.setState({ 
-                ...this.state, 
-                logoSize: { width: 132, height: 185 }, 
-                headerName: appName  
-            });
-        } else if (width > 320) {
-            this.setState({ 
-                ...this.state, 
-                logoSize: { width: 105.6, height: 148 }, 
-                headerName: { ...appName, fontSize: 32 } 
-            });
-        } else {
-            this.setState({ 
-                ...this.state, 
-                logoSize: { width: 88, height: 123.33 }, 
-                headerName: { ...appName, fontSize: 27 } 
-            });
-        }
+    constructor(props) {
+        super(props);
+        this.state = {
+            secureTextEntry: true,
+            ...this.responsesiveLogo(),
+        };
     }
 
     componentWillUpdate() {
@@ -77,6 +56,23 @@ class LoginForm extends React.Component {
 
     onUserLogin() {
         this.logInUser();
+    }
+
+    async getAPI(content, data) {
+        try {
+            const response = await fetch(`${SERVER}${content}`, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+            const responseData = await response.json();
+            return responseData;
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     async getAccessTokenFacebook(token) {
@@ -108,27 +104,25 @@ class LoginForm extends React.Component {
         // this.refreshToken(responseData);
     }
 
-    // async refreshToken(token) {
-    //     try {
-    //         const response = await fetch(`${SERVER}/auth/login/`, {
-    //             method: 'POST',
-    //             headers: {
-    //                 Accept: 'application/json',
-    //                 'Content-Type': 'application/json',
-    //             },
-    //             body: JSON.stringify({
-    //                 client_id: CLIENT_ID,
-    //                 client_secret: CLIENT_SECRET,
-    //                 grant_type: 'refresh_token',
-    //                 refresh_token: token,
-    //             }),
-    //         });
-    //         const responseData = await response.json();
-    //         console.log(responseData);
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    // }
+    responsesiveLogo() {
+        const { appName } = styles;
+        const { width } = Dimensions.get('window');
+        if (width > 375) {
+            return ({ 
+                logoSize: { width: 132, height: 185 }, 
+                headerName: appName  
+            });
+        } else if (width > 320) {
+            return ({ 
+                logoSize: { width: 105.6, height: 148 }, 
+                headerName: { ...appName, fontSize: 32 } 
+            });
+        }
+        return ({ 
+            logoSize: { width: 88, height: 123.33 }, 
+            headerName: { ...appName, fontSize: 27 } 
+        });
+    }
 
     async logInFB() {
         try {
@@ -160,32 +154,32 @@ class LoginForm extends React.Component {
     }
 
     async logInUser() {
-        try {
-            const response = await fetch(`${SERVER}/auth/login/`, {
-                method: 'POST',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    client_id: CLIENT_ID,
-                    client_secret: CLIENT_SECRET,
-                    grant_type: 'password',
-                    username: this.props.email,
-                    password: this.props.password,
-                }),
-            });
-            const responseData = await response.json();
-            if (responseData.role === 'customer') {
-                this.props.authLoginSuccess(responseData);
-                Actions.app();
-            } else {
-                this.props.authLoginFailed('error');
-            }
-        } catch (error) {
+        const data = {
+            client_id: CLIENT_ID,
+            client_secret: CLIENT_SECRET,
+            grant_type: 'password',
+            username: this.props.email,
+            password: this.props.password,
+        };
+        const response = await this.getAPI(LOGIN_APP, data);
+        if (response.role === 'customer') {
+            console.log(response.token.access_token);
+            this.storeData(response.token.access_token);
+            this.props.authLoginSuccess(response);
+            Actions.app();
+        } else {
             this.props.authLoginFailed('error');
         }
     }
+
+    async storeData(token) {
+        try {
+          await AsyncStorage.setItem('access_token', token);
+        } catch (error) {
+          // Error saving data
+          console.log(error);
+        }
+      }
     
     renderLoginButton() {
         const { loading, error } = this.props;

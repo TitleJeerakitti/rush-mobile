@@ -1,4 +1,5 @@
 import React from 'react';
+import { AsyncStorage } from 'react-native';
 import { Router, Scene, Actions, Drawer, Tabs } from 'react-native-router-flux';
 import { Font, ScreenOrientation } from 'expo';
 import { connect } from 'react-redux';
@@ -21,9 +22,10 @@ import Promotion from './Promotion';
 import EditProfile from './EditProfile';
 
 class RouterComponent extends React.Component {
-
-    componentWillMount() {
+    constructor(props) {
+        super(props);
         ScreenOrientation.allow('PORTRAIT');
+        this.checkToken();
     }
 
     async componentDidMount() {
@@ -31,9 +33,24 @@ class RouterComponent extends React.Component {
           thaisans: require('../../assets/ThaiSansNeue-Regular.ttf'),
           thaisansItalic: require('../../assets/ThaiSansNeue-Italic.ttf')
         });
-
         this.props.fontLoader();
         // other stuff
+    }
+
+    async checkToken() {
+        try {
+            const value = await AsyncStorage.getItem('access_token');
+            if (value !== null) {
+            // We have data!!
+                console.log(value);
+                // Actions.app();
+            } else {
+                console.log(value);
+            }
+        } catch (error) {
+            // Error retrieving data
+            console.log(error);
+        }
     }
 
     render() {

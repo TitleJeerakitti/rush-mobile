@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView } from 'react-native';
+import { ScrollView, } from 'react-native';
 import { connect } from 'react-redux';
 import { 
     Slick, 
@@ -7,10 +7,10 @@ import {
     FilterCard, 
     FilterItem, 
     FilterButton,
-    MainCategory,
     MenuList,
     MainCategoryItem,
     LoadingImage,
+    Row,
 } from './common';
 import { restaurantGetMenu, currentCategoryChange } from '../actions';
 import { SERVER, GET_RESTAURANT_MENU } from './common/config';
@@ -134,9 +134,9 @@ class RestaurantMenu extends React.Component {
                     <FilterButton onPress={() => this.setState({ visible: true })} >
                         {this.state.sortType}
                     </FilterButton>
-                    <MainCategory>
+                    <Row>
                         {this.renderMainCategoryItem()}
-                    </MainCategory>
+                    </Row>
                     {this.renderMenuList()}
                     {this.renderFilter()}
                 </ScrollView>
