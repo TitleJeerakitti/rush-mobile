@@ -18,3 +18,4 @@ export const CHECK_PROMO_CODE = '/order/check_promotion/';
 export const GET_QUEUE = '/order/get_queue/';
 export const GET_ORDER_DETAIL = '/order/get_order/';
 export const GET_REVIEW = '/review/get_review/';
+export const HOME = '/api/home';

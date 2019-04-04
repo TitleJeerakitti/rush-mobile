@@ -19,7 +19,13 @@ const CategoryItem = ({ source, title, overlayAlpha }) => {
             rounded={50}
             overlayAlpha={overlayAlpha}
         >
-            <FontText size={30} color='white'>{title}</FontText>
+            <FontText 
+                size={24} 
+                color='white' 
+                numberOfLines={1}
+            >
+                {title}
+            </FontText>
         </ImageOverlay>
     );
 };
