@@ -27,7 +27,6 @@ class TestingApiView(APIView):
 
         def get(self, format=None):
                 date_time = Testing.objects.all()
-                print(date_time)
                 serializer = TestingSerializer(date_time, many=True)
                 return Response(serializer.data)
 
