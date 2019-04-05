@@ -21,7 +21,7 @@ import {
     Spinner,
     AuthBg,
 } from './common';
-import { YELLOW, LIGHT_RED, SERVER, CLIENT_ID, CLIENT_SECRET, LOGIN_APP } from './common/config';
+import { YELLOW, LIGHT_RED, SERVER, CLIENT_ID, CLIENT_SECRET, LOGIN_APP } from '../../config';
 import { 
     authEmailChange,
     authPasswordChange,

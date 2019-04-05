@@ -13,7 +13,7 @@ import {
     Row,
 } from './common';
 import { restaurantGetMenu, currentCategoryChange } from '../actions';
-import { SERVER, GET_RESTAURANT_MENU } from './common/config';
+import { SERVER, GET_RESTAURANT_MENU } from '../../config';
 
 class RestaurantMenu extends React.Component {
     constructor(props) {

@@ -3,7 +3,7 @@ import { Modal, View, ScrollView, Text } from 'react-native';
 import { Divider } from 'react-native-elements';
 import { FontText, Row, CancelConfirmButton, } from '../../common';
 import { DiscountCode } from '../RemainMenu';
-import { DARK_RED, } from '../config';
+import { DARK_RED, } from '../../../../config';
 
 class OrderConfirm extends React.Component {
     

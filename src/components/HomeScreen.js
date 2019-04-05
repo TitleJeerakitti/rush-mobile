@@ -14,7 +14,7 @@ import {
     CategoryItem,
     LoadingImage,
 } from './common';
-import { DARK_RED, SERVER, HOME, } from './common/config';
+import { DARK_RED, SERVER, HOME, } from '../../config';
 
 
 class HomeScreen extends React.Component {

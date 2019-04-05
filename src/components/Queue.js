@@ -8,7 +8,7 @@ import {
     loadDataFinish,
     getOrderId,
 } from '../actions';
-import { SERVER, GET_QUEUE } from './common/config';
+import { SERVER, GET_QUEUE } from '../../config';
 
 class Queue extends React.Component {
     constructor(props) {

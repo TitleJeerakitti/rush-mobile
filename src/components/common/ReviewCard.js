@@ -2,7 +2,7 @@ import React from 'react';
 import { View, TextInput, TouchableOpacity } from 'react-native';
 import StarRating from 'react-native-star-rating';
 import { Card, CardSection, Row, ImageRound, FontText } from '../common';
-import { YELLOW, ORANGE } from './config';
+import { YELLOW, ORANGE } from '../../../config';
 
 class ReviewCard extends React.Component {
     constructor(props) {

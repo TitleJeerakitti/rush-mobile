@@ -10,7 +10,7 @@ import { Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Permissions, ImagePicker, } from 'expo';
 import { Row, ImageRound, FontText, Card, CardSection, Button } from './common';
-import { YELLOW, ORANGE, SERVER } from './common/config';
+import { YELLOW, ORANGE, SERVER } from '../../config';
 
 class EditProfile extends React.Component {
     constructor(props) {

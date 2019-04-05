@@ -9,6 +9,7 @@ import {
 import { Divider } from 'react-native-elements';
 import { connect } from 'react-redux'; 
 import DateTimePicker from 'react-native-modal-datetime-picker';
+import { Actions } from 'react-native-router-flux';
 import { 
     InputIcon, 
     AuthButton, 
@@ -16,7 +17,7 @@ import {
     AuthBg, 
     AuthCard 
 } from './common';
-import { LIGHT_RED, SERVER, REGISTER } from './common/config';
+import { LIGHT_RED, SERVER, REGISTER } from '../../config';
 import {
     authNameChange,
     authPhoneChange,
@@ -35,7 +36,7 @@ class Register extends React.Component {
             phone: '',
             email: '',
             password: '',
-            birthday: '',
+            birthday: null,
             loading: false,
             error: '',
             isDateTimePickerVisible: false,
@@ -46,12 +47,14 @@ class Register extends React.Component {
         LayoutAnimation.easeInEaseOut();
     }
 
-    onChangeState(key, data) {
-        this.setState({ [key]: data });
+    async onChangeState(key, data) {
+        await this.setState({ error: '', [key]: data });
     }
 
     async onRegister() {
         const { name, surname, phone, email, password, birthday } = this.state;
+        const date = birthday ? 
+            `${birthday.getFullYear()}-${birthday.getMonth() + 1}-${birthday.getDate()}` : null;
         this.onChangeState('loading', true);
         try {
             const response = await fetch(`${SERVER}${REGISTER}`, {
@@ -68,30 +71,25 @@ class Register extends React.Component {
                         last_name: surname,
                         email,
                     },
-                    tel_number: phone,
-                    birthday,
+                    tel_number: `+66${phone.slice(1)}`,
+                    birthday: date,
                 }),
             });
             const responseData = await response.json();
-            
-            return responseData;
+            if (responseData.status === 200) {
+                Actions.pop();
+            } else {
+                this.onChangeState('loading', false);
+                this.onChangeState('error', responseData.message.invalid);
+            }
         } catch (error) {
             console.log(error);
         }
     }
 
-    showDateTimePicker() {
-        this.onChangeState('isDateTimePickerVisible', true);
-    }
-
-    hideDateTimePicker() {
-        this.onChangeState('isDateTimePickerVisible', false);
-    }
-
     handleDatePicked = (date) => {
-        console.log(date.getFullYear(), date.getMonth() + 1, date.getDate());
-        this.hideDateTimePicker();
-        this.onChangeState('birthday', `${date.toDateString()}`);
+        this.onChangeState('isDateTimePickerVisible', false);
+        this.onChangeState('birthday', date);
     };
 
     renderButton() {
@@ -106,7 +104,7 @@ class Register extends React.Component {
                 <Text style={styles.errorText}>{error}</Text>
                 <AuthButton 
                     color={LIGHT_RED}
-                    // onPress={this.onCreateUser.bind(this)}
+                    onPress={() => this.onRegister()}
                 >
                     ลงทะเบียน
                 </AuthButton>
@@ -116,7 +114,17 @@ class Register extends React.Component {
 
     render() {
         const { headerStyle } = styles;
-        const { secureTextEntry, name, phone, email, password, surname } = this.state;
+        const { 
+            secureTextEntry, 
+            name, 
+            phone, 
+            email,
+            password, 
+            surname, 
+            birthday, 
+            isDateTimePickerVisible, 
+        } = this.state;
+
         if (Platform.OS === 'android') {
             // UIManager.setLayoutAnimationEnabledExperimental && 
             UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -130,8 +138,8 @@ class Register extends React.Component {
                         placeholder='ชื่อ'
                         iconName='account-circle'
                         type='meterial-community'
-                        addStyle={{ marginHorizontal: '10%' }}
-                        onChangeText={() => this.onChangeState('name', name)}
+                        addStyle={{ marginHorizontal: 30 }}
+                        onChangeText={(text) => this.onChangeState('name', text)}
                         value={name}
                     />
                     <InputIcon
@@ -139,7 +147,7 @@ class Register extends React.Component {
                         iconName='account-circle'
                         type='meterial-community'
                         addStyle={{ marginHorizontal: 30 }}
-                        onChangeText={() => this.onChangeState('surname', surname)}
+                        onChangeText={(text) => this.onChangeState('surname', text)}
                         value={surname}
                     />
                     <InputIcon
@@ -147,7 +155,7 @@ class Register extends React.Component {
                         iconName='phone'
                         type='meterial-community'
                         addStyle={{ marginHorizontal: 30 }}
-                        onChangeText={() => this.onChangeState('phone', phone)}
+                        onChangeText={(text) => this.onChangeState('phone', text)}
                         value={phone}
                     />
                     <InputIcon
@@ -155,7 +163,7 @@ class Register extends React.Component {
                         iconName='mail'
                         type='meterial-community'
                         addStyle={{ marginHorizontal: 30 }}
-                        onChangeText={() => this.onChangeState('email', email)}
+                        onChangeText={(text) => this.onChangeState('email', text)}
                         value={email}
                     />
                     <InputIcon
@@ -165,19 +173,19 @@ class Register extends React.Component {
                         addStyle={{ marginHorizontal: 30 }}
                         secureTextEntry={secureTextEntry}
                         password
-                        onChangeText={() => this.onChangeState('password', password)}
+                        onChangeText={(text) => this.onChangeState('password', text)}
                         onPress={() => this.onChangeState('secureTextEntry', !secureTextEntry)}
                         value={password}
                     />
                     <InputIcon
                         onPress={() => this.setState({ isDateTimePickerVisible: true })}
                     >
-                        {this.state.birthday ? this.state.birthday : 'กรุณากรอกวันเกิดของคุณ'}
+                        {birthday ? `${birthday.toDateString()}` : 'กรุณาเลือกวันเกิดของคุณ'}
                     </InputIcon>
                     <DateTimePicker
-                        isVisible={this.state.isDateTimePickerVisible}
-                        onConfirm={this.handleDatePicked}
-                        onCancel={this.hideDateTimePicker}
+                        isVisible={isDateTimePickerVisible}
+                        onConfirm={this.handleDatePicked.bind(this)}
+                        onCancel={() => this.onChangeState('isDateTimePickerVisible', false)}
                         maximumDate={new Date()}
                     />
                     <Divider style={{ height: 10 }} />

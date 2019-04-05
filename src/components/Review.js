@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { getBottomSpace } from 'react-native-iphone-x-helper';
 import { TextLineFont, FontText, ReviewCard } from './common';
 import RestaurantCard from './RestaurantCard';
-import { SERVER, GET_REVIEW } from './common/config';
+import { SERVER, GET_REVIEW } from '../../config';
 
 class ReviewPage extends React.Component {
     constructor(props) {

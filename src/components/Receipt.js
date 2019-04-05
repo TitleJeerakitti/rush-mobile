@@ -3,7 +3,7 @@ import { View, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import RestaurantCard from './RestaurantCard';
 import { TextLineFont, MenuCard, Card, CardSection, FontText, Row, LoadingImage } from './common';
-import { SERVER, GET_ORDER_DETAIL } from './common/config';
+import { SERVER, GET_ORDER_DETAIL } from '../../config';
 
 class Receipt extends React.Component {
     constructor(props) {

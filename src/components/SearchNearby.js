@@ -3,7 +3,7 @@ import { RefreshControl, View, ListView, } from 'react-native';
 import { connect } from 'react-redux';
 import RestaurantCard from './RestaurantCard';
 import { FilterCard, FilterItem, FilterButton, FontText, LoadingImage } from './common';
-import { SERVER, SEARCH_NEARBY } from './common/config';
+import { SERVER, SEARCH_NEARBY } from '../../config';
 
 class SearchNearby extends React.Component {
 

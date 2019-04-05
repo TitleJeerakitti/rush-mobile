@@ -13,7 +13,7 @@ import {
     OrderConfirm,
 } from './common';
 import { loadData } from '../actions';
-import { GREEN, SERVER, CREATE_NEW_ORDER, CHECK_PROMO_CODE } from './common/config';
+import { GREEN, SERVER, CREATE_NEW_ORDER, CHECK_PROMO_CODE } from '../../config';
 import RestaurantCard from './RestaurantCard';
 
 class MainRemain extends React.Component {

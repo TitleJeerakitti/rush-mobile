@@ -7,7 +7,7 @@ import { Constants, } from 'expo';
 import { ifIphoneX, getBottomSpace } from 'react-native-iphone-x-helper';
 import { Row, ButtonSideList, FontText } from './common';
 import { authLogout } from '../actions';
-import { YELLOW } from './common/config';
+import { YELLOW } from '../../config';
 
 class SideMenu extends React.Component {
 

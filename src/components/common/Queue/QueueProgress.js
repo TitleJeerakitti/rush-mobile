@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Image } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { Row, FontText, Card } from '../../common';
-import { DARK_RED } from '../config';
+import { DARK_RED } from '../../../../config';
 
 class QueueProgress extends React.Component {
     renderCooking() {

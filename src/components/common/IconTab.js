@@ -1,6 +1,6 @@
 import React from 'react';
 import { Icon } from 'react-native-elements';
-import { ORANGE } from './config';
+import { ORANGE } from '../../../config';
 
 class IconTab extends React.Component {
     render() {
