@@ -32,7 +32,6 @@ class ConfirmOrderSerializer(serializers.Serializer):
             total = total - promotion.discount_price
             discount_price = promotion.discount_price
         else:
-            print(promotion.discount_percent)
             discount_price = total*promotion.discount_percent/100
             total = total - discount_price
         return Response({"status": 200, "total": total, "discount_price": discount_price}, status=status.HTTP_200_OK)

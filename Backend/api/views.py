@@ -17,7 +17,6 @@ class HomeAPIView(APIView):
     permission_classes = [IsAuthenticated, IsCustomer]
 
     def get(self, request):
-        print(request.user.social_auth.values_list('provider'))
         slide_banner = Promotion.objects.filter(
             is_banner=True, is_display=True)
         slide_banner_serializer = SlideBannerSerializer(
@@ -31,3 +30,17 @@ class HomeAPIView(APIView):
         return Response({"slide_banner": slide_banner_serializer.data,
                          "category": category_serializer.data,
                          "suggest_list": suggest_list_serializer.data}, status=status.HTTP_200_OK)
+
+# class TestAPIView(APIView):
+#     permission_classes = ()
+
+#     def get(self, request):
+#         from rush.settings import MEDIA_ROOT
+#         from customer.models import Customer
+#         from django.core.files import File  # you need this somewhere
+#         import urllib
+
+#         customer = Customer.objects.get(user__username='customer')
+#         result = urllib.urlretrieve(MEDIA_ROOT+'/default_user.png')
+#         customer.profile_picture.save(,FILE
+#         return Response(status=status.HTTP_200_OK)
