@@ -1,38 +1,60 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, } from 'react-native';
+import { View, Text, TouchableOpacity, AsyncStorage, } from 'react-native';
 import { Avatar, Icon } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 import { connect } from 'react-redux';
 import { Constants, } from 'expo';
 import { ifIphoneX, getBottomSpace } from 'react-native-iphone-x-helper';
 import { Row, ButtonSideList, FontText } from './common';
-import { authLogout } from '../actions';
-import { YELLOW } from './common/config';
+import { authLogOut } from '../actions';
+import { YELLOW, SERVER, LOGOUT, CLIENT_ID, CLIENT_SECRET } from '../../config';
 
 class SideMenu extends React.Component {
+    async onLogOut() {
+        try {
+            const { token_type, access_token } = this.props.token;
+            const response = await fetch(`${SERVER}${LOGOUT}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `${token_type} ${access_token}`
+                },
+                body: JSON.stringify({
+                    client_id: CLIENT_ID,
+                    client_secret: CLIENT_SECRET,
+                    token: access_token,
+                }),
+            });
+            if (response.status === 200) {
+                this.removeToken();
+                Actions.reset('auth');
+                this.props.authLogOut();
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async removeToken() {
+        try {
+          await AsyncStorage.removeItem('token');
+        } catch (error) {
+          // Error saving data
+          console.log(error);
+        }
+    }
 
     renderPicture() {
         const { userInfo } = this.props;
         const { avatarStyle } = styles;
-        if (userInfo) {
-            return (
-                <Avatar 
-                    large
-                    rounded
-                    source={{ 
-                        uri: userInfo.picture.data !== undefined ? 
-                        userInfo.picture.data.url : userInfo.picture 
-                    }}
-                    activeOpacity={1}
-                    containerStyle={avatarStyle}
-                />
-            );
-        }
         return (
             <Avatar 
                 large
                 rounded
-                icon={{ name: 'user', type: 'font-awesome' }}
+                source={{ 
+                    uri: userInfo.picture.data !== undefined ? 
+                    userInfo.picture.data.url : userInfo.picture 
+                }}
                 activeOpacity={1}
                 containerStyle={avatarStyle}
             />
@@ -41,16 +63,9 @@ class SideMenu extends React.Component {
 
     renderPhone() {
         const { userInfo } = this.props;
-        if (userInfo) {
-            return (
-                <Text style={{ color: 'white' }}>
-                    {userInfo.tel_number !== undefined ? userInfo.tel_number : ''}
-                </Text>
-            );
-        }
         return (
             <Text style={{ color: 'white' }}>
-                081-234-5678         
+                {userInfo.tel_number !== undefined ? userInfo.tel_number : ''}
             </Text>
         );
     }
@@ -108,7 +123,7 @@ class SideMenu extends React.Component {
 
                 {/* Buttom Sign Out Section */}
                 <View style={signoutContainer}>
-                    <TouchableOpacity onPress={() => this.props.authLogout(this.props.token)} >
+                    <TouchableOpacity onPress={() => this.onLogOut()} >
                         <FontText style={signoutText}>ออกจากระบบ</FontText>
                     </TouchableOpacity>
                 </View>
@@ -165,4 +180,4 @@ const mapStateToProp = ({ auth }) => {
     return { userInfo, token };
 };
 
-export default connect(mapStateToProp, { authLogout })(SideMenu);
+export default connect(mapStateToProp, { authLogOut })(SideMenu);

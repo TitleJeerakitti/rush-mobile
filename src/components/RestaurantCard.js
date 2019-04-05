@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, View, } from 'react-native';
+import { TouchableOpacity, View, Text, } from 'react-native';
 import { connect } from 'react-redux';
 import { Icon } from 'react-native-elements';
 import StarRating from 'react-native-star-rating';
@@ -14,7 +14,7 @@ import {
     ShopDistance,
     ShopStatus,
 } from './common';
-import { YELLOW } from './common/config';
+import { YELLOW } from '../../config';
 
 class RestaurantCard extends React.Component {
 
@@ -53,7 +53,7 @@ class RestaurantCard extends React.Component {
             category,
         } = this.props.data;
         return (
-            <Card style={{ marginTop: 10 }}>
+            <Card>
                 <CardSection>
                     <TouchableOpacity
                         style={card}
@@ -97,7 +97,7 @@ class RestaurantCard extends React.Component {
                                     <Row style={{ flex: 1, justifyContent: 'flex-end' }}>
                                         <Icon name='tag' type='evilicon' size={16} color='gray' />
                                         <FontText style={{ color: 'gray' }} numberOfLines={1} >
-                                            {category}
+                                            {category.name}
                                         </FontText>
                                     </Row>
                                 </Row>
@@ -124,8 +124,7 @@ const styles = {
         shadowColor: 'black',
         shadowOffset: { width: 0, height: 0 },
         shadowRadius: 10,
-        elevation: 4
-        ,
+        elevation: 4,
     }
 };
 

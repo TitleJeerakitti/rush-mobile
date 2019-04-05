@@ -1,20 +1,5 @@
-export const EMAIL_CHANGE = 'EMAIL_CHANGE';
-export const PASSWORD_CHANGE = 'PASSWORD_CHANGE';
-export const LOGIN_USER = 'LOGIN_USER';
-export const LOGIN_FAILED = 'LOGIN_FAILED';
-export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
-export const GOTO_REGISTER = 'GOTO_REGISTER';
-export const NAME_CHANGE = 'NAME_CHANGE';
-export const PHONE_CHANGE = 'PHONE_CHANGE';
-export const CREATE_USER = 'CREATE_USER';
-export const CREATE_FAIL = 'CREATE_FAIL';
-export const CREATE_SUCCESS = 'CREATE_SUCCESS';
-export const CLEAR_STATE = 'CLEAR_STATE';
-export const FORGET_PASSWORD = 'FORGET_PASSWORD';
-export const FORGET_REQUEST = 'FORGET_REQUEST';
-export const LOGOUT_USER = 'LOGOUT_USER';
-export const FACEBOOK_LOGIN = 'FACEBOOK_LOGIN';
 export const GET_TOKEN = 'GET_TOKEN';
+export const LOG_OUT = 'LOG_OUT';
 
 export const FONT_LOADED = 'FONT_LOADED';
 export const DATA_LOADING = 'DATA_LOADING';

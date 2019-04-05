@@ -8,10 +8,13 @@ import {
     LayoutAnimation,
     Platform,
     UIManager,
+    AsyncStorage,
+    Alert,
 } from 'react-native';
 import { connect } from 'react-redux';
 import { Divider } from 'react-native-elements';
-import Expo from 'expo';
+import { Actions } from 'react-native-router-flux';
+import { Facebook } from 'expo';
 import { 
     InputIcon, 
     AuthButton, 
@@ -19,81 +22,95 @@ import {
     Spinner,
     AuthBg,
 } from './common';
-import { YELLOW, LIGHT_RED, SERVER, CLIENT_ID, CLIENT_SECRET } from './common/config';
 import { 
-    authEmailChange,
-    authPasswordChange,
-    authLogin,
-    authToRegister,
-    authForgetPassword,
-    authFacebookLogin,
-} from '../actions';
+    YELLOW, 
+    LIGHT_RED, 
+    SERVER, 
+    CLIENT_ID,
+    CLIENT_SECRET, 
+    LOGIN_APP, 
+    LOGIN_FACEBOOK 
+} from '../../config';
+import { authLoginSuccess, } from '../actions';
+
+const responsesiveLogo = () => {
+    const { appName } = styles;
+    const { width } = Dimensions.get('window');
+    if (width > 375) {
+        return ({ 
+            logoSize: { width: 132, height: 185 }, 
+            headerName: appName  
+        });
+    } else if (width > 320) {
+        return ({ 
+            logoSize: { width: 105.6, height: 148 }, 
+            headerName: { ...appName, fontSize: 32 } 
+        });
+    }
+    return ({ 
+        logoSize: { width: 88, height: 123.33 }, 
+        headerName: { ...appName, fontSize: 27 } 
+    });
+};
 
 class LoginForm extends React.Component {
-    state = {
-        secureTextEntry: true,
+    constructor(props) {
+        super(props);
+        this.state = {
+            secureTextEntry: true,
+            email: '',
+            password: '',
+            error: '',
+            loading: false,
+            ...responsesiveLogo(),
+        };
     }
 
-    componentWillMount() {
-        const { appName } = styles;
-        const { width } = Dimensions.get('window');
+    async onChangeState(key, data) {
+        await this.setState({ error: '', [key]: data });
+    }
 
-        // Responsive Condition
-        if (width > 375) {
-            this.setState({ 
-                ...this.state, 
-                logoSize: { width: 132, height: 185 }, 
-                headerName: appName  
+    async getAPI(content, data) {
+        try {
+            this.onChangeState('loading', true);
+            const response = await fetch(`${SERVER}${content}`, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
             });
-        } else if (width > 320) {
-            this.setState({ 
-                ...this.state, 
-                logoSize: { width: 105.6, height: 148 }, 
-                headerName: { ...appName, fontSize: 32 } 
-            });
-        } else {
-            this.setState({ 
-                ...this.state, 
-                logoSize: { width: 88, height: 123.33 }, 
-                headerName: { ...appName, fontSize: 27 } 
-            });
+            const responseData = await response.json();
+            this.onChangeState('loading', false);
+            return responseData;
+        } catch (error) {
+            console.log(error);
         }
     }
 
-    componentWillUpdate() {
-        LayoutAnimation.easeInEaseOut();
-    }
-
-    onEmailChange(text) {
-        this.props.authEmailChange(text);
-    }
-
-    onPasswordChange(text) {
-        this.props.authPasswordChange(text);
-    }
-
-    onUserLogin() {
-        const { email, password } = this.props;
-        this.props.authLogin(email, password);
-    }
-
     async getAccessTokenFacebook(token) {
-        const response = await fetch(`${SERVER}/customer/facebook_customer`, {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                client_id: CLIENT_ID,
-                client_secret: CLIENT_SECRET,
-                grant_type: 'convert_token',
-                backend: 'facebook',
-                token,
-            }),
-        });
-        const responseData = response.json();
-        console.log(responseData);
+        const data = {
+            client_id: CLIENT_ID,
+            client_secret: CLIENT_SECRET,
+            grant_type: 'convert_token',
+            backend: 'facebook',
+            token,
+        };
+        const response = await this.getAPI(LOGIN_FACEBOOK, data);
+        this.isCustomer(response);
+    }
+
+    async getAccessTokenApp() {
+        const data = {
+            client_id: CLIENT_ID,
+            client_secret: CLIENT_SECRET,
+            grant_type: 'password',
+            username: this.state.email,
+            password: this.state.password,
+        };
+        const response = await this.getAPI(LOGIN_APP, data);
+        this.isCustomer(response);
     }
 
     async logInFB() {
@@ -104,43 +121,54 @@ class LoginForm extends React.Component {
             // expires,
             // permissions,
             // declinedPermissions,
-          } = await Expo.Facebook.logInWithReadPermissionsAsync('322995281815548', {
+          } = await Facebook.logInWithReadPermissionsAsync('322995281815548', {
             permissions: ['public_profile', 'user_birthday', 'user_gender', 'email'],
           });
           if (type === 'success') {
             // Get the user's name using Facebook's Graph API
-            const response = await fetch(`https://graph.facebook.com/me?access_token=${token}&fields=id,name,email,birthday,gender,picture.type(large)`);
-            const responseJson = await response.json();
-            // console.log(response);
-            console.log(token);
-            // console.log(responseJson);
-            // console.log('success with ', `Hi ${responseJson.name}!`);
-            /* this.props.authFacebookLogin(token, responseJson); */
-            // Actions.app();
+            // const response = await fetch(`https://graph.facebook.com/me?access_token=${token}&fields=id,name,email,birthday,gender,picture.type(large)`);
+            // const responseJson = await response.json();
             this.getAccessTokenFacebook(token);
           } else {
             // type === 'cancel'
           }
         } catch ({ message }) {
-          alert(`Facebook Login Error: ${message}`);
+          Alert.alert(`Facebook Login Error: ${message}`);
+        }
+    }
+
+    isCustomer(response) {
+        if (response.role === 'customer') {
+            this.storeData(response.token);
+            this.props.authLoginSuccess(response);
+            Actions.app();
+        } else {
+            this.onChangeState('error', 'อีเมลหรือรหัสผ่านไม่ถูกต้อง');
+        }
+    }
+
+    async storeData(token) {
+        try {
+          await AsyncStorage.setItem('token', JSON.stringify(token));
+        } catch (error) {
+          // Error saving data
+          console.log(error);
         }
     }
     
     renderLoginButton() {
-        const { loading, error } = this.props;
+        const { loading, error } = this.state;
         const { maxWidth, errorText, marginTop10 } = styles;
 
         if (loading) {
-            return (
-                <Spinner />
-            );
+            return <Spinner />;
         }
         return (
             <View style={maxWidth}>
                 <Text style={errorText}>{error}</Text>
                 <AuthButton 
                     color={YELLOW}
-                    onPress={this.onUserLogin.bind(this)}
+                    onPress={() => this.getAccessTokenApp()}
                 >
                     เข้าสู่ระบบ
                 </AuthButton>
@@ -155,7 +183,7 @@ class LoginForm extends React.Component {
                 <TextLine title='or' />
                 <AuthButton 
                     color={LIGHT_RED}
-                    onPress={() => this.props.authToRegister()}
+                    onPress={() => Actions.register()}
                 >
                     สมัครสมาชิก
                 </AuthButton>
@@ -166,12 +194,13 @@ class LoginForm extends React.Component {
 
     render() {
         const { linkRight, height10, height20, white, } = styles;
-        const { secureTextEntry, logoSize, headerName } = this.state;
+        const { secureTextEntry, logoSize, headerName, email, password, } = this.state;
+        LayoutAnimation.easeInEaseOut();
         if (Platform.OS === 'android') {
             // UIManager.setLayoutAnimationEnabledExperimental && 
             UIManager.setLayoutAnimationEnabledExperimental(true);
         }
-
+        
         return (
             <AuthBg>
 
@@ -190,11 +219,11 @@ class LoginForm extends React.Component {
                 
                 {/* -- Input Section -- */}
                 <InputIcon 
-                    value={this.props.email}
+                    value={email}
                     placeholder='E-mail'
                     iconName='user'
                     type='evilicon'
-                    onChangeText={this.onEmailChange.bind(this)}
+                    onChangeText={(text) => this.onChangeState('email', text)}
                 />
                 <InputIcon
                     placeholder='Password'
@@ -202,13 +231,13 @@ class LoginForm extends React.Component {
                     type='evilicon'
                     secureTextEntry={secureTextEntry}
                     password
-                    value={this.props.password}
-                    onChangeText={this.onPasswordChange.bind(this)}
-                    onPress={() => this.setState({ secureTextEntry: !secureTextEntry })}
+                    value={password}
+                    onChangeText={(text) => this.onChangeState('password', text)}
+                    onPress={() => this.onChangeState('secureTextEntry', !secureTextEntry)}
                 />
                 <TouchableOpacity 
                     style={linkRight} 
-                    onPress={() => this.props.authForgetPassword()}
+                    onPress={() => Actions.forget()}
                 >
                     <Text style={white}>
                         forget password?
@@ -233,7 +262,7 @@ const styles = {
     },
     linkRight: {
         alignSelf: 'flex-end',
-        marginHorizontal: '12%',
+        marginHorizontal: 30,
         marginTop: 5,
     },
     errorText: {
@@ -262,16 +291,4 @@ const styles = {
     },
 };
 
-const mapStateToProps = ({ auth }) => {
-    const { email, password, user, loading, error } = auth;
-    return { email, password, user, loading, error };
-};
-
-export default connect(mapStateToProps, {
-    authEmailChange,
-    authPasswordChange,
-    authLogin,
-    authToRegister,
-    authForgetPassword,
-    authFacebookLogin,
-})(LoginForm);
+export default connect(null, { authLoginSuccess, })(LoginForm);

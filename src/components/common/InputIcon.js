@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextInput, View, TouchableOpacity } from 'react-native';
+import { TextInput, View, TouchableOpacity, Text, } from 'react-native';
 import { Icon } from 'react-native-elements';
 
 class InputIcon extends React.Component {
@@ -12,7 +12,7 @@ class InputIcon extends React.Component {
             this.setState({ 
                 rightIconStyle: showStyle, 
                 textStyle, 
-                containerStyle: { ...containerStyle, marginHorizontal: '12%', } });
+                containerStyle: { ...containerStyle, marginHorizontal: 30, } });
         } else {
             this.setState({ 
                 rightIconStyle: showStyle, 
@@ -53,23 +53,37 @@ class InputIcon extends React.Component {
             onChangeText,
             value,
             type,
+            children,
+            onPress,
         } = this.props;
         
+        if (!children) {
+            return (
+                <View style={{ ...containerStyle, }}>
+                    <Icon name={iconName} type={type} size={30} />
+                    <TextInput 
+                        value={value}
+                        onChangeText={onChangeText}
+                        style={textStyle}
+                        placeholder={placeholder}
+                        secureTextEntry={secureTextEntry}
+                        autoCorrect={false}
+                        autoCapitalize='none'
+                        underlineColorAndroid='transparent'
+                    />
+                    {this.renderShowPassword()}
+                </View>
+            );
+        }
         return (
-            <View style={{ ...containerStyle, }}>
-                <Icon name={iconName} type={type} size={30} />
-                <TextInput 
-                    value={value}
-                    onChangeText={onChangeText}
-                    style={textStyle}
-                    placeholder={placeholder}
-                    secureTextEntry={secureTextEntry}
-                    autoCorrect={false}
-                    autoCapitalize='none'
-                    underlineColorAndroid='transparent'
-                />
-                {this.renderShowPassword()}
-            </View>
+            <TouchableOpacity 
+                onPress={onPress} 
+                style={styles.buttonStyle}
+            >
+                <Text style={styles.buttonText}>
+                    {children}
+                </Text>
+            </TouchableOpacity>
         );
     }
 }
@@ -87,6 +101,17 @@ const styles = {
         shadowOpacity: 0.2, 
         shadowOffset: { width: 1, height: 1 }, 
     },
+    buttonStyle: {
+        backgroundColor: 'white',
+        marginHorizontal: 30,
+        padding: 10,
+        borderRadius: 25,
+        flexDirection: 'row',
+        marginTop: 20,
+        shadowColor: 'black', 
+        shadowOpacity: 0.2, 
+        shadowOffset: { width: 1, height: 1 },  
+    },
     textStyle: {
         textAlign: 'center',
         flex: 1,
@@ -96,6 +121,11 @@ const styles = {
         paddingHorizontal: 5,
         color: 'black',
     },
+    buttonText: {
+        flex: 1, 
+        textAlign: 'center', 
+        color: '#333',
+    }
 };
 
 export { InputIcon };
