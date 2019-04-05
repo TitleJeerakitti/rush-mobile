@@ -14,18 +14,18 @@ import RestaurantMenu from './RestaurantMenu';
 import MenuRemain from './MenuRemain';
 import Queue from './Queue';
 import { NavHamberger, IconTab, NavBack } from './common';
-import { fontLoader, resetRestaurant } from '../actions';
+import { fontLoader, resetRestaurant, authLoginSuccess, authTokenLogin } from '../actions';
 import Receipt from './Receipt';
 import Review from './Review';
 import History from './History';
 import Promotion from './Promotion';
 import EditProfile from './EditProfile';
+import { SERVER, CHECK_TOKEN, CLIENT_ID, CLIENT_SECRET, LOGIN_APP, } from '../../config';
 
 class RouterComponent extends React.Component {
     constructor(props) {
         super(props);
         ScreenOrientation.allow('PORTRAIT');
-        this.checkToken();
     }
 
     async componentDidMount() {
@@ -33,22 +33,84 @@ class RouterComponent extends React.Component {
           thaisans: require('../../assets/ThaiSansNeue-Regular.ttf'),
           thaisansItalic: require('../../assets/ThaiSansNeue-Italic.ttf')
         });
+
         this.props.fontLoader();
-        // other stuff
+        this.checkToken();
+    }
+
+    async getUserInfo(token) {
+        try {
+            const { access_token, refresh_token, token_type } = token;
+            const response = await fetch(`${SERVER}${CHECK_TOKEN}`, {
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: `${token_type} ${access_token}`
+                },
+            });
+            console.log(response.status);
+            if (response.status === 200) {
+                this.userLoginSuccess(response, token);
+            } else {
+                this.refreshToken(refresh_token);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async refreshToken(token) {
+        try {
+            const response = await fetch(`${SERVER}${LOGIN_APP}`, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    grant_type: 'refresh_token',
+                    client_id: CLIENT_ID,
+                    client_secret: CLIENT_SECRET,
+                    refresh_token: token,
+                }),
+            });
+            console.log('refresh', response.status);
+            if (response.status === 200) {
+                this.userLoginSuccess(response);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async userLoginSuccess(response, token = null) {
+        const responseData = await response.json();
+        if (!token) {
+            this.storeData(responseData.token);
+            this.props.authLoginSuccess(responseData);
+        } else {
+            this.props.authTokenLogin(responseData, token);
+        }
+        Actions.app();
     }
 
     async checkToken() {
         try {
-            const value = await AsyncStorage.getItem('access_token');
-            if (value !== null) {
-            // We have data!!
-                console.log(value);
-                // Actions.app();
-            } else {
-                console.log(value);
+            const storageToken = await AsyncStorage.getItem('token');
+            const token = JSON.parse(storageToken);
+            if (token !== null) {
+                console.log(token);
+                this.getUserInfo(token);
             }
         } catch (error) {
-            // Error retrieving data
+            console.log(error);
+        }
+    }
+
+    async storeData(token) {
+        try {
+            await AsyncStorage.setItem('token', JSON.stringify(token));
+        } catch (error) {
             console.log(error);
         }
     }
@@ -72,9 +134,7 @@ class RouterComponent extends React.Component {
                         <Scene key='forget' component={ForgetPassword} title='ลืมรหัสผ่าน' onLeft />
                     </Scene>
 
-                    <Scene key='profile' 
-                    // initial
-                    >
+                    <Scene key='profile' >
                         <Scene 
                             key='edit_profile' 
                             component={EditProfile} 
@@ -196,4 +256,6 @@ const styles = {
 export default connect(null, {
     fontLoader,
     resetRestaurant,
+    authLoginSuccess,
+    authTokenLogin,
 })(RouterComponent);

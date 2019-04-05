@@ -27,7 +27,7 @@ class EditProfile extends React.Component {
     }
 
     async getLocationAsync() {
-        const { status, permissions } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+        const { status, /* permissions */ } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
         if (status === 'granted') {
         //   return Location.getCurrentPositionAsync({enableHighAccuracy: true});
             this.selectPhoto();

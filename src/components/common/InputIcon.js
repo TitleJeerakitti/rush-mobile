@@ -12,7 +12,7 @@ class InputIcon extends React.Component {
             this.setState({ 
                 rightIconStyle: showStyle, 
                 textStyle, 
-                containerStyle: { ...containerStyle, marginHorizontal: '12%', } });
+                containerStyle: { ...containerStyle, marginHorizontal: 30, } });
         } else {
             this.setState({ 
                 rightIconStyle: showStyle, 

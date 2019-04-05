@@ -73,7 +73,7 @@ class QueueProgress extends React.Component {
             </Card>
         );
     }
-};
+}
 
 const styles = {
     container: {

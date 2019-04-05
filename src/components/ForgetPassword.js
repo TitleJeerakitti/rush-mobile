@@ -1,39 +1,59 @@
 import React from 'react';
-import {
-    View,
-    Text,
-} from 'react-native';
-import { Divider } from 'react-native-elements';
-import { connect } from 'react-redux';
-import { 
-    authForgetRequest,
-    authEmailChange,
-} from '../actions';
-import { 
-    AuthButton,
-    InputIcon,
-    Spinner,
-    AuthBg,
-    AuthCard,
-} from './common';
-import { LIGHT_RED } from '../../config';
+import { View, Text, UIManager, LayoutAnimation, Platform } from 'react-native';
+import { Actions } from 'react-native-router-flux';
+import { AuthButton, InputIcon, Spinner, AuthBg, AuthCard, } from './common';
+import { LIGHT_RED, SERVER, FORGET_PASSWORD, DARK_RED } from '../../config';
 
 class ForgetPassword extends React.Component {
-    onEmailChange(text) {
-        this.props.authEmailChange(text);
+    constructor(props) {
+        super(props);
+        this.state = {
+            email: '',
+            error: '',
+            loading: false,
+        };
+    }
+
+    async onChangeState(key, data) {
+        await this.setState({ error: '', [key]: data });
+    }
+
+    async forgetPassword() {
+        try {
+            this.onChangeState('loading', true);
+            const response = await fetch(`${SERVER}${FORGET_PASSWORD}`, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: this.state.email,
+                }),
+            });
+            if (response.status === 200) {
+                Actions.pop();
+            } else {
+                this.onChangeState('loading', false);
+                this.onChangeState('error', 'ไม่มีอีเมลนี้ในระบบ');
+            }
+        } catch (err) {
+            this.onChangeState('loading', false);
+            console.log(err);
+        }
     }
 
     renderButton() {
-        const { loading, error, email } = this.props;
+        const { loading, error, } = this.state;
         if (loading) {
-            return <Spinner />;
+            return <Spinner style={{ marginTop: 10, }} />;
         }
         return (
             <View style={{ width: '100%' }}>
                 <Text style={styles.errorText}>{error}</Text>
                 <AuthButton 
                     color={LIGHT_RED}
-                    onPress={() => this.props.authForgetRequest(email)}
+                    onPress={() => this.forgetPassword()}
                 >
                     Reset Password
                 </AuthButton>
@@ -42,6 +62,11 @@ class ForgetPassword extends React.Component {
     }
 
     render() {
+        if (Platform.OS === 'android') {
+            // UIManager.setLayoutAnimationEnabledExperimental && 
+            UIManager.setLayoutAnimationEnabledExperimental(true);
+        }
+        LayoutAnimation.easeInEaseOut();
         const { headerStyle } = styles;
         return (
             <AuthBg>
@@ -53,11 +78,10 @@ class ForgetPassword extends React.Component {
                         placeholder='อีเมล'
                         iconName='account-circle'
                         type='meterial-community'
-                        addStyle={{ marginHorizontal: '10%' }}
-                        onChangeText={this.onEmailChange.bind(this)}
-                        value={this.props.email}
+                        addStyle={{ marginHorizontal: 30 }}
+                        onChangeText={(text) => this.onChangeState('email', text)}
+                        value={this.state.email}
                     />
-                    <Divider style={{ height: 10 }} />
                     {this.renderButton()}
                 </AuthCard>
             </AuthBg>
@@ -70,14 +94,11 @@ const styles = {
         fontSize: 16,
         color: 'white',
     },
+    errorText: {
+        color: DARK_RED,
+        textAlign: 'center',
+        padding: 10,
+    }
 };
 
-const mapStateToProps = ({ auth }) => {
-    const { error, loading, email } = auth;
-    return { error, loading, email };
-};
-
-export default connect(mapStateToProps, {
-    authForgetRequest,
-    authEmailChange,
-})(ForgetPassword);
+export default ForgetPassword;

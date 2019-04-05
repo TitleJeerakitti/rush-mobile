@@ -12,7 +12,12 @@ export const CLIENT_SECRET = '20gLSwtsfYqqsamMYLj7GGYxziYRaoQXzCcdIARLY1XkQ7tzpv
 
 //API
 export const LOGIN_APP = '/auth/login/';
+export const LOGIN_FACEBOOK = '/auth/login-facebook/';
 export const REGISTER = '/auth/register-customer/';
+export const FORGET_PASSWORD = '/auth/reset-password/';
+export const LOGOUT = '/auth/logout/';
+export const CHECK_TOKEN = '/api/get-customer-data';
+
 export const SEARCH_NEARBY = '/restaurant/restaurant-card/';
 export const GET_RESTAURANT_MENU = '/restaurant/restaurant_detail/';
 export const CREATE_NEW_ORDER = '/order/create_new_order/';

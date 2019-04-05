@@ -54,7 +54,9 @@ class OrderConfirm extends React.Component {
                         <View style={styles.line} />
                         <Row>
                             <FontText style={{ flex: 1 }}>ส่วนลด</FontText>
-                            <FontText>{discountPrice ? discountPrice.toFixed(2) : '0.00'} บาท</FontText>
+                            <FontText>
+                                {discountPrice ? discountPrice.toFixed(2) : '0.00'} บาท
+                            </FontText>
                         </Row>
                         <Row>
                             <FontText style={{ flex: 1, color: DARK_RED, }} size={24}>

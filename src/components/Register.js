@@ -75,12 +75,12 @@ class Register extends React.Component {
                     birthday: date,
                 }),
             });
-            const responseData = await response.json();
-            if (responseData.status === 200) {
+            console.log(response.status)
+            if (response.status === 201) {
                 Actions.pop();
             } else {
                 this.onChangeState('loading', false);
-                this.onChangeState('error', responseData.message.invalid);
+                this.onChangeState('error', 'คุณกรอกข้อมูลไม่ถูกต้อง');
             }
         } catch (error) {
             console.log(error);
