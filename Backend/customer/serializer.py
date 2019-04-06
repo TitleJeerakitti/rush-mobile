@@ -12,8 +12,10 @@ from activity.models import Activity
 
 from .models import Customer, User
 
+
 class CustomerSerializer(serializers.ModelSerializer):
     user = UserCustomerSerializer(required=True)
+    birthday = serializers.DateField(required=True)
 
     class Meta:
         model = Customer
@@ -24,9 +26,10 @@ class CustomerSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(**user_data)
         user.is_customer = True
         user.save()
-        Activity.push(user,200,user.username+' is register.')
+        Activity.push(user, 200, user.username+' is register.')
         customer = Customer.objects.create(user=user, **validated_data)
         return Response(status=status.HTTP_200_OK)
+
 
 class UserSerializer(serializers.ModelSerializer):
 
