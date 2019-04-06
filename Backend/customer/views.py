@@ -19,7 +19,7 @@ class CustomerRecordAPIView(APIView):
         serializer = CustomerSerializer(data=request.data)
         if serializer.is_valid(raise_exception=ValueError):
             serializer.create(validated_data=request.data)
-            return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
+            return Response(serializer.error_messages, status=status.HTTP_201_CREATED)
         return Response(serializer.error_messages,
                         status=status.HTTP_400_BAD_REQUEST)
 

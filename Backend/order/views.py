@@ -29,8 +29,8 @@ class CreateOrderAPIView(APIView):
         if serializer.is_valid(raise_exception=ValueError):
             serializer.create(validated_data=request.data,
                               customer_id=request.user.id)
-            return Response({'success': 'Successful Create Order'}, status=status.HTTP_200_OK)
-        return Response({'error': 'Unauthorized access'}, status=status.HTTP_200_OK)
+            return Response({'status': status.HTTP_200_OK}, status=status.HTTP_200_OK)
+        return Response({'status': status.HTTP_400_BAD_REQUEST}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class QueueAPIView(APIView):
