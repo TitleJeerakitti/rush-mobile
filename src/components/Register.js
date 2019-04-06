@@ -8,6 +8,8 @@ import {
 } from 'react-native';
 import { Divider } from 'react-native-elements';
 import { connect } from 'react-redux'; 
+import DateTimePicker from 'react-native-modal-datetime-picker';
+import { Actions } from 'react-native-router-flux';
 import { 
     InputIcon, 
     AuthButton, 
@@ -15,7 +17,7 @@ import {
     AuthBg, 
     AuthCard 
 } from './common';
-import { LIGHT_RED } from './common/config';
+import { LIGHT_RED, SERVER, REGISTER } from '../../config';
 import {
     authNameChange,
     authPhoneChange,
@@ -25,38 +27,73 @@ import {
 } from '../actions';
 
 class Register extends React.Component {
-
-    state = {
-        secureTextEntry: true,
-    };
+    constructor(props) {
+        super(props);
+        this.state = {
+            secureTextEntry: true,
+            name: '',
+            surname: '',
+            phone: '',
+            email: '',
+            password: '',
+            birthday: null,
+            loading: false,
+            error: '',
+            isDateTimePickerVisible: false,
+        };
+    }
 
     componentWillUpdate() {
         LayoutAnimation.easeInEaseOut();
     }
 
-    onNameChange(text) {
-        this.props.authNameChange(text);
+    async onChangeState(key, data) {
+        await this.setState({ error: '', [key]: data });
     }
 
-    onPhoneChange(text) {
-        this.props.authPhoneChange(text);
+    async onRegister() {
+        const { name, surname, phone, email, password, birthday } = this.state;
+        const date = birthday ? 
+            `${birthday.getFullYear()}-${birthday.getMonth() + 1}-${birthday.getDate()}` : null;
+        this.onChangeState('loading', true);
+        try {
+            const response = await fetch(`${SERVER}${REGISTER}`, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user: {
+                        username: email,
+                        password,
+                        first_name: name,
+                        last_name: surname,
+                        email,
+                    },
+                    tel_number: `+66${phone.slice(1)}`,
+                    birthday: date,
+                }),
+            });
+            console.log(response.status)
+            if (response.status === 201) {
+                Actions.pop();
+            } else {
+                this.onChangeState('loading', false);
+                this.onChangeState('error', 'คุณกรอกข้อมูลไม่ถูกต้อง');
+            }
+        } catch (error) {
+            console.log(error);
+        }
     }
 
-    onEmailChange(text) {
-        this.props.authEmailChange(text);
-    }
-
-    onPasswordChange(text) {
-        this.props.authPasswordChange(text);
-    }
-
-    onCreateUser() {
-        const { email, password } = this.props;
-        this.props.authCreateUser(email, password);
-    }
+    handleDatePicked = (date) => {
+        this.onChangeState('isDateTimePickerVisible', false);
+        this.onChangeState('birthday', date);
+    };
 
     renderButton() {
-        const { loading, error } = this.props;
+        const { loading, error } = this.state;
         if (loading) {
             return (
                 <Spinner />
@@ -67,7 +104,7 @@ class Register extends React.Component {
                 <Text style={styles.errorText}>{error}</Text>
                 <AuthButton 
                     color={LIGHT_RED}
-                    onPress={this.onCreateUser.bind(this)}
+                    onPress={() => this.onRegister()}
                 >
                     ลงทะเบียน
                 </AuthButton>
@@ -77,7 +114,17 @@ class Register extends React.Component {
 
     render() {
         const { headerStyle } = styles;
-        const { secureTextEntry } = this.state;
+        const { 
+            secureTextEntry, 
+            name, 
+            phone, 
+            email,
+            password, 
+            surname, 
+            birthday, 
+            isDateTimePickerVisible, 
+        } = this.state;
+
         if (Platform.OS === 'android') {
             // UIManager.setLayoutAnimationEnabledExperimental && 
             UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -88,40 +135,58 @@ class Register extends React.Component {
                 <AuthCard>
                     <Text style={headerStyle}>กรุณากรอกข้อมูลด้านล่าง</Text>
                     <InputIcon
-                        placeholder='ชื่อ-สกุล'
+                        placeholder='ชื่อ'
                         iconName='account-circle'
                         type='meterial-community'
-                        addStyle={{ marginHorizontal: '10%' }}
-                        onChangeText={this.onNameChange.bind(this)}
-                        value={this.props.name}
+                        addStyle={{ marginHorizontal: 30 }}
+                        onChangeText={(text) => this.onChangeState('name', text)}
+                        value={name}
+                    />
+                    <InputIcon
+                        placeholder='นามสกุล'
+                        iconName='account-circle'
+                        type='meterial-community'
+                        addStyle={{ marginHorizontal: 30 }}
+                        onChangeText={(text) => this.onChangeState('surname', text)}
+                        value={surname}
                     />
                     <InputIcon
                         placeholder='เบอร์โทรศัพท์'
                         iconName='phone'
                         type='meterial-community'
-                        addStyle={{ marginHorizontal: '10%' }}
-                        onChangeText={this.onPhoneChange.bind(this)}
-                        value={this.props.phone}
+                        addStyle={{ marginHorizontal: 30 }}
+                        onChangeText={(text) => this.onChangeState('phone', text)}
+                        value={phone}
                     />
                     <InputIcon
                         placeholder='อีเมล'
                         iconName='mail'
                         type='meterial-community'
-                        addStyle={{ marginHorizontal: '10%' }}
-                        onChangeText={this.onEmailChange.bind(this)}
-                        value={this.props.email}
+                        addStyle={{ marginHorizontal: 30 }}
+                        onChangeText={(text) => this.onChangeState('email', text)}
+                        value={email}
                     />
                     <InputIcon
                         placeholder='รหัสผ่าน'
                         iconName='lock'
                         type='meterial-community'
-                        addStyle={{ marginHorizontal: '10%' }}
+                        addStyle={{ marginHorizontal: 30 }}
                         secureTextEntry={secureTextEntry}
                         password
-                        onChangeText={this.onPasswordChange.bind(this)}
-                        onPress={() => 
-                            this.setState({ secureTextEntry: !secureTextEntry, })}
-                        value={this.props.password}
+                        onChangeText={(text) => this.onChangeState('password', text)}
+                        onPress={() => this.onChangeState('secureTextEntry', !secureTextEntry)}
+                        value={password}
+                    />
+                    <InputIcon
+                        onPress={() => this.setState({ isDateTimePickerVisible: true })}
+                    >
+                        {birthday ? `${birthday.toDateString()}` : 'กรุณาเลือกวันเกิดของคุณ'}
+                    </InputIcon>
+                    <DateTimePicker
+                        isVisible={isDateTimePickerVisible}
+                        onConfirm={this.handleDatePicked.bind(this)}
+                        onCancel={() => this.onChangeState('isDateTimePickerVisible', false)}
+                        maximumDate={new Date()}
                     />
                     <Divider style={{ height: 10 }} />
                     {this.renderButton()}
@@ -148,8 +213,8 @@ const styles = {
 };
 
 const mapStateToProps = ({ auth }) => {
-    const { name, phone, email, password, loading, error } = auth;
-    return { name, phone, email, password, loading, error };
+    const { loading, error } = auth;
+    return { loading, error };
 };
 
 export default connect(mapStateToProps, {

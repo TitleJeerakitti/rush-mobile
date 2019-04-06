@@ -14,7 +14,7 @@ const TextLine = ({ title }) => {
 const styles = {
     container: {
         flexDirection: 'row',
-        marginHorizontal: '12%',
+        marginHorizontal: 30,
         marginVertical: 10,
     },
     line: {

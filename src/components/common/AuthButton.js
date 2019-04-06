@@ -31,7 +31,7 @@ const styles = {
         padding: 10,
         borderRadius: 10,
         flexDirection: 'row',
-        marginHorizontal: '12%',
+        marginHorizontal: 30,
         shadowColor: 'black', 
         shadowOpacity: 0.2, 
         shadowOffset: { width: 1, height: 1 }, 

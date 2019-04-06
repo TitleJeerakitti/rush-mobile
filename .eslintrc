@@ -3,6 +3,11 @@
     "rules": {
         "arrow-body-style": 0,
         "global-require": 0,
-        "one-var": 0
+        "one-var": 0,
+        "camelcase": 0,
+        "no-underscore-dangle": 0
+    },
+    "globals": { 
+        "fetch": false
     }
 }

@@ -3,7 +3,7 @@ import { View, ScrollView, TextInput, TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { Row, FontText } from './common';
 import RestaurantCard from './RestaurantCard';
-import { ORANGE } from './common/config';
+import { ORANGE } from '../../config';
 
 class SearchByName extends React.Component {
     

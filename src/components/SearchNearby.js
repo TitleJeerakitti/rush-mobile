@@ -1,17 +1,17 @@
 import React from 'react';
-import { ScrollView, RefreshControl, View } from 'react-native';
-import { Divider } from 'react-native-elements';
+import { RefreshControl, View, ListView, } from 'react-native';
 import { connect } from 'react-redux';
 import RestaurantCard from './RestaurantCard';
-import { FilterCard, FilterItem, FilterButton, FontText } from './common';
-import { SERVER } from './common/config';
+import { FilterCard, FilterItem, FilterButton, FontText, LoadingImage } from './common';
+import { SERVER, SEARCH_NEARBY } from '../../config';
 
 class SearchNearby extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            restaurants: [],
+            isLoaded: false,
+            restaurants: this.listViewCloneWithRows(),
             refreshing: false,
             filters: [
                 { type: 'ระยะทาง' }, 
@@ -39,17 +39,18 @@ class SearchNearby extends React.Component {
     async getRestaurantAPI() {
         await this.setState({ refreshing: true });
         try {
-            // console.log(this.props.token)
+            const { token_type, access_token } = this.props.token;
             const response = await fetch(this.selectAPI(), {
                 headers: {
                     'Cache-Control': 'no-cache',
-                    Authorization: `Token ${this.props.token}`,
+                    Authorization: `${token_type} ${access_token}`,
                 }
             });
             const responseData = await response.json();
             if (this.mounted) {
                 await this.setState({
-                    restaurants: responseData,
+                    restaurants: this.listViewCloneWithRows(responseData),
+                    isLoaded: true,
                     refreshing: false
                 });
                 // console.log(this.state.restaurants);
@@ -60,10 +61,15 @@ class SearchNearby extends React.Component {
         }
     }
 
+    listViewCloneWithRows(data = []) {
+        const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+        return ds.cloneWithRows(data);
+    }
+
     selectAPI() {
         if (this.state.sortType === 'ระยะทาง') { 
             // return ('http://localhost:3000/restaurants?_sort=distance&_order=asc');
-            return (`${SERVER}/restaurant/nearby_restaurant/`);
+            return (`${SERVER}${SEARCH_NEARBY}`);
         } else if (this.state.sortType === 'ความนิยม') {
             return ('http://localhost:3000/restaurants?_sort=rating&_order=desc');
         }
@@ -71,15 +77,13 @@ class SearchNearby extends React.Component {
         return ('http://10.66.10.222:8000/testing/restaurant');
     }
 
-    renderRestaurant() {
-        if (this.state.restaurants.length > 0) {
-            return this.state.restaurants.map(restaurant =>
-                <RestaurantCard 
-                    key={restaurant.id} 
-                    data={restaurant}
-                />
-            );
-        }
+    refreshControl() {
+        return (
+            <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this.onRefresh}
+            />
+        );
     }
 
     renderItem() {
@@ -97,6 +101,14 @@ class SearchNearby extends React.Component {
         );
     }
 
+    renderHeader() {
+        return (
+            <FilterButton onPress={() => this.setState({ visible: true })} >
+                {this.state.sortType}
+            </FilterButton>
+        );
+    }
+
     renderFilter() {
         return (
             <FilterCard visible={this.state.visible}>
@@ -106,25 +118,23 @@ class SearchNearby extends React.Component {
     }
 
     render() {
-        const { container, space, containerNone } = styles;
-        if (this.state.restaurants.length > 0) {
+        const { container, containerNone } = styles;
+        const { isLoaded, restaurants, } = this.state;
+        if (!isLoaded) {
+            return <LoadingImage />;
+        } else if (restaurants._cachedRowCount > 0) {
             return (
-                <ScrollView
-                    style={container}
-                    refreshControl={
-                        <RefreshControl
-                            refreshing={this.state.refreshing}
-                            onRefresh={this.onRefresh}
-                        />
-                    }
-                >
-                    <FilterButton onPress={() => this.setState({ visible: true })} >
-                        {this.state.sortType}
-                    </FilterButton>
-                    {this.renderRestaurant()}
+                <View style={container} >
+                    <ListView 
+                        style={container}
+                        dataSource={restaurants}
+                        stickyHeaderIndices={[0]}
+                        renderRow={(item) => <RestaurantCard data={item} />}
+                        renderHeader={() => this.renderHeader()}
+                        refreshControl={this.refreshControl()}
+                    />
                     {this.renderFilter()}
-                    <Divider style={space} />
-                </ScrollView>
+                </View>
             );
         }
         return (
@@ -152,7 +162,6 @@ const styles = {
 
 const mapStateToProps = ({ auth }) => {
     const { token } = auth;
-    // console.log(token)
     return { token }; 
 };
 

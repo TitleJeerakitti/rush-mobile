@@ -1,12 +1,14 @@
 import React from 'react';
-import { Modal, View, ScrollView } from 'react-native';
+import { Modal, View, ScrollView, Text } from 'react-native';
 import { Divider } from 'react-native-elements';
 import { FontText, Row, CancelConfirmButton, } from '../../common';
+import { DiscountCode } from '../RemainMenu';
+import { DARK_RED, } from '../../../../config';
 
 class OrderConfirm extends React.Component {
     
     renderItem() {
-        if (this.props.total > 0) {
+        if (this.props.menuData.length > 0) {
             return this.props.menuData.map(menu => {
                 return (
                     <Row key={menu.id} >
@@ -19,8 +21,17 @@ class OrderConfirm extends React.Component {
     }
 
     render() {
-        const { visible, onConfirm, onCancel, price } = this.props;
-        
+        const { 
+            visible, 
+            onConfirm, 
+            onCancel, 
+            price, 
+            discountCode, 
+            onChangeCode, 
+            discountPrice,
+            onCheckCode,
+        } = this.props;
+
         return (
             <Modal
                 visible={visible}
@@ -42,9 +53,29 @@ class OrderConfirm extends React.Component {
                         </ScrollView>
                         <View style={styles.line} />
                         <Row>
-                            <FontText style={{ flex: 1 }} size={24}>ราคาสุทธิ</FontText>
-                            <FontText size={24}>{price.toFixed(2)} บาท</FontText>
+                            <FontText style={{ flex: 1 }}>ส่วนลด</FontText>
+                            <FontText>
+                                {discountPrice ? discountPrice.toFixed(2) : '0.00'} บาท
+                            </FontText>
                         </Row>
+                        <Row>
+                            <FontText style={{ flex: 1, color: DARK_RED, }} size={24}>
+                                ราคาสุทธิ
+                            </FontText>
+                            <FontText style={{ color: DARK_RED }} size={24}>
+                                {price.toFixed(2)} บาท
+                            </FontText>
+                        </Row>
+                        <View style={styles.line} />
+                        <DiscountCode 
+                            value={discountCode}
+                            onChangeText={onChangeCode}
+                            editable={discountPrice === null}
+                            onPress={onCheckCode}
+                        />
+                        <Text style={{ textAlign: 'center', color: DARK_RED }}>
+                            {this.props.errorMessage}
+                        </Text>
                         <Divider style={{ height: 10, backgroundColor: 'transparent' }} />
                         <CancelConfirmButton 
                             onConfirm={onConfirm}

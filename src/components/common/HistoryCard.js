@@ -14,7 +14,7 @@ import {
     TwoButton,
     OneButton,
 } from '../common';
-import { YELLOW, GRAY, GREEN, DARK_RED } from './config';
+import { YELLOW, GRAY, GREEN, DARK_RED } from '../../../config';
 import { getOrderAgain } from '../../actions';
 
 class History extends React.Component {
@@ -107,7 +107,7 @@ class History extends React.Component {
             </Card>
         );
     }
-};
+}
 
 const styles = {
     card: {
