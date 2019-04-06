@@ -34,3 +34,4 @@ export * from './Queue';
 export * from './ReviewCard';
 export * from './HistoryCard';
 export * from './LoadingImage';
+export * from './Space';

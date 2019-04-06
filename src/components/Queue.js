@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Image, ScrollView, ListView, Text } from 'react-native';
+import { View, Image, ListView, RefreshControl, } from 'react-native';
 import { connect } from 'react-redux';
-// import { Actions } from 'react-native-router-flux';
-import { QueueCard, CancelConfirm, FontText, LoadingImage } from './common';
+import { Actions } from 'react-native-router-flux';
+import { QueueCard, CancelConfirm, FontText, LoadingImage, Space } from './common';
 import { 
     loadData, 
     loadDataFinish,
@@ -14,20 +14,23 @@ class Queue extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            refreshing: false,
             data: this.listViewCloneWithRows(),
+            loading: true,
             visible: false,
-            canLoad: true
+            canLoad: true,
         };
     }
 
     componentDidMount() {
         this.mounted = true;
+        if (this.state.canLoad) {
+            this.getQueueAPI();
+        }
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (((nextProps.dataLoaded !== this.props.dataLoaded) && this.state.canLoad) 
-            || nextProps.canLoad) {
-            this.setState({ canLoad: false });
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.canLoad && prevState.canLoad && this.state.canLoad) {
             this.getQueueAPI();
         }
     }
@@ -36,8 +39,18 @@ class Queue extends React.Component {
         this.mounted = false;
     }
 
+    onRefresh() {
+        this.getQueueAPI();
+    }
+
+    onSelectQueue(queue) {
+        this.props.getOrderId(queue.order_detail.order_id);
+        Actions.receipt();
+    }
+
     async getQueueAPI() {
         try { 
+            this.setState({ refreshing: true, canLoad: false });
             const { access_token, token_type, } = this.props.token;
             const response = await fetch(`${SERVER}${GET_QUEUE}`, {
                 headers: {
@@ -49,9 +62,10 @@ class Queue extends React.Component {
             if (this.mounted) {
                 await this.setState({ 
                     data: this.listViewCloneWithRows(responseData), 
+                    loading: false,
+                    refreshing: false,
+                    canLoad: true,
                 });
-                this.props.loadDataFinish();
-                this.setState({ canLoad: true });
             }
         } catch (error) {
             console.log(error);
@@ -75,6 +89,7 @@ class Queue extends React.Component {
 
     renderQueue(queue) {
         if (queue.order_detail.status < 4) {
+            // console.log(queue)
             return (
                 <QueueCard
                     status={queue.order_detail.status} 
@@ -82,7 +97,7 @@ class Queue extends React.Component {
                     amount={queue.order_detail.total} 
                     queue={queue.queue_number} 
                     onCancelPress={() => this.setState({ visible: !this.state.visible })} 
-                    onPress={() => this.props.getOrderId(queue.order_detail.order_id)}
+                    onPress={() => this.onSelectQueue(queue)}
                 />
             );
         }
@@ -92,12 +107,11 @@ class Queue extends React.Component {
     render() {
         const { containerEmpty, imageEmpty } = styles;
         const { data } = this.state;
-        if (!this.props.dataLoaded) {
+        if (this.state.loading) {
             return (
                 <LoadingImage />
             );
-        }
-        if (data._chachedRowCount === 0) {
+        } else if (data._cachedRowCount === 0) {
             return (
                 <View style={containerEmpty}>
                     <Image
@@ -112,8 +126,15 @@ class Queue extends React.Component {
             <View style={{ flex: 1 }} >
                 <ListView 
                     style={{ flex: 1 }}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={this.state.refreshing}
+                            onRefresh={() => this.onRefresh()}
+                        />
+                    }
                     dataSource={data}
                     renderRow={(item) => this.renderQueue(item)} 
+                    renderFooter={() => <Space />}
                 />
                 {this.renderCancelConfirm()}
             </View>

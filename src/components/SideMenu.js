@@ -65,7 +65,7 @@ class SideMenu extends React.Component {
         const { userInfo } = this.props;
         return (
             <Text style={{ color: 'white' }}>
-                {userInfo.tel_number !== undefined ? userInfo.tel_number : ''}
+                {userInfo.tel_number !== undefined ? `0${userInfo.tel_number.slice(3)}` : ''}
             </Text>
         );
     }

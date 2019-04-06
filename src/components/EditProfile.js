@@ -21,7 +21,7 @@ class EditProfile extends React.Component {
             email,
             name,
             picture,
-            tel_number,
+            tel_number: tel_number ? `0${tel_number.slice(3)}` : '',
             imageURL: null,
         };
     }
