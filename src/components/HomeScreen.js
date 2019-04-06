@@ -1,7 +1,7 @@
 import React from 'react';
 import { ScrollView, Dimensions, ListView, } from 'react-native';
 import { Icon } from 'react-native-elements';
-import { LinearGradient } from 'expo';
+import { LinearGradient, Permissions, Location } from 'expo';
 import { Actions } from 'react-native-router-flux';
 import { connect } from 'react-redux';
 import { 
@@ -32,6 +32,7 @@ class HomeScreen extends React.Component {
     }
 
     async componentDidMount() {
+        this.getLocationAsync();
         try {
             const { access_token, token_type, } = this.props.token;
             const response = await fetch(`${SERVER}${HOME}`, {
@@ -53,6 +54,24 @@ class HomeScreen extends React.Component {
             console.log(error);
         }
     }
+
+    // async onPressSearchNearby() {
+    //     const locate = await this.getLocationAsync();
+    //     console.log(locate.latitude);
+    //     navigator.geolocation.getCurrentPosition(position => console.log(position));
+    //     // Actions.search_nearby()
+    // }
+
+    async getLocationAsync() {
+        // permissions returns only for location permissions on iOS and under certain conditions, see Permissions.LOCATION
+        const { status, permissions } = await Permissions.askAsync(Permissions.LOCATION);
+        if (status === 'granted') {
+            console.log('pass')
+        //   return Location.getCurrentPositionAsync(/*{ enableHighAccuracy: true }*/);
+        } else {
+          throw new Error('Location permission not granted');
+        }
+      }
 
     listViewCloneWithRows(data = []) {
         const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });

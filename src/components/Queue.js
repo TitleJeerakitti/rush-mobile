@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Image, ListView, RefreshControl, } from 'react-native';
+import { View, Image, ListView, RefreshControl, Dimensions, } from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { QueueCard, CancelConfirm, FontText, LoadingImage, Space } from './common';
@@ -9,6 +9,8 @@ import {
     getOrderId,
 } from '../actions';
 import { SERVER, GET_QUEUE } from '../../config';
+
+const imageHeight = Dimensions.get('window').height * 0.3;
 
 class Queue extends React.Component {
     constructor(props) {
@@ -144,7 +146,7 @@ class Queue extends React.Component {
 
 const styles = {
     imageEmpty: {
-        height: '30%', 
+        height: imageHeight, 
         resizeMode: 'contain', 
         tintColor: 'gray'
     },

@@ -1,8 +1,8 @@
 import React from 'react';
-import { RefreshControl, View, ListView, } from 'react-native';
+import { RefreshControl, View, ListView, Modal, } from 'react-native';
 import { connect } from 'react-redux';
 import RestaurantCard from './RestaurantCard';
-import { FilterCard, FilterItem, FilterButton, FontText, LoadingImage } from './common';
+import { FilterCard, FilterItem, FilterButton, FontText, LoadingImage, RestaurantMaps } from './common';
 import { SERVER, SEARCH_NEARBY } from '../../config';
 
 class SearchNearby extends React.Component {
@@ -134,6 +134,7 @@ class SearchNearby extends React.Component {
                         refreshControl={this.refreshControl()}
                     />
                     {this.renderFilter()}
+                    <RestaurantMaps />
                 </View>
             );
         }

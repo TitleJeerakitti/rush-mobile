@@ -1,8 +1,17 @@
 import React from 'react';
-import { View, ScrollView, ListView, } from 'react-native';
+import { View, ListView, } from 'react-native';
 import { connect } from 'react-redux';
 import RestaurantCard from './RestaurantCard';
-import { TextLineFont, MenuCard, Card, CardSection, FontText, Row, LoadingImage, Space } from './common';
+import { 
+    TextLineFont,
+    MenuCard, 
+    Card, 
+    CardSection, 
+    FontText, 
+    Row, 
+    LoadingImage, 
+    Space,
+} from './common';
 import { SERVER, GET_ORDER_DETAIL } from '../../config';
 
 class Receipt extends React.Component {
@@ -47,14 +56,6 @@ class Receipt extends React.Component {
     listViewCloneWithRows(data = []) {
         const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
         return ds.cloneWithRows(data);
-    }
-
-    renderMenu() {
-        if (this.state.menus.length > 0) {
-            return this.state.menus.map((menu, index) => 
-                <MenuCard key={index} data={menu} notQuantity />
-            );
-        }
     }
 
     render() {

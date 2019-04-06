@@ -1,8 +1,7 @@
 import React from 'react';
-import { View, ScrollView } from 'react-native';
+import { View, LayoutAnimation, Platform, UIManager, ListView, } from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
-import { Divider } from 'react-native-elements';
 // import update from 'immutability-helper';
 import { 
     TextLineFont, 
@@ -26,6 +25,7 @@ class MainRemain extends React.Component {
             errorMessage: '',
             discountPrice: null,
             totalPrice: null,
+            canUse: false,
         };
     }
 
@@ -49,6 +49,7 @@ class MainRemain extends React.Component {
 
     async getAPI(body) {
         try {
+            const { totalPrice, discountPrice, canUse } = this.state;
             const { access_token, token_type, } = this.props.token;
             const response = await fetch(`${SERVER}${body}`, {
                 method: 'POST',
@@ -60,11 +61,11 @@ class MainRemain extends React.Component {
                 body: JSON.stringify({
                     supplier_id: this.props.restaurantId,
                     menus: this.makeMenuSentAPI(this.state.menus),
-                    total: this.computeSubtotal(),
+                    total: totalPrice || this.computeSubtotal(),
                     special_request: '',
-                    discount: 0,
+                    discount: 0 || discountPrice,
                     category: 'R',
-                    promotion_code: this.state.discountCode === '' ? null : this.state.discountCode,
+                    promotion_code: canUse ? null : this.state.discountCode,
                 }),
             });
             const responseData = await response.json();
@@ -82,6 +83,11 @@ class MainRemain extends React.Component {
         } else {
             this.setState({ menus: [] });
         }
+    }
+
+    listViewCloneWithRows(data = []) {
+        const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+        return ds.cloneWithRows(data);
     }
 
     makeMenuList(menuData) {
@@ -125,7 +131,7 @@ class MainRemain extends React.Component {
         const { status } = await this.getAPI(CREATE_NEW_ORDER);
         if (status === 200) {
             await this.setState({ visible: false, menus: [] });
-            this.props.loadData();
+            // this.props.loadData();
             Actions.popTo('home_homepage');
             Actions.queue();
         }
@@ -134,7 +140,11 @@ class MainRemain extends React.Component {
     async checkPromo() {
         const { status, total, discount_price } = await this.getAPI(CHECK_PROMO_CODE);
         if (status === 200) {
-            await this.setState({ discountPrice: discount_price, totalPrice: total });
+            await this.setState({ 
+                discountPrice: discount_price, 
+                totalPrice: total, 
+                canUse: true, 
+            });
         } else if (status === 600) {
             await this.setState({ errorMessage: 'Invalid Promotion Code' });
         } else if (status === 601) {
@@ -157,34 +167,24 @@ class MainRemain extends React.Component {
         return 0;
     }
 
-    renderMenu() {
+    renderEmpty() {
         const { menus } = this.state;
-        if (menus.length > 0) {
-            return menus.map(menu => {
-                return (
-                    <MenuCard 
-                        key={menu.id} 
-                        data={menu}
-                        index={menu.index}
-                        currentCategory={menu.mainIndex}
-                        subIndex={menu.subIndex}
-                    />
-                );
-            });
+        if (menus.length === 0) {
+            return (
+                <View style={styles.containerEmpty}>
+                    <FontText>ไม่มีสินค้าในตะกร้า</FontText>
+                </View>
+            );
         }
-        return (
-            <View style={styles.containerEmpty}>
-                <FontText>ไม่มีสินค้าในตะกร้า</FontText>
-            </View>
-        );
     }
 
     renderSubtotal() {
         const { menuData } = this.props;
+        const { totalPrice } = this.state;
         const subtotal = this.computeSubtotal();
         return (
             <Subtotal 
-                price={subtotal} 
+                price={totalPrice || subtotal} 
                 time={menuData.estimate_time} 
                 onPress={() => this.shouldBuy()} 
             />
@@ -203,7 +203,8 @@ class MainRemain extends React.Component {
                     errorMessage: '', 
                     discountCode: null, 
                     totalPrice: null, 
-                    discountPrice: null 
+                    discountPrice: null,
+                    canUse: false,
                 })} 
                 onConfirm={() => this.placeOrder()}
                 discountCode={this.state.discountCode}
@@ -216,6 +217,11 @@ class MainRemain extends React.Component {
 
     render() {
         const { data } = this.props;
+        LayoutAnimation.spring();
+        if (Platform.OS === 'android') {
+            // UIManager.setLayoutAnimationEnabledExperimental && 
+            UIManager.setLayoutAnimationEnabledExperimental(true);
+        }
         return (
             <View style={{ flex: 1 }}>
                 <RestaurantCard 
@@ -223,13 +229,29 @@ class MainRemain extends React.Component {
                     disabled
                 />
                 <TextLineFont title='รายการอาหารที่สั่ง' />
-                <ScrollView style={{ flex: 1 }}>
-                    {this.renderMenu()}
-                    <Button color={GREEN} onPress={() => Actions.pop()}>
-                        <FontText color='white' size={24}>สั่งอาหารเพิ่มเติม</FontText>
-                    </Button>
-                    <Divider style={{ height: 10, backgroundColor: 'transparent' }} />
-                </ScrollView>
+                <ListView 
+                    style={{ flex: 1 }}
+                    dataSource={this.listViewCloneWithRows(this.state.menus)}
+                    enableEmptySections
+                    renderHeader={() => this.renderEmpty()}
+                    renderRow={(menu) => 
+                        <MenuCard 
+                            data={menu}
+                            index={menu.index}
+                            currentCategory={menu.mainIndex}
+                            subIndex={menu.subIndex}
+                        />
+                    }
+                    renderFooter={() => 
+                        <Button 
+                            color={GREEN} 
+                            onPress={() => Actions.pop()} 
+                            style={{ marginBottom: 10, }}
+                        >
+                            <FontText color='white' size={24}>สั่งอาหารเพิ่มเติม</FontText>
+                        </Button>
+                    }
+                />
                 {this.renderSubtotal()}
                 {this.renderConfirmPopup()}
             </View>

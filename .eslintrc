@@ -8,6 +8,7 @@
         "no-underscore-dangle": 0
     },
     "globals": { 
-        "fetch": false
+        "fetch": false,
+        "navigator": false,
     }
 }
