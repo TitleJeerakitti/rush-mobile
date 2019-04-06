@@ -36,11 +36,14 @@ class HomeAPIView(APIView):
 
 #     def get(self, request):
 #         from rush.settings import MEDIA_ROOT
-#         from customer.models import Customer
+#         from supplier.models import Menu
 #         from django.core.files import File  # you need this somewhere
 #         import urllib
 
-#         customer = Customer.objects.get(user__username='customer')
-#         result = urllib.urlretrieve(MEDIA_ROOT+'/default_user.png')
-#         customer.profile_picture.save(,FILE
+#         temp = Menu.objects.all()
+#         # for target_list in temp:
+#             # try
+#             # print(target_list.image)
+#         # result = urllib.urlretrieve(MEDIA_ROOT+'/default_user.png')
+#         # customer.profile_picture.save(,FILE
 #         return Response(status=status.HTTP_200_OK)

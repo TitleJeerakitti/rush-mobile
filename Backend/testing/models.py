@@ -9,7 +9,7 @@ class Restaurant(models.Model):
     category = models.CharField(max_length=200)
     isOpen = models.BooleanField(default=False)
     distance = models.FloatField(null=True, blank=True, default=None)
-    image = models.ImageField(upload_to='testing')
+    image = models.ImageField(upload_to='testing',default='default/no_picture.png')
 
     def __str__(self):
         return self.name

@@ -7,7 +7,7 @@ from account.models import User
 
 class Category(models.Model):
     name = models.CharField(max_length=25)
-    image = models.ImageField(upload_to='supplier/category')
+    image = models.ImageField(upload_to='supplier/category',default='default/no_picture.png')
     is_display = models.BooleanField(default=False)
     is_home = models.BooleanField(default=False)
 
@@ -39,8 +39,8 @@ class Supplier(models.Model):
     #     null=True
     # )
     name = models.CharField(max_length=30)
-    profile_picture = models.ImageField(upload_to='supplier/profile')
-    banner_picture = models.ImageField(upload_to='supplier/banner')
+    profile_picture = models.ImageField(upload_to='supplier/profile',default='default/no_picture.png')
+    banner_picture = models.ImageField(upload_to='supplier/banner',default='default/no_picture.png')
     address = models.CharField(blank=True, max_length=150)
     description = models.CharField(blank=True, max_length=300)
     isOpen = models.BooleanField('open status', default=False)
@@ -59,7 +59,7 @@ class Telephone(models.Model):
 
 class ExtraPicture(models.Model):
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='supplier/extra')
+    image = models.ImageField(upload_to='supplier/extra',default='default/no_picture.png')
 
     def __str__(self):
         return self.supplier.name
@@ -92,7 +92,7 @@ class Menu(models.Model):
     sub_category = models.ForeignKey(SubCategory, on_delete=models.CASCADE)
     name = models.CharField(max_length=30)
     price = models.FloatField(null=True, blank=True, default=None)
-    image = models.ImageField(null=True, blank=True, upload_to='supplier/menu')
+    image = models.ImageField(upload_to='supplier/menu',default='supplier/menu/food_default.png')
     is_display = models.BooleanField(default=True)
     is_out_of_stock = models.BooleanField(default=False)
 

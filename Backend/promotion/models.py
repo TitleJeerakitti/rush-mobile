@@ -6,7 +6,7 @@ from order.models import Order
 class Promotion(models.Model):
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
     name = models.CharField(max_length=250)
-    image = models.ImageField(upload_to='promotion')
+    image = models.ImageField(upload_to='promotion',default='default/no_picture.png')
     promotion_code = models.CharField(max_length=5)
     description = models.CharField(max_length=250, blank=True)
     minimum_price = models.FloatField(default=0)
