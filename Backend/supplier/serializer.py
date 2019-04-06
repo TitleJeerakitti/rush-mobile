@@ -29,6 +29,20 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = ('name', 'image')
 
+class LocationSerializers(serializers.ModelSerializer):
+    latitude = serializers.SerializerMethodField('get_supplier_latitude')
+    longtitude = serializers.SerializerMethodField('get_supplier_longtitude')
+
+    class Meta:
+        model = Supplier
+        fields = ('latitude','longtitude')
+
+    def get_supplier_latitude(self, obj):
+        return obj.latitude
+
+    def get_supplier_longtitude(self, obj):
+        return obj.longtitude
+
 
 class SupplierCardSerializers(serializers.ModelSerializer):
     id = serializers.SerializerMethodField('get_supplier_id')
@@ -37,11 +51,12 @@ class SupplierCardSerializers(serializers.ModelSerializer):
     distance = serializers.IntegerField(default=1000)
     image = serializers.SerializerMethodField('get_profile_picture')
     category = CategorySerializer()
+    location = serializers.SerializerMethodField('get_supplier_location')
 
     class Meta:
         model = Supplier
         fields = ('id', 'name', 'rating', 'reviewCount',
-                  'category', 'isOpen', 'distance', 'image')
+                  'category', 'isOpen', 'distance', 'image', 'location')
 
     def get_supplier_id(self, obj):
         return obj.user.id
@@ -50,6 +65,10 @@ class SupplierCardSerializers(serializers.ModelSerializer):
         request = self.context.get('request')
         image_url = obj.profile_picture.url
         return request.build_absolute_uri(image_url)
+
+    def get_supplier_location(self, obj):
+        serializers = LocationSerializers(obj)
+        return serializers.data
 
 
 class ExtraPictureSerializer(serializers.ModelSerializer):
