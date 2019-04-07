@@ -15,13 +15,13 @@ class ConfirmOrderSerializer(serializers.Serializer):
 
     def check_can_used(self, validated_data, customer):
         if not(self.check_exist(validated_data['promotion_code'])):
-            return Response(status=600)
+            return Response({"status": 600}, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
         elif not(self.is_include_restaurant(validated_data=validated_data)):
-            return Response(status=603)
+            return Response({"status": 603}, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
         elif self.check_used(validated_data['promotion_code'], customer):
-            return Response(status=601)
+            return Response({"status": 601}, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
         elif not(self.pass_condition(validated_data=validated_data)):
-            return Response(status=602)
+            return Response({"status": 602}, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
         return self.discount(validated_data=validated_data)
 
     def discount(self, validated_data):
