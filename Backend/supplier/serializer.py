@@ -15,7 +15,7 @@ class SupplierSerializer(serializers.ModelSerializer):
     class Meta:
         model = Supplier
         fields = ('user',  'name', 'profile_picture', 'banner_picture',
-                  'address', 'description', 'isOpen', 'category')
+                  'address', 'description', 'is_open', 'category')
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')
@@ -55,7 +55,7 @@ class SupplierCardSerializers(serializers.ModelSerializer):
     class Meta:
         model = Supplier
         fields = ('id', 'name', 'rating', 'reviewCount',
-                  'category', 'isOpen', 'image', 'location')
+                  'category', 'is_open', 'image', 'location')
 
     def get_supplier_id(self, obj):
         return obj.user.id

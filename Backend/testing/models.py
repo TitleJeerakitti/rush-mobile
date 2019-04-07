@@ -7,7 +7,7 @@ class Restaurant(models.Model):
     rating = models.FloatField(null=True, blank=True, default=None)
     reviewCount = models.IntegerField(default=0)
     category = models.CharField(max_length=200)
-    isOpen = models.BooleanField(default=False)
+    is_open = models.BooleanField(default=False)
     image = models.ImageField(upload_to='testing',default='default/no_picture.png')
 
     def __str__(self):
