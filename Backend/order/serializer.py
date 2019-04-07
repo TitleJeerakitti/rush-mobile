@@ -86,6 +86,7 @@ class CreateOrderSerializer(serializers.Serializer):
     category = serializers.CharField()
 
     def create(self, validated_data, customer_id):
+    
         promotion_code = validated_data.pop('promotion_code')
         order = Order.create_order(self, customer_id, **validated_data)
         queue = Queue.create_queue(self, order)

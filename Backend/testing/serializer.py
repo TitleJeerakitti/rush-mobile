@@ -4,7 +4,7 @@ from testing.models import Restaurant,Testing
 class RestaurantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Restaurant
-        fields = ('id','name','rating','reviewCount','category','isOpen','distance','image',)
+        fields = ('id','name','rating','reviewCount','category','isOpen','image',)
 
 
 class TestingSerializer(serializers.ModelSerializer):

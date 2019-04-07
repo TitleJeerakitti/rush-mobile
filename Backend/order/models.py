@@ -66,7 +66,13 @@ class Order(models.Model):
     def get_order_id(self):
         return '{0:08}'.format(self.id)
 
+    def cancel_order(self):
+        self.status = 4
+        queue = Queue.objects.get(order=self)
+        queue.cancel_queue()
+        self.save()
 
+        
 class OrderMenu(models.Model):
     id = models.AutoField(primary_key=True)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
@@ -88,10 +94,12 @@ class Queue(models.Model):
     DEFAULT = 0
     INPROCESS = 1
     DONE = 2
+    CANCEL = 3 
     STATUS_CHOICE = (
         (DEFAULT, 'Default'),
         (INPROCESS, 'Inprocess'),
         (DONE, 'DONE'),
+        (CANCEL, 'CANCEL'),
     )
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     status = models.IntegerField(choices=STATUS_CHOICE, default=0)
@@ -113,3 +121,7 @@ class Queue(models.Model):
             order=order, queue_number=supplier_queue.new_queue(), status=1)
         queue.save()
         return queue.queue_number
+
+    def cancel_queue(self):
+        self.status = 3
+        self.save()

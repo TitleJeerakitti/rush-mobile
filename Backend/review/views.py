@@ -24,5 +24,6 @@ class CreateReviewAPIView(APIView):
     def post(self ,request):
         serializer = ReviewDetailSerializer(data=request.data)
         if serializer.is_valid(raise_exception=ValueError):
-           print('test')
-        return create_response
+            supplier = Supplier.objects.get(user__id=request.data['supplier_id'])
+            return_status = request.user.get_customer().create_review(supplier,request.data['rate'],request.data['comment'])
+        return Response(return_status,status=status.HTTP_200_OK)

@@ -43,7 +43,7 @@ class Supplier(models.Model):
     banner_picture = models.ImageField(upload_to='supplier/banner',default='default/no_picture.png')
     address = models.CharField(blank=True, max_length=150)
     description = models.CharField(blank=True, max_length=300)
-    isOpen = models.BooleanField('open status', default=False)
+    is_open = models.BooleanField('open status', default=False)
     latitude = models.FloatField(default=0)
     longitude = models.FloatField(default=0)
 
