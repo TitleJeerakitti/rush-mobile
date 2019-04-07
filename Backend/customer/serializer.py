@@ -12,14 +12,22 @@ from activity.models import Activity
 
 from .models import Customer, User
 
+class CustomerProfileSerializer(serializers.ModelSerializer):
+    first_name = serializers.CharField(source='user.first_name')
+    last_name = serializers.CharField(source='user.last_name')
+
+    class Meta:
+        model = Customer
+        fields = ('first_name','last_name','tel_number','profile_picture')
+
 
 class CustomerSerializer(serializers.ModelSerializer):
     user = UserCustomerSerializer(required=True)
     birthday = serializers.DateField(required=True)
-
+    
     class Meta:
         model = Customer
-        fields = ('user', 'birthday', 'tel_number')
+        fields = ('user', 'birthday', 'tel_number',)
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')

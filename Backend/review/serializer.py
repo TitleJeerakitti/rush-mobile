@@ -14,17 +14,17 @@ class ReviewDetailSerializer(serializers.ModelSerializer):
         model = Review
         fields = ('supplier_id', 'rate', 'comment',)
 
-    def create(self, validated_data, request):
-        customer = Customer.objects.get(user=request.user)
-        supplier_id = validated_data['supplier_id']
-        supplier = Supplier.objects.get(user__id=supplier_id)
-        try:
-            Review.objects.get(supplier=supplier,customer=customer)
-            return Response({'error':'This user already review'},status=status.HTTP_406_NOT_ACCEPTABLE)
-        except:
-            review = Review.objects.create(customer=customer, supplier=supplier,
-                                        rate=validated_data['rate'], comment=validated_data['comment'])
-        return Response({'success':'successful create review'},status=status.HTTP_200_OK)
+    # def create(self, validated_data, request):
+    #     customer = Customer.objects.get(user=request.user)
+    #     supplier_id = validated_data['supplier_id']
+    #     supplier = Supplier.objects.get(user__id=supplier_id)
+    #     try:
+    #         Review.objects.get(supplier=supplier,customer=customer)
+    #         return Response({'error':'This user already review'},status=status.HTTP_406_NOT_ACCEPTABLE)
+    #     except:
+    #         review = Review.objects.create(customer=customer, supplier=supplier,
+    #                                     rate=validated_data['rate'], comment=validated_data['comment'])
+    #     return Response({'success':'successful create review'},status=status.HTTP_200_OK)
 
 
 class CustomerReviewSerializer(serializers.ModelSerializer):

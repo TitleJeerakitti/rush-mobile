@@ -45,7 +45,7 @@ class Supplier(models.Model):
     description = models.CharField(blank=True, max_length=300)
     isOpen = models.BooleanField('open status', default=False)
     latitude = models.FloatField(default=0)
-    longtitude = models.FloatField(default=0)
+    longitude = models.FloatField(default=0)
 
     def __str__(self):
         return self.name

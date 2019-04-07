@@ -17,3 +17,30 @@ class Customer(models.Model):
 
     def get_name(self):
         return self.user.first_name+' '+self.user.last_name
+
+    def edit_profile(self,first_name,last_name,tel_number):
+        print(self)
+        print(first_name)
+        print(last_name)
+        print(tel_number)
+        self.user.first_name = first_name
+        self.user.last_name = last_name
+        self.tel_number = tel_number
+        self.user.save(update_fields=['first_name','last_name'])
+        self.save(update_fields=['tel_number'])
+        return self
+
+    def uploadphoto(self,profile_picture):
+        import base64
+        import datetime
+        from django.core.files.base import ContentFile
+        image_data = profile_picture
+        format, imgstr = image_data.split(';base64,')
+
+        ext = format.split('/')[-1]
+
+        data = ContentFile(base64.b64decode(imgstr))
+        file_name = self.user.first_name + \
+            str(datetime.datetime.now())+'.' + ext
+        self.profile_picture.save(file_name, data, save=True)
+
