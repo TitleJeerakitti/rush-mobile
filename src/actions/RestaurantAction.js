@@ -10,10 +10,7 @@ import {
 } from './types';
 
 export const restaurantSelected = (data) => {
-    return (dispatch) => {
-        dispatch({ type: RESTAURANT_SELECTED, payload: data });
-        Actions.restaurant_menu();
-    };
+    return { type: RESTAURANT_SELECTED, payload: data };
 };
 
 // export const reviewSelected = (data) => {

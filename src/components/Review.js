@@ -9,6 +9,7 @@ import { SERVER, GET_REVIEW } from '../../config';
 class ReviewPage extends React.Component {
     constructor(props) {
         super(props);
+        this._isMounted = false;
         this.state = {
             canReview: false,
             reviewData: [],
@@ -17,7 +18,7 @@ class ReviewPage extends React.Component {
 
     async componentDidMount() {
         // fetch('http://10.66.10.222:8000/testing/datetime')
-        this.mounted = true;
+        this._isMounted = true;
         const { userInfo, supplier_id } = this.props;
         try {
             const { access_token, token_type, } = this.props.token;
@@ -40,7 +41,7 @@ class ReviewPage extends React.Component {
     }
 
     componentWillUnmount() {
-        this.mounted = false;
+        this._isMounted = false;
     }
 
     renderReview() {

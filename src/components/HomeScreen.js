@@ -1,7 +1,7 @@
 import React from 'react';
 import { ScrollView, Dimensions, ListView, } from 'react-native';
 import { Icon } from 'react-native-elements';
-import { LinearGradient, Permissions, Location } from 'expo';
+import { LinearGradient, Permissions, } from 'expo';
 import { Actions } from 'react-native-router-flux';
 import { connect } from 'react-redux';
 import { 

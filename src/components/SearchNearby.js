@@ -1,17 +1,32 @@
 import React from 'react';
-import { RefreshControl, View, ListView, Modal, } from 'react-native';
+import { RefreshControl, View, ListView, } from 'react-native';
 import { connect } from 'react-redux';
+import { Actions } from 'react-native-router-flux';
 import RestaurantCard from './RestaurantCard';
-import { FilterCard, FilterItem, FilterButton, FontText, LoadingImage, RestaurantMaps } from './common';
+import { 
+    FilterCard, 
+    FilterItem, 
+    FilterButton, 
+    FontText, 
+    LoadingImage, 
+    RestaurantMaps 
+} from './common';
 import { SERVER, SEARCH_NEARBY } from '../../config';
+import { restaurantSelected } from '../actions';
+
+const INITIAL_LOCATION = {
+    latitude: 0,
+    longitude: 0,
+};
 
 class SearchNearby extends React.Component {
 
     constructor(props) {
         super(props);
+        this._isMounted = false;
         this.state = {
             isLoaded: false,
-            restaurants: this.listViewCloneWithRows(),
+            restaurants: [],
             refreshing: false,
             filters: [
                 { type: 'ระยะทาง' }, 
@@ -20,20 +35,38 @@ class SearchNearby extends React.Component {
             ],
             sortType: 'ระยะทาง',
             visible: false,
+            mapVisible: false,
+            restaurantSelect: {},
+            latitude: INITIAL_LOCATION.latitude,
+            longitude: INITIAL_LOCATION.longitude,
         };
     }
 
     componentDidMount() {
-        this.mounted = true;
-        this.getRestaurantAPI();
+        this._isMounted = true;
+        if (this._isMounted) {
+            navigator.geolocation.getCurrentPosition(position => {
+                this.setState({
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude,
+                });
+                this.getRestaurantAPI();
+            });
+        }
     }
 
     componentWillUnmount() {
-        this.mounted = false;
+        this._isMounted = false;
     }
 
     onRefresh = () => {
         this.getRestaurantAPI();
+    }
+
+    onRestaurantSelect(item) {
+        this.setState({ mapVisible: false, });
+        this.props.restaurantSelected(item);
+        Actions.restaurant_menu();
     }
 
     async getRestaurantAPI() {
@@ -47,13 +80,12 @@ class SearchNearby extends React.Component {
                 }
             });
             const responseData = await response.json();
-            if (this.mounted) {
+            if (this._isMounted) {
                 await this.setState({
-                    restaurants: this.listViewCloneWithRows(responseData),
+                    restaurants: responseData,
                     isLoaded: true,
                     refreshing: false
                 });
-                // console.log(this.state.restaurants);
             }
         } catch (error) {
             console.log(error);
@@ -69,7 +101,7 @@ class SearchNearby extends React.Component {
     selectAPI() {
         if (this.state.sortType === 'ระยะทาง') { 
             // return ('http://localhost:3000/restaurants?_sort=distance&_order=asc');
-            return (`${SERVER}${SEARCH_NEARBY}`);
+            return (`${SERVER}${SEARCH_NEARBY}?latitude=${this.state.latitude}&longitude=${this.state.longitude}`);
         } else if (this.state.sortType === 'ความนิยม') {
             return ('http://localhost:3000/restaurants?_sort=rating&_order=desc');
         }
@@ -119,22 +151,51 @@ class SearchNearby extends React.Component {
 
     render() {
         const { container, containerNone } = styles;
-        const { isLoaded, restaurants, } = this.state;
+        const { 
+            isLoaded, 
+            restaurants, 
+            restaurantSelect, 
+            mapVisible, 
+            latitude, 
+            longitude 
+        } = this.state;
+
         if (!isLoaded) {
             return <LoadingImage />;
-        } else if (restaurants._cachedRowCount > 0) {
+        } else if (restaurants.length > 0) {
             return (
                 <View style={container} >
                     <ListView 
                         style={container}
-                        dataSource={restaurants}
+                        dataSource={this.listViewCloneWithRows(restaurants)}
                         stickyHeaderIndices={[0]}
-                        renderRow={(item) => <RestaurantCard data={item} />}
+                        renderRow={(item) => 
+                            <RestaurantCard 
+                                data={item} 
+                                onPress={() => this.onRestaurantSelect(item)}
+                                onLongPress={() => this.setState({ 
+                                    mapVisible: true, 
+                                    restaurantSelect: item, 
+                                })} 
+                            />
+                        }
                         renderHeader={() => this.renderHeader()}
                         refreshControl={this.refreshControl()}
                     />
                     {this.renderFilter()}
-                    <RestaurantMaps />
+                    <RestaurantMaps 
+                        data={restaurantSelect}
+                        visible={mapVisible} 
+                        onCancel={() => this.setState({ 
+                            mapVisible: false, 
+                            restaurantSelect: {},
+                        })}
+                        userPosition={{
+                            latitude,
+                            longitude,
+                        }}
+                        onPress={() => this.onRestaurantSelect(restaurantSelect)}
+                    />
                 </View>
             );
         }
@@ -166,4 +227,4 @@ const mapStateToProps = ({ auth }) => {
     return { token }; 
 };
 
-export default connect(mapStateToProps)(SearchNearby);
+export default connect(mapStateToProps, { restaurantSelected })(SearchNearby);

@@ -29,7 +29,6 @@ class NavBackComponent extends React.Component {
 
     renderNotify() {
         const { menuData } = this.props;
-        // console.log(menuData);
         if (menuData.main_categories !== undefined) {
             const total = menuData.main_categories.reduce((amount, mainCategory) => {
                 mainCategory.sub_categories.forEach(subCategory => {

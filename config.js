@@ -20,7 +20,7 @@ export const LOGOUT = '/auth/logout/';
 export const CHECK_TOKEN = '/api/get-customer-data';
 
 export const HOME = '/api/home';
-export const SEARCH_NEARBY = '/restaurant/restaurant-card/';
+export const SEARCH_NEARBY = '/restaurant/restaurant-nearby/';
 export const GET_RESTAURANT_MENU = '/restaurant/restaurant_detail/';
 export const CREATE_NEW_ORDER = '/order/create_new_order/';
 export const CHECK_PROMO_CODE = '/order/check_promotion/';
