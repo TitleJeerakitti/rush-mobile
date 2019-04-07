@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'social_django',
     'rest_framework_social_oauth2',
     'phonenumber_field',
-    'testing.apps.TestingConfig',   #app
+    # 'testing.apps.TestingConfig',   #app
     'account.apps.AccountConfig',
     'supplier.apps.SupplierConfig',
     'customer.apps.CustomerConfig',
