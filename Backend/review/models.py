@@ -2,6 +2,7 @@ from django.db import models
 
 from customer.models import Customer
 from supplier.models import Supplier
+from order.models import Order
 # Create your models here.
 
 
@@ -18,4 +19,4 @@ class Review(models.Model):
     def get_timestamp(self):
         return self.timestamp.strftime("%H:%M %d-%B-%Y")
 
-
+    

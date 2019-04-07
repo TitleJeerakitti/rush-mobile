@@ -82,16 +82,16 @@ class SupplierNearByAPIView(APIView):
     def get(self, request):
         try:
             latitude = request.GET['latitude']
-            longtitude = request.GET['longtitude']
+            longitude = request.GET['longitude']
         except:
             return Response(status.HTTP_400_BAD_REQUEST)
         latitude_difference = 0.1305
-        longtitude_difference = 0.14
+        longitude_difference = 0.14
         latitude_h = float(latitude)+latitude_difference 
         latitude_l = float(latitude)-latitude_difference 
-        longtitude_h = float(longtitude)+longtitude_difference
-        longtitude_l = float(longtitude)-longtitude_difference
-        supplier = Supplier.objects.filter(user__is_supplier=True,latitude__range=(latitude_l,latitude_h),longtitude__range=(longtitude_l,longtitude_h))
+        longitude_h = float(longitude)+longitude_difference
+        longitude_l = float(longitude)-longitude_difference
+        supplier = Supplier.objects.filter(user__is_supplier=True,latitude__range=(latitude_l,latitude_h),longitude__range=(longitude_l,longitude_h))
         serializers = SupplierCardSerializers(
             supplier, many=True, context={'request': request})
         return Response(serializers.data)

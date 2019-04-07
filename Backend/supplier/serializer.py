@@ -31,17 +31,17 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class LocationSerializers(serializers.ModelSerializer):
     latitude = serializers.SerializerMethodField('get_supplier_latitude')
-    longtitude = serializers.SerializerMethodField('get_supplier_longtitude')
+    longitude = serializers.SerializerMethodField('get_supplier_longitude')
 
     class Meta:
         model = Supplier
-        fields = ('latitude','longtitude')
+        fields = ('latitude','longitude')
 
     def get_supplier_latitude(self, obj):
         return obj.latitude
 
-    def get_supplier_longtitude(self, obj):
-        return obj.longtitude
+    def get_supplier_longitude(self, obj):
+        return obj.longitude
 
 
 class SupplierCardSerializers(serializers.ModelSerializer):
