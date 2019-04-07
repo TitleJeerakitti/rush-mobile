@@ -63,13 +63,12 @@ class MainRemain extends React.Component {
                     menus: this.makeMenuSentAPI(this.state.menus),
                     total: totalPrice || this.computeSubtotal(),
                     special_request: '',
-                    discount: 0 || discountPrice,
+                    discount: discountPrice || 0,
                     category: 'R',
                     promotion_code: canUse ? null : this.state.discountCode,
                 }),
             });
-            const responseData = await response.json();
-            return responseData;
+            return response;
         } catch (err) {
             console.log(err);
             return undefined;
@@ -129,6 +128,7 @@ class MainRemain extends React.Component {
 
     async placeOrder() {
         const { status } = await this.getAPI(CREATE_NEW_ORDER);
+        console.log('order', status);
         if (status === 200) {
             await this.setState({ visible: false, menus: [] });
             // this.props.loadData();
@@ -138,7 +138,8 @@ class MainRemain extends React.Component {
     }
 
     async checkPromo() {
-        const { status, total, discount_price } = await this.getAPI(CHECK_PROMO_CODE);
+        const response = await this.getAPI(CHECK_PROMO_CODE);
+        const { status, total, discount_price } = await response.json();
         if (status === 200) {
             await this.setState({ 
                 discountPrice: discount_price, 
@@ -217,11 +218,6 @@ class MainRemain extends React.Component {
 
     render() {
         const { data } = this.props;
-        LayoutAnimation.spring();
-        if (Platform.OS === 'android') {
-            // UIManager.setLayoutAnimationEnabledExperimental && 
-            UIManager.setLayoutAnimationEnabledExperimental(true);
-        }
         return (
             <View style={{ flex: 1 }}>
                 <RestaurantCard 

@@ -2,7 +2,7 @@ import React from 'react';
 import { ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 import { HistoryCard, FontText, LoadingImage } from './common';
-import { SERVER } from '../../config';
+import { SERVER, GET_HISTORY } from '../../config';
 
 class History extends React.Component {
     // static getDerivedStateFromProps(nextProps, prevState) {
@@ -36,9 +36,11 @@ class History extends React.Component {
     async getHistoryAPI() {
         await this.setState({ canLoad: false });
         try {
-            const response = await fetch(`${SERVER}/customer/customer_history/?customer_id=${this.props.userInfo.id}`, {
+            const { access_token, token_type } = this.props.token;
+            const response = await fetch(`${SERVER}${GET_HISTORY}`, {
                 headers: {
                     'Cache-Control': 'no-cache',
+                    Authorization: `${token_type} ${access_token}`,
                 }
             });
             const responseData = await response.json();
@@ -87,8 +89,8 @@ const styles = {
 };
 
 const mapStateToProps = ({ auth }) => {
-    const { userInfo } = auth;
-    return { userInfo };
+    const { token } = auth;
+    return { token };
 };
 
 export default connect(mapStateToProps)(History);

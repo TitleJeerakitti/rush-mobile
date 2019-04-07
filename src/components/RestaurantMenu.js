@@ -92,7 +92,14 @@ class RestaurantMenu extends React.Component {
             return mainCategories.map((category, index) => 
                 <MainCategoryItem 
                     key={index}
-                    onPress={() => this.props.currentCategoryChange(index)}
+                    onPress={() => {
+                        this.props.currentCategoryChange(index);
+                        LayoutAnimation.easeInEaseOut();
+                        if (Platform.OS === 'android') {
+                            // UIManager.setLayoutAnimationEnabledExperimental && 
+                            UIManager.setLayoutAnimationEnabledExperimental(true);
+                        }
+                    }}
                     selected={index === currentCategory}
                 >
                     {category.name}
@@ -127,11 +134,6 @@ class RestaurantMenu extends React.Component {
     }
 
     render() {
-        LayoutAnimation.easeInEaseOut();
-        if (Platform.OS === 'android') {
-            // UIManager.setLayoutAnimationEnabledExperimental && 
-            UIManager.setLayoutAnimationEnabledExperimental(true);
-        }
         if (this.props.menuData.main_categories !== undefined) {
             return (
                 <ScrollView style={{ flex: 1, }}>

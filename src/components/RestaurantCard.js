@@ -74,7 +74,7 @@ class RestaurantCard extends React.Component {
         const { card } = styles;
         const { onLongPress, onPress, } = this.props;
         const {
-            isOpen,
+            is_open,
             name,
             image,
             rating,
@@ -137,7 +137,7 @@ class RestaurantCard extends React.Component {
                                     </Row>
                                 </Row>
                                 <Row style={{ marginTop: 5 }}>
-                                    <ShopStatus isOpen={isOpen} />
+                                    <ShopStatus isOpen={is_open} />
                                     {this.renderDistance()}
                                 </Row>
                             </View>

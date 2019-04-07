@@ -82,7 +82,7 @@ class RestaurantMaps extends React.Component {
     render() {
         const { visible, onCancel, onPress } = this.props;
         const {
-            isOpen,
+            is_open,
             name,
             rating,
             reviewCount,
@@ -155,7 +155,7 @@ class RestaurantMaps extends React.Component {
                                 </Row>
                             </Row>
                             <Row style={{ marginTop: 5 }}>
-                                <ShopStatus isOpen={isOpen} />
+                                <ShopStatus isOpen={is_open} />
                                 {this.renderDistance()}
                             </Row>
                         </View>

@@ -8,24 +8,26 @@ import {
     loadDataFinish,
     getOrderId,
 } from '../actions';
-import { SERVER, GET_QUEUE } from '../../config';
+import { SERVER, GET_QUEUE, CANCEL_ORDER } from '../../config';
 
 const imageHeight = Dimensions.get('window').height * 0.3;
 
 class Queue extends React.Component {
     constructor(props) {
         super(props);
+        this._isMounted = false;
         this.state = {
             refreshing: false,
-            data: this.listViewCloneWithRows(),
+            data: [],
             loading: true,
             visible: false,
             canLoad: true,
+            selected: {},
         };
     }
 
     componentDidMount() {
-        this.mounted = true;
+        this._isMounted = true;
         if (this.state.canLoad) {
             this.getQueueAPI();
         }
@@ -38,7 +40,7 @@ class Queue extends React.Component {
     }
 
     componentWillUnmount() {
-        this.mounted = false;
+        this._isMounted = false;
     }
 
     onRefresh() {
@@ -48,6 +50,33 @@ class Queue extends React.Component {
     onSelectQueue(queue) {
         this.props.getOrderId(queue.order_detail.order_id);
         Actions.receipt();
+    }
+
+    async onCancelOrder(id) {
+        try {
+            this.setState({ refreshing: true, canLoad: false });
+            const { access_token, token_type, } = this.props.token;
+            const response = await fetch(`${SERVER}${CANCEL_ORDER}`, {
+                method: 'POST',
+                headers: {
+                    'Cache-Control': 'no-cache',
+                    'Content-Type': 'application/json',
+                    Authorization: `${token_type} ${access_token}`,
+                },
+                body: JSON.stringify({ id }),
+            });
+            if (response.status === 200) {
+                await this.setState({ 
+                    loading: false,
+                    refreshing: false,
+                    canLoad: true,
+                    visible: false,
+                });
+                this.getQueueAPI();
+            }
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     async getQueueAPI() {
@@ -61,9 +90,9 @@ class Queue extends React.Component {
                 },
             });
             const responseData = await response.json();
-            if (this.mounted) {
+            if (this._isMounted) {
                 await this.setState({ 
-                    data: this.listViewCloneWithRows(responseData), 
+                    data: responseData, 
                     loading: false,
                     refreshing: false,
                     canLoad: true,
@@ -83,7 +112,9 @@ class Queue extends React.Component {
         return (
             <CancelConfirm 
                 visible={this.state.visible}
-                onConfirm={() => console.log('cancel')}
+                onConfirm={() => {
+                    this.onCancelOrder(this.state.selected);
+                }}
                 onCancel={() => this.setState({ visible: !this.state.visible })}
             />
         );
@@ -98,7 +129,12 @@ class Queue extends React.Component {
                     data={queue.supplier_detail} 
                     amount={queue.order_detail.total} 
                     queue={queue.queue_number} 
-                    onCancelPress={() => this.setState({ visible: !this.state.visible })} 
+                    onCancelPress={() => 
+                        this.setState({ 
+                            selected: parseInt(queue.order_detail.order_id, 10),
+                            visible: true,
+                        })
+                    } 
                     onPress={() => this.onSelectQueue(queue)}
                 />
             );
@@ -113,33 +149,33 @@ class Queue extends React.Component {
             return (
                 <LoadingImage />
             );
-        } else if (data._cachedRowCount === 0) {
+        } else if (data.length > 0) {
             return (
-                <View style={containerEmpty}>
-                    <Image
-                        style={imageEmpty}
-                        source={require('../images/r-logo.png')}
+                <View style={{ flex: 1 }} >
+                    <ListView 
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={this.state.refreshing}
+                                onRefresh={() => this.onRefresh()}
+                            />
+                        }
+                        enableEmptySections={false}
+                        dataSource={this.listViewCloneWithRows(data)}
+                        renderRow={(item) => this.renderQueue(item)}
+                        renderFooter={() => <Space />}
                     />
-                    <FontText size={24}>ยังไม่ได้สั่งอาหารเลยจ้า</FontText>)
-                </View>        
+                    {this.renderCancelConfirm()}
+                </View>
             );
         }
         return (
-            <View style={{ flex: 1 }} >
-                <ListView 
-                    style={{ flex: 1 }}
-                    refreshControl={
-                        <RefreshControl
-                            refreshing={this.state.refreshing}
-                            onRefresh={() => this.onRefresh()}
-                        />
-                    }
-                    dataSource={data}
-                    renderRow={(item) => this.renderQueue(item)} 
-                    renderFooter={() => <Space />}
+            <View style={containerEmpty}>
+                <Image
+                    style={imageEmpty}
+                    source={require('../images/r-logo.png')}
                 />
-                {this.renderCancelConfirm()}
-            </View>
+                <FontText size={24}>ยังไม่ได้สั่งอาหารเลยจ้า</FontText>)
+            </View>        
         );
     }
 }
