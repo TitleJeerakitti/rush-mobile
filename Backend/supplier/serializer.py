@@ -48,7 +48,6 @@ class SupplierCardSerializers(serializers.ModelSerializer):
     id = serializers.SerializerMethodField('get_supplier_id')
     rating = serializers.FloatField(default=5.0)
     reviewCount = serializers.IntegerField(default=500)
-    distance = serializers.IntegerField(default=1000)
     image = serializers.SerializerMethodField('get_profile_picture')
     category = CategorySerializer()
     location = serializers.SerializerMethodField('get_supplier_location')
@@ -56,7 +55,7 @@ class SupplierCardSerializers(serializers.ModelSerializer):
     class Meta:
         model = Supplier
         fields = ('id', 'name', 'rating', 'reviewCount',
-                  'category', 'isOpen', 'distance', 'image', 'location')
+                  'category', 'isOpen', 'image', 'location')
 
     def get_supplier_id(self, obj):
         return obj.user.id

@@ -1,9 +1,9 @@
 from django.db import models
 
 from phonenumber_field.modelfields import PhoneNumberField
+from rest_framework import status
 
 from account.models import User
-
 
 # Create your models here.
 class Customer(models.Model):
@@ -12,23 +12,23 @@ class Customer(models.Model):
     tel_number = PhoneNumberField(null=False, blank=False, unique=True)
     profile_picture = models.ImageField(upload_to='account/customer/profile',default='default/default_user.png')
 
+
     def __str__(self):
         return self.user.username
+
 
     def get_name(self):
         return self.user.first_name+' '+self.user.last_name
 
+
     def edit_profile(self,first_name,last_name,tel_number):
-        print(self)
-        print(first_name)
-        print(last_name)
-        print(tel_number)
         self.user.first_name = first_name
         self.user.last_name = last_name
         self.tel_number = tel_number
         self.user.save(update_fields=['first_name','last_name'])
         self.save(update_fields=['tel_number'])
         return self
+
 
     def uploadphoto(self,profile_picture):
         import base64
@@ -43,4 +43,20 @@ class Customer(models.Model):
         file_name = self.user.first_name + \
             str(datetime.datetime.now())+'.' + ext
         self.profile_picture.save(file_name, data, save=True)
+        return self
 
+    def create_review(self,supplier,rate,comment):
+        #check can review
+        from order.models import Order
+        from review.models import Review
+        order = Order.objects.filter(customer=self,supplier=supplier)
+        if order:
+            self_reiview = Review.objects.filter(customer=self,supplier=supplier)
+            if not self_reiview:
+                review = Review.objects.create(customer=self,supplier=supplier,rate=rate,comment=comment)
+                return {'status':200} #create done
+            else:
+                return {'status':600} #customer already review
+        else:
+            return {'status':601} #customer didn't order food
+     
