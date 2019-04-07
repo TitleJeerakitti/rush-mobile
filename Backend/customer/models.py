@@ -51,12 +51,8 @@ class Customer(models.Model):
         from review.models import Review
         order = Order.objects.filter(customer=self,supplier=supplier)
         if order:
-            self_reiview = Review.objects.filter(customer=self,supplier=supplier)
-            if not self_reiview:
-                review = Review.objects.create(customer=self,supplier=supplier,rate=rate,comment=comment)
-                return {'status':200} #create done
-            else:
-                return {'status':600} #customer already review
+            review = Review.objects.create(customer=self,supplier=supplier,rate=rate,comment=comment)
+            return {'status':200} #create done
         else:
             return {'status':601} #customer didn't order food
      
