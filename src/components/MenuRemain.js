@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, LayoutAnimation, Platform, UIManager, ListView, } from 'react-native';
+import { View, ListView, } from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 // import update from 'immutability-helper';

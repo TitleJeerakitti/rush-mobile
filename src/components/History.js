@@ -1,7 +1,7 @@
 import React from 'react';
-import { ScrollView, View } from 'react-native';
+import { View, ListView, RefreshControl, } from 'react-native';
 import { connect } from 'react-redux';
-import { HistoryCard, FontText, LoadingImage } from './common';
+import { HistoryCard, FontText, LoadingImage, Space } from './common';
 import { SERVER, GET_HISTORY } from '../../config';
 
 class History extends React.Component {
@@ -16,8 +16,10 @@ class History extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            refreshing: false,
             canLoad: true,
             histories: [],
+            loading: true,
         };
     }
 
@@ -33,9 +35,14 @@ class History extends React.Component {
         }
     }
 
+    onRefresh() {
+        this.setState({ refreshing: true, });
+        this.getHistoryAPI();
+    }
+
     async getHistoryAPI() {
-        await this.setState({ canLoad: false });
         try {
+            await this.setState({ canLoad: false });
             const { access_token, token_type } = this.props.token;
             const response = await fetch(`${SERVER}${GET_HISTORY}`, {
                 headers: {
@@ -44,32 +51,44 @@ class History extends React.Component {
                 }
             });
             const responseData = await response.json();
-            await this.setState({ histories: responseData.histories, canLoad: true });
+            await this.setState({ 
+                histories: responseData.histories, 
+                canLoad: true,
+                loading: false,
+                refreshing: false,
+            });
             // console.log('finish get api');
         } catch (error) {
             console.log(error);
         }
     }
 
-    renderHistoryCard() {
-        return this.state.histories.map((history, index) => 
-            <HistoryCard 
-                key={index}
-                data={history}
-            />
-        );
+    listViewCloneWithRows(data = []) {
+        const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+        return ds.cloneWithRows(data);
     }
 
     render() {
         // console.log('render ', this.props.canLoad, this.state.canLoad);
-        if (!this.state.canLoad) {
+        if (this.state.loading) {
             return <LoadingImage />;
         }
         if (this.state.histories.length > 0) {
             return (
-                <ScrollView style={{ flex: 1 }}>
-                    {this.renderHistoryCard()}
-                </ScrollView>
+                // <ScrollView style={{ flex: 1 }}>
+                //     {this.renderHistoryCard()}
+                // </ScrollView>
+                <ListView 
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={this.state.refreshing}
+                            onRefresh={() => this.onRefresh()}
+                        />
+                    }
+                    dataSource={this.listViewCloneWithRows(this.state.histories)}
+                    renderRow={(history) => <HistoryCard data={history} />}
+                    renderFooter={() => <Space />}
+                />
             );
         }
         return (

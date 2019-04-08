@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Image, ListView, RefreshControl, Dimensions, } from 'react-native';
+import { View, Image, ListView, RefreshControl, Dimensions, LayoutAnimation, Platform, UIManager } from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { QueueCard, CancelConfirm, FontText, LoadingImage, Space } from './common';
@@ -34,7 +34,8 @@ class Queue extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (prevProps.canLoad && prevState.canLoad && this.state.canLoad) {
+        if (prevProps.canLoad && prevState.canLoad && this.state.canLoad 
+            && (prevState.visible === this.state.visible)) {
             this.getQueueAPI();
         }
     }
@@ -44,6 +45,7 @@ class Queue extends React.Component {
     }
 
     onRefresh() {
+        this.setState({ refreshing: true, });
         this.getQueueAPI();
     }
 
@@ -54,7 +56,7 @@ class Queue extends React.Component {
 
     async onCancelOrder(id) {
         try {
-            this.setState({ refreshing: true, canLoad: false });
+            this.setState({ canLoad: false });
             const { access_token, token_type, } = this.props.token;
             const response = await fetch(`${SERVER}${CANCEL_ORDER}`, {
                 method: 'POST',
@@ -68,7 +70,6 @@ class Queue extends React.Component {
             if (response.status === 200) {
                 await this.setState({ 
                     loading: false,
-                    refreshing: false,
                     canLoad: true,
                     visible: false,
                 });
@@ -81,7 +82,7 @@ class Queue extends React.Component {
 
     async getQueueAPI() {
         try { 
-            this.setState({ refreshing: true, canLoad: false });
+            this.setState({ canLoad: false });
             const { access_token, token_type, } = this.props.token;
             const response = await fetch(`${SERVER}${GET_QUEUE}`, {
                 headers: {
@@ -94,8 +95,8 @@ class Queue extends React.Component {
                 await this.setState({ 
                     data: responseData, 
                     loading: false,
-                    refreshing: false,
                     canLoad: true,
+                    refreshing: false,
                 });
             }
         } catch (error) {
@@ -113,6 +114,11 @@ class Queue extends React.Component {
             <CancelConfirm 
                 visible={this.state.visible}
                 onConfirm={() => {
+                    LayoutAnimation.easeInEaseOut();
+                    if (Platform.OS === 'android') {
+                        // UIManager.setLayoutAnimationEnabledExperimental && 
+                        UIManager.setLayoutAnimationEnabledExperimental(true);
+                    }
                     this.onCancelOrder(this.state.selected);
                 }}
                 onCancel={() => this.setState({ visible: !this.state.visible })}
@@ -122,7 +128,6 @@ class Queue extends React.Component {
 
     renderQueue(queue) {
         if (queue.order_detail.status < 4) {
-            // console.log(queue)
             return (
                 <QueueCard
                     status={queue.order_detail.status} 

@@ -1,21 +1,9 @@
 import React from 'react';
-import { View, ListView } from 'react-native';
-import { Divider } from 'react-native-elements';
+import { View, } from 'react-native';
 import { Card, CardSection, FontText, MenuCard } from '../../common';
+import { Space } from '../Space';
 
 class MenuContainerList extends React.Component {
-    // constructor(props) {
-    //     super(props);
-    //     const { data, currentCategory } = this.props;
-    //     this.state = {
-    //         data: data.main_categories[currentCategory].sub_categories,
-    //     };
-    // }
-
-    // listViewCloneWithRows(data = []) {
-    //     const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
-    //     return ds.cloneWithRows(data);
-    // }
 
     renderMenuItem(menus, subIndex) {
         return menus.map((menu, index) => 
@@ -47,26 +35,14 @@ class MenuContainerList extends React.Component {
         }
     }
 
-    // renderSubCategoryList(item, index) {
-    //     return (
-    //         <CardSection>
-    //             <FontText >{item.name}</FontText>
-    //             { this.renderMenuItem(item.menus, index) }
-    //         </CardSection>
-    //     );
-    // }
-
     render() {
         return (
             <View style={{ backgroundColor: '#FAFAFA', }}>
                 <Card>
                     {this.renderSubCategory()}
                 </Card>
+                <Space />
             </View>
-            // <ListView 
-            //     dataSource={this.listViewCloneWithRows(this.state.data)}
-            //     renderRow={(item, index) => this.renderSubCategoryList(item, index)}
-            // />
         );
     }
 }
