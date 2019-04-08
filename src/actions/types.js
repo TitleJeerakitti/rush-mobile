@@ -1,5 +1,6 @@
 export const GET_TOKEN = 'GET_TOKEN';
 export const LOG_OUT = 'LOG_OUT';
+export const UPDATE_USER_INFO = 'UPDATE_USER_INFO';
 
 export const FONT_LOADED = 'FONT_LOADED';
 export const DATA_LOADING = 'DATA_LOADING';

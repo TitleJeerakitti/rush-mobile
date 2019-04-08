@@ -5,34 +5,93 @@ import {
     ImageBackground, 
     KeyboardAvoidingView, 
     TouchableOpacity, 
+    Alert,
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Permissions, ImagePicker, } from 'expo';
+import { Actions } from 'react-native-router-flux';
 import { Row, ImageRound, FontText, Card, CardSection, Button } from './common';
-import { YELLOW, ORANGE, SERVER } from '../../config';
+import { YELLOW, ORANGE, SERVER, EDIT_PROFILE } from '../../config';
+import { authUpdateUserInfo } from '../actions';
 
 class EditProfile extends React.Component {
     constructor(props) {
         super(props);
-        const { birthday, email, name, picture, tel_number = '' } = this.props.userInfo;
+        const { birthday, email, picture, tel_number = '' } = this.props.userInfo;
         this.state = {
             birthday,
             email,
-            name,
+            firstName: '',
+            lastName: '',
             picture,
-            tel_number: tel_number ? `0${tel_number.slice(3)}` : '',
+            telNumber: tel_number ? `0${tel_number.slice(3)}` : '',
             imageURL: null,
         };
     }
 
-    async getLocationAsync() {
+    componentDidMount() {
+        this.getUserInfo();
+    }
+
+    async getUserInfo() {
+        try {
+            const { access_token, token_type, } = this.props.token;
+            const response = await fetch(`${SERVER}${EDIT_PROFILE}`, {
+                headers: {
+                    Authorization: `${token_type} ${access_token}`,
+                    'Content-Type': 'application/json',
+                }
+            });
+            const responseData = await response.json();
+            if (response.status === 200) {
+                this.setState({
+                    firstName: responseData.first_name,
+                    lastName: responseData.last_name,
+                    telNumber: `0${responseData.tel_number.slice(3)}`,
+                    picture: responseData.profile_picture,
+                });
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async getCameraRollAsync() {
         const { status, /* permissions */ } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
         if (status === 'granted') {
         //   return Location.getCurrentPositionAsync({enableHighAccuracy: true});
             this.selectPhoto();
         } else {
           throw new Error('Location permission not granted');
+        }
+    }
+
+    async saveEditProfile() {
+        try {
+            const { access_token, token_type, } = this.props.token;
+            const response = await fetch(`${SERVER}${EDIT_PROFILE}`, {
+                method: 'POST',
+                headers: {
+                    Authorization: `${token_type} ${access_token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    first_name: this.state.firstName,
+                    last_name: this.state.lastName,
+                    tel_number: `+66${this.state.telNumber.slice(1)}`,
+                    profile_picture: this.state.imageURL,
+                }),
+            });
+            const responseData = await response.json();
+            console.log(response.status);
+            if (response.status === 200) {
+                Alert.alert('Update Profile Success!');
+                this.props.authUpdateUserInfo(responseData);
+                Actions.pop();
+            }
+        } catch (error) {
+            console.log(error);
         }
     }
 
@@ -44,39 +103,38 @@ class EditProfile extends React.Component {
         });
         const imageUri = `data:image/jpg;base64,${result.base64}`;
         await this.setState({ imageURL: imageUri, });
-        await this.uploadImage();
     }
 
-    async uploadImage() {
-        try {
-            const { access_token, token_type, } = this.props.token;
+    // async uploadImage() {
+    //     try {
+    //         const { access_token, token_type, } = this.props.token;
 
-            const response = await fetch(`${SERVER}/auth/upload-customer-profile-picture/`, {
-                method: 'POST',
-                headers: {
-                    Authorization: `${token_type} ${access_token}`,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    profile_picture: this.state.imageURL,
-                }),
-            });
-            const responseData = await response.json();
-            console.log(responseData);
-        } catch (error) {
-            console.log(error);
-        }
-    }
+    //         const response = await fetch(`${SERVER}/auth/upload-customer-profile-picture/`, {
+    //             method: 'POST',
+    //             headers: {
+    //                 Authorization: `${token_type} ${access_token}`,
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify({
+    //                 profile_picture: this.state.imageURL,
+    //             }),
+    //         });
+    //         const responseData = await response.json();
+    //         console.log(responseData);
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // }
 
     render() {
         const { imageStyle, containerDetail, containerBackground, textInputStyle } = styles;
-        const { birthday, email, name, picture, tel_number } = this.state;
+        const { birthday, email, firstName, lastName, picture, telNumber } = this.state;
         return (
             <KeyboardAvoidingView behavior='position' style={{ flex: 1 }} enabled>
                 <ImageBackground source={{ uri: 'https://png.pngtree.com/thumb_back/fw800/back_pic/04/51/79/17585f3a4b4b691.jpg' }} style={containerBackground}>
-                    <TouchableOpacity onPress={() => this.getLocationAsync()}>
+                    <TouchableOpacity onPress={() => this.getCameraRollAsync()}>
                     <ImageRound
-                        source={{ uri: this.state.imageURL ? this.state.imageURL : picture }} 
+                        source={{ uri: this.state.imageURL || picture }} 
                         style={imageStyle}
                     />
                     </TouchableOpacity>
@@ -100,11 +158,25 @@ class EditProfile extends React.Component {
                 <Card style={{ backgroundColor: '#FEFEFE', marginTop: 0, paddingTop: 10 }}>
                     <CardSection style={{ paddingBottom: 10 }}>
                         <Row>
-                            <FontText style={{ flex: 1 }}>ชื่อ-สกุล</FontText>
+                            <FontText style={{ flex: 1 }}>ชื่อ</FontText>
                             <TextInput 
-                                placeholder='ชื่อ - สกุล' 
+                                placeholder='ชื่อ' 
                                 style={textInputStyle} 
-                                value={name} 
+                                value={firstName} 
+                                onChangeText={(text) => this.setState({ firstName: text })}
+                                autoCapitalize='none'
+                                autoCorrect={false}
+                            />
+                        </Row>
+                    </CardSection>
+                    <CardSection style={{ paddingBottom: 10 }}>
+                        <Row>
+                            <FontText style={{ flex: 1 }}>นามสกุล</FontText>
+                            <TextInput 
+                                placeholder='นามสกุล' 
+                                style={textInputStyle} 
+                                value={lastName} 
+                                onChangeText={(text) => this.setState({ lastName: text })}
                                 autoCapitalize='none'
                                 autoCorrect={false}
                             />
@@ -116,14 +188,15 @@ class EditProfile extends React.Component {
                             <TextInput 
                                 placeholder='เบอร์โทรศัพท์' 
                                 style={textInputStyle} 
-                                value={tel_number} 
+                                value={telNumber} 
+                                onChangeText={(text) => this.setState({ telNumber: text })}
                                 autoCapitalize='none'
                                 autoCorrect={false}
                             />
                         </Row>
                     </CardSection>
                 </Card>
-                <Button onPress={() => console.log('here')} color={YELLOW}>
+                <Button onPress={() => this.saveEditProfile()} color={YELLOW}>
                     <FontText color='white'>บันทึกการเปลี่ยนแปลง</FontText>
                 </Button>
             </KeyboardAvoidingView>
@@ -171,4 +244,4 @@ const mapStateToProps = ({ auth }) => {
     return { userInfo, token };
 };
 
-export default connect(mapStateToProps)(EditProfile);
+export default connect(mapStateToProps, { authUpdateUserInfo })(EditProfile);
