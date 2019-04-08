@@ -17,7 +17,6 @@ class ReviewPage extends React.Component {
     }
 
     async componentDidMount() {
-        // fetch('http://10.66.10.222:8000/testing/datetime')
         this._isMounted = true;
         const { userInfo, supplier_id } = this.props;
         try {
@@ -29,8 +28,8 @@ class ReviewPage extends React.Component {
                 }
             });
             const responseData = await response.json();
-            if (this.mounted) {
-                await this.setState({
+            if (this._isMounted) {
+                this.setState({
                     reviewData: responseData.reviews,
                     canReview: responseData.can_review,
                 });

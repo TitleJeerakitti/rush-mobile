@@ -15,6 +15,7 @@ class History extends React.Component {
 
     constructor(props) {
         super(props);
+        this._isMounted = false;
         this.state = {
             refreshing: false,
             canLoad: true,
@@ -24,6 +25,7 @@ class History extends React.Component {
     }
 
     componentDidMount() {
+        this._isMounted = true;
         if (this.state.canLoad) {
             this.getHistoryAPI();
         }
@@ -33,6 +35,10 @@ class History extends React.Component {
         if (prevProps.canLoad && prevState.canLoad && this.state.canLoad) {
             this.getHistoryAPI();
         }
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
     }
 
     onRefresh() {
@@ -51,13 +57,14 @@ class History extends React.Component {
                 }
             });
             const responseData = await response.json();
-            await this.setState({ 
-                histories: responseData.histories, 
-                canLoad: true,
-                loading: false,
-                refreshing: false,
-            });
-            // console.log('finish get api');
+            if (this._isMounted) {
+                await this.setState({ 
+                    histories: responseData.histories, 
+                    canLoad: true,
+                    loading: false,
+                    refreshing: false,
+                });
+            }
         } catch (error) {
             console.log(error);
         }

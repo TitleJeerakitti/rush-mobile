@@ -34,14 +34,14 @@ class RestaurantCard extends React.Component {
 
     componentDidMount() {
         this._isMounted = true;
-        if (this._isMounted) {
-            navigator.geolocation.getCurrentPosition(position => {
+        navigator.geolocation.getCurrentPosition(position => {
+            if (this._isMounted) {
                 this.setState({
                     latitude: position.coords.latitude,
                     longitude: position.coords.longitude,
                 });
-            });
-        }
+            }
+        });
     }
 
     componentWillUnmount() {

@@ -15,7 +15,7 @@ import {
     OneButton,
 } from '../common';
 import { YELLOW, GRAY, GREEN, DARK_RED } from '../../../config';
-import { getOrderAgain } from '../../actions';
+import { getOrderAgain, reviewSelected } from '../../actions';
 
 class History extends React.Component {
     orderAgain() {
@@ -31,7 +31,7 @@ class History extends React.Component {
         if (order_detail.status === 5) {
             return (
                 <TwoButton 
-                    onFirstPress={() => console.log('first')}
+                    onFirstPress={() => this.props.reviewSelected(this.props.data.supplier_detail)}
                     firstText='ให้คะแนนรีวิว'
                     firstColor={GRAY}
                     onSecondPress={() => this.orderAgain()}
@@ -123,5 +123,5 @@ const styles = {
     }
 };
 
-const HistoryCard = connect(null, { getOrderAgain })(History);
+const HistoryCard = connect(null, { getOrderAgain, reviewSelected, })(History);
 export { HistoryCard };
