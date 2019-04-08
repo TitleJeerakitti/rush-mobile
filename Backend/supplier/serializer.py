@@ -29,13 +29,14 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = ('name', 'image')
 
+
 class LocationSerializers(serializers.ModelSerializer):
     latitude = serializers.SerializerMethodField('get_supplier_latitude')
     longitude = serializers.SerializerMethodField('get_supplier_longitude')
 
     class Meta:
         model = Supplier
-        fields = ('latitude','longitude')
+        fields = ('latitude', 'longitude')
 
     def get_supplier_latitude(self, obj):
         return obj.latitude
@@ -46,8 +47,10 @@ class LocationSerializers(serializers.ModelSerializer):
 
 class SupplierCardSerializers(serializers.ModelSerializer):
     id = serializers.SerializerMethodField('get_supplier_id')
-    rating = serializers.FloatField(default=5.0)
-    reviewCount = serializers.IntegerField(default=500)
+    # rating = serializers.SerializerMethodField('get_supplier_rating')
+    # reviewCount = serializers.SerializerMethodField('get_supplier_review_count')
+    rating = serializers.FloatField(source='get_rating')
+    reviewCount = serializers.FloatField(source='get_review_count')
     image = serializers.SerializerMethodField('get_profile_picture')
     category = CategorySerializer()
     location = serializers.SerializerMethodField('get_supplier_location')
@@ -68,7 +71,6 @@ class SupplierCardSerializers(serializers.ModelSerializer):
     def get_supplier_location(self, obj):
         serializers = LocationSerializers(obj)
         return serializers.data
-
 
 class ExtraPictureSerializer(serializers.ModelSerializer):
 
@@ -142,5 +144,5 @@ class RestaurantDetailSerializer(serializers.ModelSerializer):
             serializers = ExtraPictureSerializer(
                 extra_picture, many=True, context={'request': request})
         else:
-            return [{'image': request.build_absolute_uri('/media/default/extra_picture.png')},]
+            return [{'image': request.build_absolute_uri('/media/default/extra_picture.png')}, ]
         return serializers.data

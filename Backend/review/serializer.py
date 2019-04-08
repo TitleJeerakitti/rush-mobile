@@ -55,7 +55,7 @@ class GetReviewSerializer(serializers.Serializer):
 
     def get_method(self, validated_data, request):
         review = Review.objects.filter(
-            supplier__user__id=validated_data['supplier_id']).order_by('timestamp')
+            supplier__user__id=validated_data['supplier_id']).order_by('timestamp').order_by('-timestamp')
         serializers = ReviewSerializer(
             review, many=True, context={'request': request})
         

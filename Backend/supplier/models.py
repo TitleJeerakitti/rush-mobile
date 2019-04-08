@@ -50,7 +50,22 @@ class Supplier(models.Model):
     def __str__(self):
         return self.name
 
-    # def get_rating(self):
+    def get_rating(self):
+        from review.models import Review
+        from django.db.models import Avg
+        review = Review.objects.filter(supplier=self)
+        rating = review.aggregate(Avg('rate'))['rate__avg']
+        if not rating:
+            rating = 0
+        return rating
+    
+    def get_review_count(self):
+        from review.models import Review
+        from django.db.models import Count
+        review = Review.objects.filter(supplier=self)
+        review_count = review.aggregate(Count('rate'))['rate__count']
+        return review_count
+
 
 class Telephone(models.Model):
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
