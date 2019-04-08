@@ -37,16 +37,14 @@ class RestaurantMaps extends React.Component {
 
     componentDidMount() {
         this._isMounted = true;
-        if (this._isMounted) {
-            navigator.geolocation.getCurrentPosition(position => {
-                this.setState({
-                    location: {
-                        latitude: position.coords.latitude,
-                        longitude: position.coords.longitude,
-                    }
-                });
+        navigator.geolocation.getCurrentPosition(position => {
+            this._isMounted && this.setState({
+                location: {
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude,
+                }
             });
-        }
+        });
     }
 
     componentWillUnmount() {

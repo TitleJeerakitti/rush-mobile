@@ -52,7 +52,6 @@ class SearchByName extends React.Component {
 
     onSelectRestaurant(item) {
         this.props.restaurantSelected(item);
-        // Actions.pop();
         Actions.restaurant_menu();
     }
 
