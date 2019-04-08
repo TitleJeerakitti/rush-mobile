@@ -4,7 +4,7 @@ from rest_framework import serializers, status
 from .models import Review
 from customer.models import Customer
 from supplier.models import Supplier
-
+from order.models import Order
 
 class ReviewDetailSerializer(serializers.ModelSerializer):
     supplier_id = serializers.IntegerField()
@@ -58,9 +58,8 @@ class GetReviewSerializer(serializers.Serializer):
             supplier__user__id=validated_data['supplier_id']).order_by('timestamp')
         serializers = ReviewSerializer(
             review, many=True, context={'request': request})
-        try:
-            Review.objects.get(
-                supplier__user__id=validated_data['supplier_id'], customer__user__id=validated_data['customer_id'])
-        except:
+        
+        order = Order.objects.filter(supplier__user__id=validated_data['supplier_id'],customer__user__id=validated_data['customer_id'])
+        if order:
             return {'can_review': True, 'reviews': serializers.data}
         return {'can_review': False, 'reviews': serializers.data}

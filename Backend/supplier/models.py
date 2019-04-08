@@ -50,6 +50,7 @@ class Supplier(models.Model):
     def __str__(self):
         return self.name
 
+    # def get_rating(self):
 
 class Telephone(models.Model):
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
