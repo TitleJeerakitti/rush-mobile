@@ -6,6 +6,7 @@ src/images/*
 assets/*
 yarn-error.log
 src/test_json
+assets
 
 
 #python

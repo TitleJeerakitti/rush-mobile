@@ -1,8 +1,17 @@
 import React from 'react';
-import { View, ScrollView } from 'react-native';
+import { View, ListView, } from 'react-native';
 import { connect } from 'react-redux';
 import RestaurantCard from './RestaurantCard';
-import { TextLineFont, MenuCard, Card, CardSection, FontText, Row, LoadingImage } from './common';
+import { 
+    TextLineFont,
+    MenuCard, 
+    Card, 
+    CardSection, 
+    FontText, 
+    Row, 
+    LoadingImage, 
+    Space,
+} from './common';
 import { SERVER, GET_ORDER_DETAIL } from '../../config';
 
 class Receipt extends React.Component {
@@ -10,7 +19,7 @@ class Receipt extends React.Component {
         super(props);
         this.state = {
             data: {},
-            menus: [],
+            menus: this.listViewCloneWithRows(),
             total: 0,
             visible: false,
         };
@@ -31,7 +40,7 @@ class Receipt extends React.Component {
             if (this.mounted) {
                 await this.setState({
                     data: responseData.supplier_detail,
-                    menus: responseData.menus,
+                    menus: this.listViewCloneWithRows(responseData.menus),
                     total: responseData.total
                 });
             }
@@ -44,16 +53,13 @@ class Receipt extends React.Component {
         this.mounted = false;
     }
 
-    renderMenu() {
-        if (this.state.menus.length > 0) {
-            return this.state.menus.map((menu, index) => 
-                <MenuCard key={index} data={menu} notQuantity />
-            );
-        }
+    listViewCloneWithRows(data = []) {
+        const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+        return ds.cloneWithRows(data);
     }
 
     render() {
-        if (this.state.menus.length > 0) {
+        if (this.state.menus._cachedRowCount > 0) {
             return (
                 <View style={{ flex: 1 }}>
                     <RestaurantCard
@@ -61,10 +67,12 @@ class Receipt extends React.Component {
                         disabled
                     />
                     <TextLineFont title='รายการอาหารที่สั่ง' />
-                    <ScrollView style={{ flex: 1 }}>
-                        {this.renderMenu()}
-                        <View style={{ marginTop: 10 }} />
-                    </ScrollView>
+                    <ListView 
+                        style={{ flex: 1 }}
+                        dataSource={this.state.menus}
+                        renderRow={(menu) => <MenuCard data={menu} notQuantity />}
+                        renderFooter={() => <Space />}
+                    />
                     <Card style={styles.line} />
                     <Card style={{ marginBottom: 10 }}>
                         <CardSection>

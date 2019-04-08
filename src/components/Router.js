@@ -14,7 +14,7 @@ import RestaurantMenu from './RestaurantMenu';
 import MenuRemain from './MenuRemain';
 import Queue from './Queue';
 import { NavHamberger, IconTab, NavBack } from './common';
-import { fontLoader, resetRestaurant, authLoginSuccess, authTokenLogin } from '../actions';
+import { fontLoader, resetRestaurant, authLoginSuccess, authTokenLogin, } from '../actions';
 import Receipt from './Receipt';
 import Review from './Review';
 import History from './History';
@@ -215,8 +215,8 @@ class RouterComponent extends React.Component {
                                         component={Queue} 
                                         title='Q U E U E' 
                                         navBar={NavHamberger}
-                                        onEnter={() => Actions.refresh({ canLoad: true })}
                                         initial
+                                        onEnter={() => Actions.refresh({ canLoad: true })}
                                     />
                                     <Scene 
                                         key='receipt' 

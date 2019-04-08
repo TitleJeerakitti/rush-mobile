@@ -1,8 +1,9 @@
 import React from 'react';
-import { TouchableOpacity, View, Text, } from 'react-native';
+import { TouchableOpacity, View, } from 'react-native';
 import { connect } from 'react-redux';
 import { Icon } from 'react-native-elements';
 import StarRating from 'react-native-star-rating';
+import geolib from 'geolib';
 // import { Actions } from 'react-native-router-flux';
 import { restaurantSelected, reviewSelected } from '../actions';
 import {
@@ -16,13 +17,42 @@ import {
 } from './common';
 import { YELLOW } from '../../config';
 
-class RestaurantCard extends React.Component {
+const empty_location = {
+    latitude: 0,
+    longitude: 0,
+};
 
-    onClick() {
-        if (!this.props.disabled) {
-            this.props.restaurantSelected(this.props.data);
-        }
+class RestaurantCard extends React.Component {
+    constructor(props) {
+        super(props);
+        this._isMounted = false;
+        this.state = {
+            latitude: 0,
+            longitude: 0,
+        };
     }
+
+    componentDidMount() {
+        this._isMounted = true;
+        navigator.geolocation.getCurrentPosition(position => {
+            if (this._isMounted) {
+                this.setState({
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude,
+                });
+            }
+        });
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
+    }
+
+    // onClick() {
+    //     if (!this.props.disabled) {
+            
+    //     }
+    // }
 
     onReviewSelect() {
         if (!this.props.disabledStar) {
@@ -31,21 +61,20 @@ class RestaurantCard extends React.Component {
     }
 
     renderDistance() {
-        const { distance } = this.props.data;
-        if (distance < 1000) {
-            return (
-                <ShopDistance>{distance} M</ShopDistance>
-            );
-        }
+        const { location = empty_location } = this.props.data;
+        const response = this._isMounted && geolib.getDistance(this.state, location);
         return (
-            <ShopDistance>{distance / 1000} KM</ShopDistance>
+            <ShopDistance>
+                {response < 1000 ? `${response} M` : `${(response / 1000).toFixed(1)} KM`}
+            </ShopDistance>
         );
     }
 
     render() {
         const { card } = styles;
+        const { onLongPress, onPress, } = this.props;
         const {
-            isOpen,
+            is_open,
             name,
             image,
             rating,
@@ -58,7 +87,8 @@ class RestaurantCard extends React.Component {
                     <TouchableOpacity
                         style={card}
                         activeOpacity={1}
-                        onPress={this.onClick.bind(this)}
+                        onPress={onPress}
+                        onLongPress={onLongPress}
                     >
                         <Row>
                             <ImageRound
@@ -95,14 +125,19 @@ class RestaurantCard extends React.Component {
                                         </Row>
                                     </TouchableOpacity>
                                     <Row style={{ flex: 1, justifyContent: 'flex-end' }}>
-                                        <Icon name='tag' type='evilicon' size={16} color='gray' />
+                                        <Icon 
+                                            name='tag' 
+                                            type='evilicon' 
+                                            size={16} 
+                                            color='gray' 
+                                        />
                                         <FontText style={{ color: 'gray' }} numberOfLines={1} >
                                             {category.name}
                                         </FontText>
                                     </Row>
                                 </Row>
                                 <Row style={{ marginTop: 5 }}>
-                                    <ShopStatus isOpen={isOpen} />
+                                    <ShopStatus isOpen={is_open} />
                                     {this.renderDistance()}
                                 </Row>
                             </View>

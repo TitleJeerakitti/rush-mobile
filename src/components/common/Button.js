@@ -2,9 +2,9 @@ import React from 'react';
 import { TouchableOpacity } from 'react-native';
 import { Row, Card, CardSection } from '../common';
 
-const Button = ({ onPress, children, color }) => {
+const Button = ({ onPress, children, color, style }) => {
     return (
-        <Card>
+        <Card style={style}>
             <CardSection>
                 <TouchableOpacity 
                     onPress={onPress} 

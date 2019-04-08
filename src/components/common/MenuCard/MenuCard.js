@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, LayoutAnimation, Platform, UIManager, } from 'react-native';
 import { connect } from 'react-redux';
 import update from 'immutability-helper';
 import { Card, CardSection, ImageRound, FontText, QuantityButton } from '../../common';
@@ -9,6 +9,11 @@ import { ORANGE } from '../../../../config';
 class MenuContainer extends React.Component {
 
     subtractAmount() {
+        LayoutAnimation.spring();
+        if (Platform.OS === 'android') {
+            // UIManager.setLayoutAnimationEnabledExperimental && 
+            UIManager.setLayoutAnimationEnabledExperimental(true);
+        }
         const { subIndex, index, currentCategory, menuData } = this.props;
         const menu = menuData.main_categories[currentCategory]
                     .sub_categories[subIndex].menus[index];
@@ -34,6 +39,11 @@ class MenuContainer extends React.Component {
     }
 
     additionAmount() {
+        LayoutAnimation.spring();
+        if (Platform.OS === 'android') {
+            // UIManager.setLayoutAnimationEnabledExperimental && 
+            UIManager.setLayoutAnimationEnabledExperimental(true);
+        }
         const { subIndex, index, currentCategory, menuData } = this.props;
         const menu = menuData.main_categories[currentCategory]
                     .sub_categories[subIndex].menus[index];
