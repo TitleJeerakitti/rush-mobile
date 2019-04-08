@@ -31,7 +31,7 @@ class SearchNearby extends React.Component {
             filters: [
                 { type: 'ระยะทาง' }, 
                 { type: 'ความนิยม' }, 
-                { type: 'ตัวอักษร' }
+                { type: 'จำนวนรีวิว' }
             ],
             sortType: 'ระยะทาง',
             visible: false,
@@ -101,12 +101,12 @@ class SearchNearby extends React.Component {
     selectAPI() {
         if (this.state.sortType === 'ระยะทาง') { 
             // return ('http://localhost:3000/restaurants?_sort=distance&_order=asc');
-            return (`${SERVER}${SEARCH_NEARBY}?latitude=${this.state.latitude}&longitude=${this.state.longitude}`);
+            return (`${SERVER}${SEARCH_NEARBY}?latitude=${this.state.latitude}&longitude=${this.state.longitude}&sorted_by=1`);
         } else if (this.state.sortType === 'ความนิยม') {
-            return ('http://localhost:3000/restaurants?_sort=rating&_order=desc');
+            return (`${SERVER}${SEARCH_NEARBY}?latitude=${this.state.latitude}&longitude=${this.state.longitude}&sorted_by=2`);
         }
         // return ('http://localhost:3000/restaurants?_sort=name&_order=asc');
-        return ('http://10.66.10.222:8000/testing/restaurant');
+        return (`${SERVER}${SEARCH_NEARBY}?latitude=${this.state.latitude}&longitude=${this.state.longitude}&sorted_by=3`);
     }
 
     refreshControl() {

@@ -1,73 +1,97 @@
 import React from 'react';
-import { View, ScrollView, TextInput, TouchableOpacity } from 'react-native';
+import { View, TextInput, TouchableOpacity, ListView, } from 'react-native';
 import { Icon } from 'react-native-elements';
-import { Row, FontText } from './common';
+import { connect } from 'react-redux';
+import { Actions } from 'react-native-router-flux';
+import { Row, FontText, Empty } from './common';
 import RestaurantCard from './RestaurantCard';
-import { ORANGE } from '../../config';
-
+import { ORANGE, SERVER, SEARCH_BY_NAME } from '../../config';
+import { restaurantSelected } from '../actions';
+ 
 class SearchByName extends React.Component {
     
     constructor(props) {
         super(props);
+        this._isMounted = false;
         this.state = {
             text: '',
             refreshing: false,
             restaurants: [],
-            filters: [
-                { type: 'ระยะทาง' }, 
-                { type: 'ความนิยม' }, 
-                { type: 'ตัวอักษร' }
-            ],
-            sortType: 'ระยะทาง',
             visible: false,
         };
     }
-    
 
-    onTextChange(text) {
-        this.setState({
-            text
-        });
+    componentDidMount() {
+        this._isMounted = true;
+    }
+    
+    componentWillUnmount() {
+        this._isMounted = false;
     }
 
-    getRestaurantAPI() {
-        fetch(`http://localhost:3000/restaurants?name=${this.state.text}`, {
-            headers: {
-                'Cache-Control': 'no-cache'
-            }
-        })
-            .then(response => response.json())
-            .then(responseData => {
+    async getRestaurantAPI() {
+        try {
+            const { access_token, token_type } = this.props.token;
+            const response = await fetch(`${SERVER}${SEARCH_BY_NAME}?word=${this.state.text}`, {
+                headers: {
+                    'Cache-Control': 'no-cache',
+                    Authorization: `${token_type} ${access_token}`,
+                }
+            });
+            const responseData = await response.json();
+            if (this._isMounted && response.status === 200) {
                 this.setState({
                     restaurants: responseData,
                     refreshing: false
                 });
-            })
-            .catch(() => {
-                console.log('error connect!');
-            });
+            }
+        } catch (error) {
+            console.log(error);
+        }
     }
 
-    clearText() {
-        this.setState({
-            text: ''
-        });
+    onSelectRestaurant(item) {
+        this.props.restaurantSelected(item);
+        // Actions.pop();
+        Actions.restaurant_menu();
+    }
+
+    listViewCloneWithRows(data = []) {
+        const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+        return ds.cloneWithRows(data);
     }
 
     renderClear() {
         const { text } = this.state;
         if (text !== '') {
             return (
-                <TouchableOpacity onPress={this.clearText.bind(this)} style={{ marginLeft: 10 }} >
+                <TouchableOpacity 
+                    onPress={() => this.setState({ text: '' })} 
+                    style={{ marginLeft: 10 }} 
+                >
                     <Icon name='close-circle' type='material-community' color={ORANGE} />
                 </TouchableOpacity>
             );
         }
     }
 
-    renderRestaurant() {
-        return this.state.restaurants.map(restaurant =>
-            <RestaurantCard key={restaurant.id} data={restaurant} />
+    renderContent() {
+        if (this.state.restaurants.length === 0) {
+            return (
+                <Empty title='ไม่มีร้านที่คุณค้นหา' />
+            );
+        }
+        return (
+            <ListView 
+                dataSource={this.listViewCloneWithRows(this.state.restaurants)}
+                renderRow={(restaurant) => 
+                    <RestaurantCard 
+                        data={restaurant} 
+                        onPress={() => this.onSelectRestaurant(restaurant)} 
+                    />
+                }
+                enableEmptySections
+            />
         );
     }
 
@@ -79,7 +103,7 @@ class SearchByName extends React.Component {
                     <Icon name='search' />
                     <TextInput
                         value={this.state.text}
-                        onChangeText={this.onTextChange.bind(this)}
+                        onChangeText={(text) => this.setState({ text })}
                         style={{ marginLeft: 10, flex: 1, }}
                         numberOfLines={1}
                         placeholder='ค้นหาร้านอาหารที่ท่านต้องการ...'
@@ -89,15 +113,13 @@ class SearchByName extends React.Component {
                     />
                     {this.renderClear()}
                     <TouchableOpacity 
-                        onPress={this.getRestaurantAPI.bind(this)} 
+                        onPress={() => this.getRestaurantAPI()} 
                         style={{ marginLeft: 10 }}
                     >
                         <FontText>ค้นหา</FontText>
                     </TouchableOpacity>
                 </Row>
-                <ScrollView style={{ flex: 1 }}>
-                    {this.renderRestaurant()}
-                </ScrollView>
+                {this.renderContent()}
             </View>
         );
     }
@@ -112,4 +134,9 @@ const styles = {
     }
 };
 
-export default SearchByName;
+
+const mapStateToProps = ({ auth }) => {
+    const { token } = auth;
+    return { token };
+}
+export default connect(mapStateToProps, { restaurantSelected })(SearchByName);

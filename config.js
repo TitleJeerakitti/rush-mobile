@@ -21,6 +21,7 @@ export const CHECK_TOKEN = '/api/get-customer-data';
 export const EDIT_PROFILE = '/api/customer-profile';
 // API RESTAURANT
 export const HOME = '/api/home';
+export const SEARCH_BY_NAME = '/restaurant/restaurant-name/';
 export const SEARCH_NEARBY = '/restaurant/restaurant-nearby/';
 export const GET_RESTAURANT_MENU = '/restaurant/restaurant_detail/';
 export const CREATE_NEW_ORDER = '/order/create_new_order/';
