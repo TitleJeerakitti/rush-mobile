@@ -4,3 +4,15 @@ psql rushdb postgres
 psql -U postgres
 pip freeze > requirements.txt 
 pip install -r requirements.txt --upgrade
+
+
+
+
+
+#when install docker-compose
+for python container
+apt-get update
+apt-get install -y gdal-bin libgdal-dev
+apt-get install -y python3-gdal
+apt-get install -y binutils libproj-dev
+For postgres container

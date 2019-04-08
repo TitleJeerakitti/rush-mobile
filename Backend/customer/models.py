@@ -9,7 +9,7 @@ from account.models import User
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     birthday = models.DateField(null=True, auto_now=False)
-    tel_number = PhoneNumberField(null=False, blank=False, unique=True)
+    tel_number = PhoneNumberField(null=False, blank=False)
     profile_picture = models.ImageField(upload_to='account/customer/profile',default='default/default_user.png')
 
 
@@ -49,7 +49,7 @@ class Customer(models.Model):
         #check can review
         from order.models import Order
         from review.models import Review
-        order = Order.objects.filter(customer=self,supplier=supplier)
+        order = Order.objects.filter(customer=self,supplier=supplier,status=5)
         if order:
             review = Review.objects.create(customer=self,supplier=supplier,rate=rate,comment=comment)
             return {'status':200} #create done

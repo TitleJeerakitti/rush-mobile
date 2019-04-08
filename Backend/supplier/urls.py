@@ -11,5 +11,8 @@ urlpatterns = [
         name='restuarant_menu'),
     path('restaurant-nearby/',
         SupplierNearByAPIView.as_view(),
-        name='restaurant_nearby')
+        name='restaurant_nearby'),
+    path('restaurant-name/',
+        SupplierNameAPIView.as_view(),
+        name='restaurant_nearby'),
 ]

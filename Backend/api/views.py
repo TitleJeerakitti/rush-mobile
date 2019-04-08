@@ -35,15 +35,23 @@ class HomeAPIView(APIView):
 #     permission_classes = ()
 
 #     def get(self, request):
-#         from rush.settings import MEDIA_ROOT
-#         from supplier.models import Menu
-#         from django.core.files import File  # you need this somewhere
-#         import urllib
+        
+#         from supplier.models import Supplier
+#         try:
+#             latitude = request.GET['latitude']
+#             longitude = request.GET['longitude']
+#         except:
+#             return Response(status.HTTP_400_BAD_REQUEST)
+#         supplier_list = Supplier.objects.all()
+#         user_location = Point(float(longitude),float(latitude),srid=4326)
+#         pnt = GEOSGeometry(user_location)
 
-#         temp = Menu.objects.all()
-#         # for target_list in temp:
-#             # try
-#             # print(target_list.image)
-#         # result = urllib.urlretrieve(MEDIA_ROOT+'/default_user.png')
-#         # customer.profile_picture.save(,FILE
-#         return Response(status=status.HTTP_200_OK)
+#         for supplier in supplier_list:
+#             distance = supplier.distance_from_location(user_location)
+#             if distance > 20:
+#                 supplier_list = supplier_list.exclude(user=supplier.user)
+#         supplier_sorted = sorted(supplier_list,key=lambda t:t.distance_from_location(user_location))
+#         # supplier = Supplier.objects.filter(user__is_supplier=True,latitude__range=(latitude_l,latitude_h),longitude__range=(longitude_l,longitude_h))
+#         # serializers = SupplierCardSerializers(
+        #     supplier, many=True, context={'request': request})
+        # return Response(serializers.data)

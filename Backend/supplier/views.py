@@ -1,4 +1,7 @@
 from django.shortcuts import render, get_object_or_404
+from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import GEOSGeometry
+from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -83,17 +86,36 @@ class SupplierNearByAPIView(APIView):
         try:
             latitude = request.GET['latitude']
             longitude = request.GET['longitude']
+            sorted_by = int(request.GET['sorted_by'])
         except:
             return Response(status.HTTP_400_BAD_REQUEST)
-        latitude_difference = 0.1305
-        longitude_difference = 0.14
-        latitude_h = float(latitude)+latitude_difference 
-        latitude_l = float(latitude)-latitude_difference 
-        longitude_h = float(longitude)+longitude_difference
-        longitude_l = float(longitude)-longitude_difference
-        supplier = Supplier.objects.filter(user__is_supplier=True,latitude__range=(latitude_l,latitude_h),longitude__range=(longitude_l,longitude_h))
+        user_location = Point(float(longitude), float(latitude), srid=4326)
+        supplier_list = Supplier.nearby(user_location)
+
+        if sorted_by == 1:  # nearlest
+            supplier_sorted = Supplier.sorted_by_distance(
+                supplier_list, user_location)
+        elif sorted_by == 2:  # rating
+            supplier_sorted = Supplier.sorted_by_rating(supplier_list)
+        elif sorted_by == 3:  # review count
+            supplier_sorted = Supplier.sorted_by_review_count(supplier_list)
+        else:
+            return Response(status.HTTP_403_FORBIDDEN)
         serializers = SupplierCardSerializers(
-            supplier, many=True, context={'request': request})
+            supplier_sorted, many=True, context={'request': request})
         return Response(serializers.data)
-#0.0627911,0.0731991
-#13.7292128,100.7733807
+
+
+class SupplierNameAPIView(APIView):
+    permission_classes = [IsAuthenticated, IsCustomer]
+
+    def get(self, request):
+        try:
+            word = str(request.GET['word'])
+        except:
+            return Response(status.HTTP_400_BAD_REQUEST)
+
+        supplier_list = Supplier.objects.filter(name__icontains=word)
+        serializers = SupplierCardSerializers(
+            supplier_list, many=True, context={'request': request})
+        return Response(serializers.data)

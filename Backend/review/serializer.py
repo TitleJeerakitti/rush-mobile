@@ -59,7 +59,7 @@ class GetReviewSerializer(serializers.Serializer):
         serializers = ReviewSerializer(
             review, many=True, context={'request': request})
         
-        order = Order.objects.filter(supplier__user__id=validated_data['supplier_id'],customer__user__id=validated_data['customer_id'])
+        order = Order.objects.filter(supplier__user__id=validated_data['supplier_id'],customer__user__id=validated_data['customer_id'],status=5)
         if order:
             return {'can_review': True, 'reviews': serializers.data}
         return {'can_review': False, 'reviews': serializers.data}

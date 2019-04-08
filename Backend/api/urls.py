@@ -14,6 +14,6 @@ urlpatterns = [
     path('customer-profile',CustomerProfileAPIView.as_view()),
     path('get-promotion',PromotionAPIView.as_view()),
     path('create-review',CreateReviewAPIView.as_view()),
-    path('customer-cancel-order',CancelOrderAPIView.as_view())
+    path('customer-cancel-order',CancelOrderAPIView.as_view()),
     # path('test', TestAPIView.as_view()),
 ]
