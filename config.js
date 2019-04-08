@@ -24,9 +24,11 @@ export const SEARCH_NEARBY = '/restaurant/restaurant-nearby/';
 export const GET_RESTAURANT_MENU = '/restaurant/restaurant_detail/';
 export const CREATE_NEW_ORDER = '/order/create_new_order/';
 export const CHECK_PROMO_CODE = '/order/check_promotion/';
+export const GET_PROMOTION = '/api/get-promotion';
 // API USER ORDER & QUEUE
 export const GET_QUEUE = '/order/get_queue/';
 export const GET_ORDER_DETAIL = '/order/get_order/';
 export const CANCEL_ORDER = '/api/customer-cancel-order';
 export const GET_REVIEW = '/review/get_review/';
+export const CREATE_REVIEW = '/api/create-review';
 export const GET_HISTORY = '/api/get-customer-history';

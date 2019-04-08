@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Modal, } from 'react-native';
+import { View, Modal, Alert, } from 'react-native';
 import { FontText } from '../common';
 
 const FilterCard = ({ visible, children }) => {
@@ -9,6 +9,9 @@ const FilterCard = ({ visible, children }) => {
             visible={visible}
             transparent
             animationType='fade'
+            onRequestClose={() => {
+                Alert.alert('Modal has been closed.');
+            }}
         >
             <View style={container} >
                 <View style={cardStyle} >

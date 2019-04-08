@@ -7,7 +7,7 @@ const SlickItem = ({ source }) => {
     return (
         <Image 
             resizeMode={'cover'}
-            style={{ width: '100%', height: imageHeight }} 
+            style={{ flex: 1, height: imageHeight }} 
             source={source} 
         />
     );

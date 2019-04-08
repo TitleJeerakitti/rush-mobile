@@ -1,39 +1,13 @@
 import React from 'react';
-import { View, TextInput, TouchableOpacity } from 'react-native';
+import { View, TextInput, TouchableOpacity, } from 'react-native';
 import StarRating from 'react-native-star-rating';
 import { Card, CardSection, Row, ImageRound, FontText } from '../common';
-import { YELLOW, ORANGE } from '../../../config';
+import { YELLOW, ORANGE, DARK_RED } from '../../../config';
 
 class ReviewCard extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            rating: 0,
-            comment: '',
-        };
-    }
-
-    onStarRatingPress(rating) {
-        this.setState({
-          rating
-        });
-    }
-
-    onChangeText(text) {
-        this.setState({ comment: text });
-    }
-
-    submitComment() {
-        const { rating, comment } = this.state;
-        if (rating !== 0 && comment !== '') {
-            console.log('success');
-        } else {
-            console.log('fail');
-        }
-    }
 
     renderComment() {
-        const { disabled, data } = this.props;
+        const { disabled, data, value, onChangeText, } = this.props;
         if (disabled && data.comment) {
             return (
                 <FontText>
@@ -51,9 +25,9 @@ class ReviewCard extends React.Component {
         return (
             <TextInput 
                 style={styles.textInput} 
-                value={this.state.comment}
+                value={value}
                 placeholder='แสดงความคิดเห็น...' 
-                onChangeText={this.onChangeText.bind(this)}
+                onChangeText={onChangeText}
                 autoCapitalize='none'
                 autoCorrect={false}
             />
@@ -73,7 +47,7 @@ class ReviewCard extends React.Component {
                 <View style={{ flex: 1 }} />
                 <TouchableOpacity 
                     style={styles.buttonSubmit}
-                    onPress={this.submitComment.bind(this)}
+                    onPress={this.props.onPress}
                 >
                     <FontText color='white'>Comment</FontText>
                 </TouchableOpacity>
@@ -82,7 +56,7 @@ class ReviewCard extends React.Component {
     }
 
     render() {
-        const { disabled, data } = this.props;
+        const { disabled, data, selectedStar, rating, error } = this.props;
         // console.log(data.customer_detail);
         return (
             <Card>
@@ -101,13 +75,14 @@ class ReviewCard extends React.Component {
                                     <StarRating
                                         disabled={disabled}
                                         maxStars={5}
-                                        rating={data.rating !== undefined ? data.rating : this.state.rating}
+                                        rating={rating}
                                         starSize={14}
                                         fullStarColor={YELLOW}
                                         emptyStarColor={YELLOW}
-                                        selectedStar={(rate) => this.onStarRatingPress(rate)}
+                                        selectedStar={selectedStar}
                                     />
                                 </Row>
+                                <FontText style={{ color: DARK_RED }}>{error}</FontText>
                                 {this.renderComment()}
                                 {this.renderButton()}
                             </View>
@@ -115,6 +90,7 @@ class ReviewCard extends React.Component {
                     </View>
                 </CardSection>
             </Card>
+            // </KeyboardAvoidingView>
         );
     }
 }

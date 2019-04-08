@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Modal, Dimensions, TouchableOpacity, } from 'react-native';
+import { View, Modal, Dimensions, TouchableOpacity, Alert, } from 'react-native';
 import StarRating from 'react-native-star-rating';
 import { Icon } from 'react-native-elements';
 import { MapView, } from 'expo';
@@ -94,6 +94,9 @@ class RestaurantMaps extends React.Component {
                 visible={visible}
                 transparent
                 animationType='slide'
+                onRequestClose={() => {
+                    Alert.alert('Modal has been closed.');
+                }}
             >
                 <View style={styles.containerOut} >
                     <View style={styles.container}>

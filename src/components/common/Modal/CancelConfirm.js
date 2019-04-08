@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, View, } from 'react-native';
+import { Modal, View, Alert } from 'react-native';
 import { FontText, CancelConfirmButton, Card } from '../../common';
 
 class CancelConfirm extends React.Component {
@@ -10,6 +10,9 @@ class CancelConfirm extends React.Component {
                 visible={visible}
                 transparent
                 animationType='fade'
+                onRequestClose={() => {
+                    Alert.alert('Modal has been closed.');
+                }}
             >
                 <View style={styles.container}>
                     <View style={styles.containerChild}>

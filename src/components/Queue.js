@@ -1,16 +1,21 @@
 import React from 'react';
-import { View, Image, ListView, RefreshControl, Dimensions, LayoutAnimation, Platform, UIManager } from 'react-native';
+import { 
+    View,
+    ListView, 
+    RefreshControl, 
+    LayoutAnimation, 
+    Platform, 
+    UIManager 
+} from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
-import { QueueCard, CancelConfirm, FontText, LoadingImage, Space } from './common';
+import { QueueCard, CancelConfirm, LoadingImage, Space, Empty } from './common';
 import { 
     loadData, 
     loadDataFinish,
     getOrderId,
 } from '../actions';
 import { SERVER, GET_QUEUE, CANCEL_ORDER } from '../../config';
-
-const imageHeight = Dimensions.get('window').height * 0.3;
 
 class Queue extends React.Component {
     constructor(props) {
@@ -148,7 +153,6 @@ class Queue extends React.Component {
     }
 
     render() {
-        const { containerEmpty, imageEmpty } = styles;
         const { data } = this.state;
         if (this.state.loading) {
             return (
@@ -173,30 +177,9 @@ class Queue extends React.Component {
                 </View>
             );
         }
-        return (
-            <View style={containerEmpty}>
-                <Image
-                    style={imageEmpty}
-                    source={require('../images/r-logo.png')}
-                />
-                <FontText size={24}>ยังไม่ได้สั่งอาหารเลยจ้า</FontText>)
-            </View>        
-        );
+        return <Empty title='ยังไม่ได้สั่งอาหารเลยจ้า' />;
     }
 }
-
-const styles = {
-    imageEmpty: {
-        height: imageHeight, 
-        resizeMode: 'contain', 
-        tintColor: 'gray'
-    },
-    containerEmpty: {
-        flex: 1, 
-        justifyContent: 'center', 
-        alignItems: 'center'
-    }
-};
 
 const mapStateToProps = ({ global, auth }) => {
     const { dataLoaded } = global;

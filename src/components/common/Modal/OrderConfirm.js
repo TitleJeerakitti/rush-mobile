@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, View, ScrollView, Text } from 'react-native';
+import { Modal, View, ScrollView, Text, Alert } from 'react-native';
 import { Divider } from 'react-native-elements';
 import { FontText, Row, CancelConfirmButton, } from '../../common';
 import { DiscountCode } from '../RemainMenu';
@@ -37,6 +37,9 @@ class OrderConfirm extends React.Component {
                 visible={visible}
                 transparent
                 animationType='fade'
+                onRequestClose={() => {
+                    Alert.alert('Modal has been closed.');
+                }}
             >
                 <View style={styles.container}>
                     <View style={styles.containerChild}>

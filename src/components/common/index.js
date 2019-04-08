@@ -36,3 +36,4 @@ export * from './HistoryCard';
 export * from './LoadingImage';
 export * from './Space';
 export * from './RestaurantMaps';
+export * from './Empty';

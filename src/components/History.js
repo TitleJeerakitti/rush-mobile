@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, ListView, RefreshControl, } from 'react-native';
 import { connect } from 'react-redux';
-import { HistoryCard, FontText, LoadingImage, Space } from './common';
+import { HistoryCard, FontText, LoadingImage, Space, Empty } from './common';
 import { SERVER, GET_HISTORY } from '../../config';
 
 class History extends React.Component {
@@ -99,20 +99,10 @@ class History extends React.Component {
             );
         }
         return (
-            <View style={styles.containerEmpty}>
-                <FontText size={24}>ไม่มีประวัติการสั่งอาหาร</FontText>
-            </View>
+            <Empty title='ไม่มีประวัติการสั่งอาหาร' />
         );
     }
 }
-
-const styles = {
-    containerEmpty: {
-        flex: 1, 
-        justifyContent: 'center', 
-        alignItems: 'center'
-    }
-};
 
 const mapStateToProps = ({ auth }) => {
     const { token } = auth;
