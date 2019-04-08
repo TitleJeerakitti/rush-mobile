@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, TouchableOpacity, ListView } from 'react-native';
+import { View, TouchableOpacity, ListView, Text, } from 'react-native';
 import { connect } from 'react-redux';
-import { SlickItem, LoadingImage, FontText, Empty } from './common';
-import { SERVER, GET_PROMOTION } from '../../config';
+import { SlickItem, LoadingImage, Empty, FontText, Row, Space } from './common';
+import { SERVER, GET_PROMOTION, ORANGE } from '../../config';
+import PromotionCard from './advance_component/PromotionCard';
 
 class Promotion extends React.Component {
     constructor(props) {
@@ -44,18 +45,6 @@ class Promotion extends React.Component {
         return ds.cloneWithRows(data);
     }
 
-    renderPromotion(item) {
-        return (
-            <TouchableOpacity
-                onPress={() => console.log(item)} 
-                activeOpacity={1}
-                // style={{ marginTop: 5 }}
-            >
-                <SlickItem source={{ uri: item.image }} />
-            </TouchableOpacity>
-        );
-    }
-
     render() {
         if (this.state.loading) {
             return <LoadingImage />;
@@ -63,7 +52,8 @@ class Promotion extends React.Component {
             return (
                 <ListView 
                     dataSource={this.listViewCloneWithRows(this.state.data)}
-                    renderRow={(item) => this.renderPromotion(item)}
+                    renderRow={(item) => <PromotionCard item={item} />}
+                    renderFooter={() => <Space />}
                 />
             );
         }
