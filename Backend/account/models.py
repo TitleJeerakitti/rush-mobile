@@ -10,6 +10,8 @@ class User(AbstractUser):
 
     def get_customer(self):
         from customer.models import Customer
-        return Customer.objects.filter(user=self).first()
+        return Customer.objects.get(user=self)
             
-
+    def get_supplier(self):
+        from supplier.models import Supplier
+        return Supplier.objects.get(user=self)

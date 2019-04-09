@@ -4,9 +4,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
-from account.permission import IsCustomer
-from supplier.models import Category
-from supplier.serializer import SupplierCardSerializers
+from account.permission import IsCustomer,IsSupplier
+from supplier.models import Category,Supplier,MainCategory
+from supplier.serializer import SupplierCardSerializers,MainCategoriesSerializer
 from promotion.models import Promotion
 from activity.views import restaurant_suggestion_list
 
@@ -55,3 +55,13 @@ class HomeAPIView(APIView):
 #         # serializers = SupplierCardSerializers(
         #     supplier, many=True, context={'request': request})
         # return Response(serializers.data)
+class RestaurantHomeAPIView(APIView):
+    permission_classes = [IsAuthenticated, IsSupplier]
+
+    def get(self, request):
+        supplier = request.user.get_supplier()
+        main_category = MainCategory.objects.filter(supplier=supplier)
+        print(main_category)
+        print(supplier)
+        serializers = MainCategoriesSerializer(main_category,many=True,context={'request':request})
+        return Response(serializers.data,status.HTTP_200_OK)

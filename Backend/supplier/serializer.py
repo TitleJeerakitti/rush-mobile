@@ -146,3 +146,10 @@ class RestaurantDetailSerializer(serializers.ModelSerializer):
         else:
             return [{'image': request.build_absolute_uri('/media/default/extra_picture.png')}, ]
         return serializers.data
+
+
+class HomeSupplierSeriailizer(serializers.ModelSerializer):
+    id = serializers.IntegerField(source='user.id')
+    class Meta:
+        model = Supplier
+        fields = ('id','name','category','profile_picture','is_open',)

@@ -132,3 +132,14 @@ class SupplierCategoryAPIView(APIView):
         supplier_list = Supplier.objects.filter(category__id=category_id)
         serializers = SupplierCardSerializers(supplier_list, many=True, context={'request': request})
         return Response(serializers.data)
+
+
+class SupplierMenuView(APIView):
+    permission_classes = [IsAuthenticated, IsCustomer]
+
+    def get(self, request):
+        try:
+            supplier_id = request.GET['id']
+        except:
+            return Response(status.HTTP_400_BAD_REQUEST)
+        # serializers
