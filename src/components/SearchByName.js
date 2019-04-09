@@ -29,6 +29,11 @@ class SearchByName extends React.Component {
         this._isMounted = false;
     }
 
+    onSelectRestaurant(item) {
+        this.props.restaurantSelected(item);
+        Actions.restaurant_menu();
+    }
+
     async getRestaurantAPI() {
         try {
             const { access_token, token_type } = this.props.token;
@@ -48,11 +53,6 @@ class SearchByName extends React.Component {
         } catch (error) {
             console.log(error);
         }
-    }
-
-    onSelectRestaurant(item) {
-        this.props.restaurantSelected(item);
-        Actions.restaurant_menu();
     }
 
     listViewCloneWithRows(data = []) {
@@ -137,5 +137,6 @@ const styles = {
 const mapStateToProps = ({ auth }) => {
     const { token } = auth;
     return { token };
-}
+};
+
 export default connect(mapStateToProps, { restaurantSelected })(SearchByName);

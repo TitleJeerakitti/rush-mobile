@@ -21,6 +21,7 @@ import History from './History';
 import Promotion from './Promotion';
 import EditProfile from './EditProfile';
 import { SERVER, CHECK_TOKEN, CLIENT_ID, CLIENT_SECRET, LOGIN_APP, } from '../../config';
+import SearchCategory from './SearchCategory';
 
 class RouterComponent extends React.Component {
     constructor(props) {
@@ -179,6 +180,14 @@ class RouterComponent extends React.Component {
                                         key='search_nearby'
                                         component={SearchNearby}
                                         title='ค้นหาร้านอาหารใกล้คุณ'
+                                        navBar={NavBack}
+                                        onLeft={() => Actions.pop()}
+                                        // initial
+                                    />
+                                    <Scene
+                                        key='search_category'
+                                        component={SearchCategory}
+                                        title='ค้นหาร้านอาหาร'
                                         navBar={NavBack}
                                         onLeft={() => Actions.pop()}
                                         // initial

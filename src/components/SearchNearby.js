@@ -7,9 +7,9 @@ import {
     FilterCard, 
     FilterItem, 
     FilterButton, 
-    FontText, 
     LoadingImage, 
-    RestaurantMaps 
+    RestaurantMaps, 
+    Empty
 } from './common';
 import { SERVER, SEARCH_NEARBY } from '../../config';
 import { restaurantSelected } from '../actions';
@@ -150,7 +150,7 @@ class SearchNearby extends React.Component {
     }
 
     render() {
-        const { container, containerNone } = styles;
+        const { container, } = styles;
         const { 
             isLoaded, 
             restaurants, 
@@ -200,9 +200,7 @@ class SearchNearby extends React.Component {
             );
         }
         return (
-            <View style={containerNone}>
-                <FontText>ไม่มีร้านอาหารบริเวณใกล้เคียง</FontText>
-            </View>
+            <Empty title='ไม่มีร้านอาหารบริเวณใกล้เคียง' />
         );
     }
 }
@@ -210,11 +208,6 @@ class SearchNearby extends React.Component {
 const styles = {
     container: {
         flex: 1,
-    },
-    containerNone: {
-        flex: 1, 
-        justifyContent: 'center', 
-        alignItems: 'center'
     },
     space: {
         height: 10,

@@ -15,7 +15,7 @@ import {
     LoadingImage,
 } from './common';
 import { DARK_RED, SERVER, HOME, } from '../../config';
-import { restaurantSelected } from '../actions';
+import { restaurantSelected, restaurantSelectCategory, } from '../actions';
 
 
 class HomeScreen extends React.Component {
@@ -72,7 +72,7 @@ class HomeScreen extends React.Component {
         // permissions returns only for location permissions on iOS and under certain conditions, see Permissions.LOCATION
         const { status, permissions } = await Permissions.askAsync(Permissions.LOCATION);
         if (status === 'granted') {
-            console.log('pass')
+            console.log('pass');
         //   return Location.getCurrentPositionAsync(/*{ enableHighAccuracy: true }*/);
         } else {
           throw new Error('Location permission not granted');
@@ -97,7 +97,16 @@ class HomeScreen extends React.Component {
     }
 
     renderCategory(item) {
-        return <CategoryItem source={{ uri: item.image }} title={item.name} />;
+        return (
+            <CategoryItem 
+                source={{ uri: item.image }} 
+                title={item.name} 
+                onPress={() => {
+                    this.props.restaurantSelectCategory(item);
+                    Actions.search_category();
+                }}
+            />
+        );
     }
 
     renderSuggest(item) {
@@ -156,4 +165,7 @@ const mapStateToProps = ({ auth }) => {
     return { token };
 };
 
-export default connect(mapStateToProps, { restaurantSelected })(HomeScreen);
+export default connect(mapStateToProps, { 
+    restaurantSelected,
+    restaurantSelectCategory,
+})(HomeScreen);
