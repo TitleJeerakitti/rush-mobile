@@ -18,6 +18,7 @@ import { authUpdateUserInfo } from '../actions';
 class EditProfile extends React.Component {
     constructor(props) {
         super(props);
+        this._isMounted = false;
         const { birthday, email, picture, tel_number = '' } = this.props.userInfo;
         this.state = {
             birthday,
@@ -31,7 +32,12 @@ class EditProfile extends React.Component {
     }
 
     componentDidMount() {
+        this._isMounted = true;
         this.getUserInfo();
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
     }
 
     async getUserInfo() {
@@ -44,7 +50,7 @@ class EditProfile extends React.Component {
                 }
             });
             const responseData = await response.json();
-            if (response.status === 200) {
+            if (this._isMounted && response.status === 200) {
                 this.setState({
                     firstName: responseData.first_name,
                     lastName: responseData.last_name,
@@ -102,7 +108,9 @@ class EditProfile extends React.Component {
             aspect: [1, 1],
         });
         const imageUri = `data:image/jpg;base64,${result.base64}`;
-        await this.setState({ imageURL: imageUri, });
+        if (this._isMounted) {
+            this.setState({ imageURL: imageUri, });
+        }
     }
 
     // async uploadImage() {

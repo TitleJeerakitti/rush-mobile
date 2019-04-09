@@ -15,6 +15,7 @@ import {
     LoadingImage,
 } from './common';
 import { DARK_RED, SERVER, HOME, } from '../../config';
+import { restaurantSelected, restaurantSelectCategory, } from '../actions';
 
 
 class HomeScreen extends React.Component {
@@ -62,16 +63,21 @@ class HomeScreen extends React.Component {
     //     // Actions.search_nearby()
     // }
 
+    onSelectRestaurant(item) {
+        this.props.restaurantSelected(item);
+        Actions.restaurant_menu();
+    }
+
     async getLocationAsync() {
         // permissions returns only for location permissions on iOS and under certain conditions, see Permissions.LOCATION
         const { status, permissions } = await Permissions.askAsync(Permissions.LOCATION);
         if (status === 'granted') {
-            console.log('pass')
+            console.log('pass');
         //   return Location.getCurrentPositionAsync(/*{ enableHighAccuracy: true }*/);
         } else {
           throw new Error('Location permission not granted');
         }
-      }
+    }
 
     listViewCloneWithRows(data = []) {
         const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
@@ -91,11 +97,26 @@ class HomeScreen extends React.Component {
     }
 
     renderCategory(item) {
-        return <CategoryItem source={{ uri: item.image }} title={item.name} />;
+        return (
+            <CategoryItem 
+                source={{ uri: item.image }} 
+                title={item.name} 
+                onPress={() => {
+                    this.props.restaurantSelectCategory(item);
+                    Actions.search_category();
+                }}
+            />
+        );
     }
 
     renderSuggest(item) {
-        return <CategoryItem source={{ uri: item.image }} overlayAlpha={0} />;
+        return (
+            <CategoryItem 
+                source={{ uri: item.image }} 
+                overlayAlpha={0} 
+                onPress={() => this.onSelectRestaurant(item)}
+            />
+        );
     }
 
     render() {
@@ -144,4 +165,7 @@ const mapStateToProps = ({ auth }) => {
     return { token };
 };
 
-export default connect(mapStateToProps)(HomeScreen);
+export default connect(mapStateToProps, { 
+    restaurantSelected,
+    restaurantSelectCategory,
+})(HomeScreen);

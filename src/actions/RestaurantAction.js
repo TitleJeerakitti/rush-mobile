@@ -7,6 +7,7 @@ import {
     EDIT_MENU,
     GET_ORDER_AGAIN,
     RESET_RESTAURANT_REDUCER,
+    RESTAURANT_SELECT_CATEGORY,
 } from './types';
 
 export const restaurantSelected = (data) => {
@@ -44,4 +45,8 @@ export const resetRestaurant = () => {
         dispatch({ type: RESET_RESTAURANT_REDUCER });
         Actions.pop();
     };
+};
+
+export const restaurantSelectCategory = (data) => {
+    return { type: RESTAURANT_SELECT_CATEGORY, payload: data, };
 };

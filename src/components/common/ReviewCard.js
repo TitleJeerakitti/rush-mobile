@@ -109,10 +109,10 @@ const styles = {
         fontSize: 20,
         paddingHorizontal: 10,
         paddingVertical: 5,
-        borderRadius: 5,
+        borderRadius: 10,
         backgroundColor: 'white',
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.2,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
         shadowRadius: 5,
         elevation: 4
     },

@@ -132,7 +132,7 @@ class RestaurantCard extends React.Component {
                                             color='gray' 
                                         />
                                         <FontText style={{ color: 'gray' }} numberOfLines={1} >
-                                            {category.name}
+                                            {category ? category.name : ''}
                                         </FontText>
                                     </Row>
                                 </Row>

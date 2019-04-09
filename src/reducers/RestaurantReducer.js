@@ -5,6 +5,7 @@ import {
     CHANGE_CURRENT_CATEGORY,
     GET_ORDER_AGAIN, 
     RESET_RESTAURANT_REDUCER,
+    RESTAURANT_SELECT_CATEGORY,
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -14,6 +15,7 @@ const INITIAL_STATE = {
     orderId: '',
     currentRestaurant: '',
     currentCategory: 0,
+    categoryType: null,
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -47,6 +49,11 @@ export default (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 menuData: action.payload,
+            };
+        case RESTAURANT_SELECT_CATEGORY:
+            return {
+                ...state,
+                categoryType: action.payload,
             };
         case RESET_RESTAURANT_REDUCER:
             return INITIAL_STATE;

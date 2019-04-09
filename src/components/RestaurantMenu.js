@@ -3,14 +3,12 @@ import { ScrollView, LayoutAnimation, Platform, UIManager, } from 'react-native'
 import { connect } from 'react-redux';
 import { 
     Slick, 
-    SlickItem, 
-    FilterCard, 
-    FilterItem, 
-    FilterButton,
+    SlickItem,
     MenuList,
     MainCategoryItem,
     LoadingImage,
     Row,
+    Space,
 } from './common';
 import { restaurantGetMenu, currentCategoryChange } from '../actions';
 import { SERVER, GET_RESTAURANT_MENU } from '../../config';
@@ -20,11 +18,6 @@ class RestaurantMenu extends React.Component {
         super(props);
         this.state = {
             // refreshing: false,
-            filters: [
-                { type: 'ความนิยม' }, 
-                { type: 'ราคาต่ำ' }, 
-                { type: 'ราคาสูง' }
-            ],
             sortType: 'ราคา',
             visible: false,
             // refresh: false,
@@ -56,33 +49,6 @@ class RestaurantMenu extends React.Component {
             return `${SERVER}${GET_RESTAURANT_MENU}?supplier_id=${this.props.restaurantId}&order_id=${this.props.orderId}`;
         }
         return `${SERVER}${GET_RESTAURANT_MENU}?supplier_id=${this.props.restaurantId}`;
-    }
-
-    renderItem() {
-        return this.state.filters.map((filter, index) =>
-            <FilterItem 
-                key={index}
-                onPress={() => {
-                    this.setState({ 
-                        sortType: filter.type, 
-                        visible: false 
-                    }, () => {
-                        // this.onRefresh();
-                        console.log('click');
-                    });
-                }}
-            >
-                {filter.type}
-            </FilterItem>
-        );
-    }
-
-    renderFilter() {
-        return (
-            <FilterCard visible={this.state.visible}>
-                {this.renderItem()}
-            </FilterCard>
-        );
     }
 
     renderMainCategoryItem() {
@@ -138,14 +104,11 @@ class RestaurantMenu extends React.Component {
             return (
                 <ScrollView style={{ flex: 1, }}>
                     {this.renderSlickItem()}
-                    <FilterButton onPress={() => this.setState({ visible: true })} >
-                        {this.state.sortType}
-                    </FilterButton>
+                    <Space />
                     <Row>
                         {this.renderMainCategoryItem()}
                     </Row>
                     {this.renderMenuList()}
-                    {this.renderFilter()}
                 </ScrollView>
             );
         }

@@ -42,8 +42,10 @@ class History extends React.Component {
     }
 
     onRefresh() {
-        this.setState({ refreshing: true, });
-        this.getHistoryAPI();
+        if (this._isMounted) {
+            this.setState({ refreshing: true, });
+            this.getHistoryAPI();
+        }
     }
 
     async getHistoryAPI() {

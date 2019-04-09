@@ -72,7 +72,7 @@ class Queue extends React.Component {
                 },
                 body: JSON.stringify({ id }),
             });
-            if (response.status === 200) {
+            if (this._isMounted && response.status === 200) {
                 await this.setState({ 
                     loading: false,
                     canLoad: true,
@@ -96,7 +96,7 @@ class Queue extends React.Component {
                 },
             });
             const responseData = await response.json();
-            if (this._isMounted) {
+            if (this._isMounted && response.status === 200) {
                 await this.setState({ 
                     data: responseData, 
                     loading: false,

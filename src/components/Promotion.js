@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, TouchableOpacity, ListView, Text, } from 'react-native';
+import { ListView, } from 'react-native';
 import { connect } from 'react-redux';
-import { SlickItem, LoadingImage, Empty, FontText, Row, Space } from './common';
-import { SERVER, GET_PROMOTION, ORANGE } from '../../config';
+import { LoadingImage, Empty, Space } from './common';
+import { SERVER, GET_PROMOTION, } from '../../config';
 import PromotionCard from './advance_component/PromotionCard';
 
 class Promotion extends React.Component {
@@ -18,6 +18,10 @@ class Promotion extends React.Component {
     componentDidMount() {
         this._isMounted = true;
         this.getPromotion();
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
     }
 
     async getPromotion() {
