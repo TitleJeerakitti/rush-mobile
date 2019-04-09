@@ -17,6 +17,7 @@ import { SERVER, GET_ORDER_DETAIL } from '../../config';
 class Receipt extends React.Component {
     constructor(props) {
         super(props);
+        this._isMounted = false;
         this.state = {
             data: {},
             menus: this.listViewCloneWithRows(),
@@ -26,7 +27,7 @@ class Receipt extends React.Component {
     }
 
     async componentDidMount() {
-        this.mounted = true;
+        this._isMounted = true;
         try {
             const { access_token, token_type, } = this.props.token;
             const response = await fetch(`${SERVER}${GET_ORDER_DETAIL}?order_id=${this.props.orderId}`, {
@@ -37,7 +38,7 @@ class Receipt extends React.Component {
             });
             const responseData = await response.json();
             // console.log(responseData);
-            if (this.mounted) {
+            if (this._isMounted) {
                 await this.setState({
                     data: responseData.supplier_detail,
                     menus: this.listViewCloneWithRows(responseData.menus),
@@ -50,7 +51,7 @@ class Receipt extends React.Component {
     }
 
     componentWillUnmount() {
-        this.mounted = false;
+        this._isMounted = false;
     }
 
     listViewCloneWithRows(data = []) {

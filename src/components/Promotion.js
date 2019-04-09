@@ -20,6 +20,10 @@ class Promotion extends React.Component {
         this.getPromotion();
     }
 
+    componentWillUnmount() {
+        this._isMounted = false;
+    }
+
     async getPromotion() {
         try {
             const { access_token, token_type } = this.props.token;

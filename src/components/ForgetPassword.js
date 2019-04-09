@@ -7,6 +7,7 @@ import { LIGHT_RED, SERVER, FORGET_PASSWORD, DARK_RED } from '../../config';
 class ForgetPassword extends React.Component {
     constructor(props) {
         super(props);
+        this._isMounted = false;
         this.state = {
             email: '',
             error: '',
@@ -14,8 +15,18 @@ class ForgetPassword extends React.Component {
         };
     }
 
-    async onChangeState(key, data) {
-        await this.setState({ error: '', [key]: data });
+    componentDidMount() {
+        this._isMounted = true;
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
+    }
+
+    onChangeState(key, data) {
+        if (this._isMounted) {
+            this.setState({ error: '', [key]: data });
+        }
     }
 
     async forgetPassword() {

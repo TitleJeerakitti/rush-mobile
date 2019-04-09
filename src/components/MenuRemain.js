@@ -18,6 +18,7 @@ import RestaurantCard from './RestaurantCard';
 class MainRemain extends React.Component {
     constructor(props) {
         super(props);
+        this._isMounted = false;
         this.state = {
             visible: false,
             menus: [],
@@ -30,6 +31,7 @@ class MainRemain extends React.Component {
     }
 
     componentDidMount() {
+        this._isMounted = true;
         const { menuData } = this.props;
         this.getMenus(menuData);
     }
@@ -78,9 +80,9 @@ class MainRemain extends React.Component {
     getMenus(menuData) {
         if (menuData !== undefined) {
             const menuList = this.makeMenuList(menuData);
-            this.setState({ menus: menuList });
+            this._isMounted && this.setState({ menus: menuList });
         } else {
-            this.setState({ menus: [] });
+            this._isMounted && this.setState({ menus: [] });
         }
     }
 
@@ -121,7 +123,7 @@ class MainRemain extends React.Component {
     }
 
     shouldBuy() {
-        if (this.state.menus.length > 0) {
+        if (this.state.menus.length > 0 && this._isMounted) {
             this.setState({ visible: true });
         }
     }
@@ -129,7 +131,7 @@ class MainRemain extends React.Component {
     async placeOrder() {
         const { status } = await this.getAPI(CREATE_NEW_ORDER);
         console.log('order', status);
-        if (status === 200) {
+        if (status === 200 && this._isMounted) {
             await this.setState({ visible: false, menus: [] });
             // this.props.loadData();
             Actions.popTo('home_homepage');
@@ -140,19 +142,19 @@ class MainRemain extends React.Component {
     async checkPromo() {
         const response = await this.getAPI(CHECK_PROMO_CODE);
         const { status, total, discount_price } = await response.json();
-        if (status === 200) {
+        if (status === 200 && this._isMounted) {
             await this.setState({ 
                 discountPrice: discount_price, 
                 totalPrice: total, 
                 canUse: true, 
             });
-        } else if (status === 600) {
+        } else if (status === 600 && this._isMounted) {
             await this.setState({ errorMessage: 'Invalid Promotion Code' });
-        } else if (status === 601) {
+        } else if (status === 601 && this._isMounted) {
             await this.setState({ errorMessage: 'Promotion already used' });
-        } else if (status === 602) {
+        } else if (status === 602 && this._isMounted) {
             await this.setState({ errorMessage: 'Your price is below for this code' });
-        } else if (status === 603) {
+        } else if (status === 603 && this._isMounted) {
             await this.setState({ errorMessage: 'Invalid code for this restaurant' });
         }
     }
@@ -199,7 +201,7 @@ class MainRemain extends React.Component {
                 discountPrice={this.state.discountPrice}
                 menuData={this.state.menus}
                 visible={this.state.visible} 
-                onCancel={() => this.setState({ 
+                onCancel={() => this._isMounted && this.setState({ 
                     visible: !this.state.visible, 
                     errorMessage: '', 
                     discountCode: null, 
