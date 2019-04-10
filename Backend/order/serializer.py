@@ -153,3 +153,22 @@ class OrderReceiptSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ('supplier_detail', 'menus', 'total')
+
+class OrderManagementSerializer(serializers.ModelSerializer):
+    date = serializers.SerializerMethodField('get_order_date')
+    time = serializers.SerializerMethodField('get_order_time')
+    queue_number = serializers.SerializerMethodField('get_order_queue_number')
+    id = serializers.CharField(source = 'get_order_id')
+    
+    class Meta:
+        model = Order
+        fields = ('status','id','queue_number','date','time','customer_id','total')
+
+    def get_order_date(self, obj):
+        return obj.timestamp.strftime("%d-%m-%Y")
+    
+    def get_order_time(self, obj):
+        return obj.timestamp.strftime("%H:%M")
+
+    def get_order_queue_number(self, obj):
+        return str(Queue.objects.get(order=obj))

@@ -72,6 +72,7 @@ class SupplierCardSerializers(serializers.ModelSerializer):
         serializers = LocationSerializers(obj)
         return serializers.data
 
+
 class ExtraPictureSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -108,21 +109,21 @@ class MenusSerializers(serializers.ModelSerializer):
 
 
 class SubCategoriesSerializer(serializers.ModelSerializer):
-    menus = MenusSerializers(source='menu_set', many=True)
+    menus = MenusSerializers(source='display_menu', many=True)
 
     class Meta:
         model = SubCategory
-        fields = ('name', 'menus')
+        fields = ('id', 'name', 'menus')
 
 
 class MainCategoriesSerializer(serializers.ModelSerializer):
     # sub_categories = serializers.SerializerMethodField('get_sub_category')
     sub_categories = SubCategoriesSerializer(
-        source='subcategory_set', many=True)
+        source='display_sub_category', many=True)
 
     class Meta:
         model = MainCategory
-        fields = ('name', 'sub_categories', )
+        fields = ('id', 'name', 'sub_categories', )
 
 
 class RestaurantDetailSerializer(serializers.ModelSerializer):
@@ -131,7 +132,7 @@ class RestaurantDetailSerializer(serializers.ModelSerializer):
     #     source='extrapicture_set', many=True)
     estimate_time = serializers.IntegerField(default=20)
     main_categories = MainCategoriesSerializer(
-        source='main_category', many=True)
+        source='display_main_category', many=True)
 
     class Meta:
         model = Supplier
@@ -150,6 +151,9 @@ class RestaurantDetailSerializer(serializers.ModelSerializer):
 
 class HomeSupplierSeriailizer(serializers.ModelSerializer):
     id = serializers.IntegerField(source='user.id')
+
     class Meta:
         model = Supplier
-        fields = ('id','name','category','profile_picture','is_open',)
+        fields = ('id', 'name', 'category', 'profile_picture', 'is_open',)
+
+

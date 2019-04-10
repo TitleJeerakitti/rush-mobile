@@ -83,6 +83,13 @@ class LoginRestuarantUserTokenView(TokenView):
             return Response(response.data, status=response.status_code)
 
 
+class GetSupplierData(APIView):
+
+    def get(self, request):
+        supplier_data = get_supplier_data(request, request.user)
+        return Response(supplier_data, status=status.HTTP_200_OK)
+
+
 class GetCustomerData(APIView):
 
     def get(self, request):

@@ -1,15 +1,18 @@
 from django.shortcuts import render
+from django.utils.timezone import datetime
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
-from account.permission import IsCustomer,IsSupplier
-from supplier.models import Category,Supplier,MainCategory
-from supplier.serializer import SupplierCardSerializers,MainCategoriesSerializer
+from account.permission import IsCustomer, IsSupplier
+from supplier.models import Category, Supplier, MainCategory
+from supplier.serializer import SupplierCardSerializers, MainCategoriesSerializer
 from promotion.models import Promotion
 from activity.views import restaurant_suggestion_list
-
+from order.views import Order
+from order.serializer import OrderManagementSerializer
 from .serializers import *
 
 
@@ -35,7 +38,7 @@ class HomeAPIView(APIView):
 #     permission_classes = ()
 
 #     def get(self, request):
-        
+
 #         from supplier.models import Supplier
 #         try:
 #             latitude = request.GET['latitude']
@@ -55,13 +58,34 @@ class HomeAPIView(APIView):
 #         # serializers = SupplierCardSerializers(
         #     supplier, many=True, context={'request': request})
         # return Response(serializers.data)
+
+
 class RestaurantHomeAPIView(APIView):
     permission_classes = [IsAuthenticated, IsSupplier]
 
     def get(self, request):
         supplier = request.user.get_supplier()
         main_category = MainCategory.objects.filter(supplier=supplier)
-        print(main_category)
-        print(supplier)
-        serializers = MainCategoriesSerializer(main_category,many=True,context={'request':request})
-        return Response(serializers.data,status.HTTP_200_OK)
+        serializers = MainCategoriesSerializer(
+            main_category, many=True, context={'request': request})
+        return Response(serializers.data, status=status.HTTP_200_OK)
+
+
+class RestaurantOrderAPIView(APIView):
+    permission_classes = [IsAuthenticated, IsSupplier]
+
+    def get(self, request):
+        today = datetime.today()
+        supplier = request.user.get_supplier()
+        order_dict = {}
+        order_list = Order.objects.filter(
+            supplier=supplier, timestamp__year=today.year, timestamp__month=today.month, timestamp__day=today.day)
+        order_dict['waiting_order'] = OrderManagementSerializer(
+            order_list.filter(status=1).order_by('-timestamp'), many=True).data
+        order_dict['cooking_order'] = OrderManagementSerializer(
+            order_list.filter(status=2).order_by('-timestamp'), many=True).data
+        order_dict['done_order'] = OrderManagementSerializer(
+            order_list.filter(status=3).order_by('-timestamp'), many=True).data
+
+        return Response(order_dict, status=status.HTTP_200_OK)
+

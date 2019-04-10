@@ -98,6 +98,10 @@ class Supplier(models.Model):
     def sorted_by_review_count(supplier_list):
         return sorted(supplier_list, key=lambda t: t.get_review_count(), reverse=True)
 
+    @property
+    def display_main_category(self):
+        return MainCategory.objects.filter(supplier=self, is_display=True)
+
 
 class Telephone(models.Model):
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
@@ -126,6 +130,25 @@ class MainCategory(models.Model):
     def __str__(self):
         return self.supplier.name+' '+self.name
 
+    @property
+    def display_sub_category(self):
+        return SubCategory.objects.filter(main_category=self, is_display=True)
+
+    @staticmethod
+    def create(supplier,main_category_id, name, is_display):
+        if main_category_id:
+            main_category = MainCategory.objects.get(id=main_category_id)
+            main_category.name = name
+            main_category.is_display = is_display
+            main_category.save()
+        else:
+            main_category = MainCategory.objects.create(
+                name=name,
+                is_display=is_display,
+                supplier=supplier,
+            )
+        return main_category
+
 
 class SubCategory(models.Model):
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
@@ -136,6 +159,27 @@ class SubCategory(models.Model):
 
     def __str__(self):
         return self.supplier.name+' '+self.name
+
+    @property
+    def display_menu(self):
+        return Menu.objects.filter(sub_category=self, is_display=True)
+
+    @staticmethod
+    def create(main_category_id, sub_category_id, name, is_display):
+        if sub_category_id:
+            sub_category = SubCategory.objects.get(id=sub_category_id)
+            sub_category.name = name
+            sub_category.is_display = is_display
+            sub_category.save()
+        else:
+            main_category = MainCategory.objects.get(id=main_category_id)
+            sub_category = SubCategory.objects.create(
+                name=name,
+                is_display=is_display,
+                main_category=main_category,
+                supplier=main_category.supplier,
+            )
+        return sub_category
 
 
 class Menu(models.Model):
@@ -150,6 +194,41 @@ class Menu(models.Model):
 
     def __str__(self):
         return self.supplier.name+' '+self.name
+
+    @staticmethod
+    def create(menu_id, name, price, is_out_of_stock, is_display, sub_category_id):
+        if menu_id:
+            menu = Menu.objects.get(id=menu_id)
+            menu.name = name
+            menu.price = price
+            menu.is_out_of_stock = is_out_of_stock
+            menu.is_display = is_display
+            menu.save()
+        else:
+            sub_category = SubCategory.objects.get(id=sub_category_id)
+            menu = Menu.objects.create(name=name,
+                                       price=price,
+                                       is_out_of_stock=is_out_of_stock,
+                                       is_display=is_display,
+                                       sub_category=sub_category,
+                                       supplier=sub_category.supplier)
+
+        return menu
+
+    def uploadphoto(self, image):
+        import base64
+        import datetime
+        from django.core.files.base import ContentFile
+        image_data = image
+        format, imgstr = image_data.split(';base64,')
+
+        ext = format.split('/')[-1]
+
+        data = ContentFile(base64.b64decode(imgstr))
+        file_name = self.name + \
+            str(datetime.datetime.now())+'.' + ext
+        self.image.save(file_name, data, save=True)
+        return self
 
 
 class SupplierQueueIndex(models.Model):

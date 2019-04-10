@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ParseError
 
 from activity.models import ViewActivity
-from account.permission import IsCustomer
+from account.permission import IsCustomer, IsSupplier
 from .models import *
 from .serializer import *
 
@@ -130,16 +130,48 @@ class SupplierCategoryAPIView(APIView):
         except:
             return Response(status.HTTP_400_BAD_REQUEST)
         supplier_list = Supplier.objects.filter(category__id=category_id)
-        serializers = SupplierCardSerializers(supplier_list, many=True, context={'request': request})
+        serializers = SupplierCardSerializers(
+            supplier_list, many=True, context={'request': request})
         return Response(serializers.data)
 
 
-class SupplierMenuView(APIView):
-    permission_classes = [IsAuthenticated, IsCustomer]
+class CreateEditMenu(APIView):
+    permission_classes = [IsAuthenticated, IsSupplier]
 
-    def get(self, request):
-        try:
-            supplier_id = request.GET['id']
-        except:
-            return Response(status.HTTP_400_BAD_REQUEST)
-        # serializers
+    def post(self, request):
+        image = request.data['image']
+        menu = Menu.create(menu_id=request.data['id'],
+                           name=request.data['name'],
+                           price=request.data['price'],
+                           is_out_of_stock=request.data['is_out_of_stock'],
+                           is_display=request.data['is_display'],
+                           sub_category_id=request.data['sub_category_id'])
+        if image:
+            menu.uploadphoto(image=image)
+        return Response(status=status.HTTP_200_OK)
+
+
+class CreateEditSubCategoryAPIView(APIView):
+    permission_classes = [IsAuthenticated, IsSupplier]
+
+    def post(self, request):
+        sub_category = SubCategory.create(
+            main_category_id=request.data['main_category_id'],
+            sub_category_id=request.data['sub_category_id'],
+            name=request.data['name'],
+            is_display=request.data['is_display']
+        )
+        return Response(status=status.HTTP_200_OK)
+
+
+class CreateEditMainCategoryAPIView(APIView):
+    permission_classes = [IsAuthenticated, IsSupplier]
+
+    def post(self, request):
+        main_category = MainCategory.create(
+            supplier=request.user.get_supplier(),
+            main_category_id=request.data['main_category_id'],
+            name=request.data['name'],
+            is_display=request.data['is_display'],
+        )
+        return Response(status=status.HTTP_200_OK)

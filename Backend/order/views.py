@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
-from account.permission import IsCustomer
+from account.permission import IsCustomer,IsSupplier
 from supplier.models import Supplier
 from .serializer import CreateOrderSerializer, QueueDetailSerializer, OrderReceiptSerializer, ConfirmOrderSerializer
 from .models import Queue, Order
@@ -71,6 +71,7 @@ class UpdateOrderAPIView(APIView):
 
 
 class CancelOrderAPIView(APIView):
+    permission_classes = [IsAuthenticated,IsCustomer]
 
     def post(self, request):
         try:
@@ -83,3 +84,5 @@ class CancelOrderAPIView(APIView):
             return Response(status=status.HTTP_200_OK)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
