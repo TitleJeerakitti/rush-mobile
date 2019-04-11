@@ -11,6 +11,8 @@ from rest_framework.exceptions import ParseError
 
 from activity.models import ViewActivity
 from account.permission import IsCustomer, IsSupplier
+from order.serializer import CreateOrderSupplierSerializer
+from order.models import Queue,Order
 from .models import *
 from .serializer import *
 
@@ -175,3 +177,20 @@ class CreateEditMainCategoryAPIView(APIView):
             is_display=request.data['is_display'],
         )
         return Response(status=status.HTTP_200_OK)
+
+
+class RestaurantCreateOrderAPIView(APIView):
+    permission_classes = [IsAuthenticated, IsSupplier]
+
+    def post(self, request):
+        serializer = CreateOrderSupplierSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=ValueError):
+            order = Order.create_offline_order(
+                user = request.user,
+                total = request.data['total'],
+                special_request= request.data['special_request'],
+                discount = request.data['discount'],
+                menus = request.data['menus'],
+                )
+            queue = Queue.create_queue(order)
+            return Response(status=status.HTTP_200_OK)

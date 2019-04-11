@@ -12,7 +12,7 @@ from supplier.serializer import SupplierCardSerializers, MainCategoriesSerialize
 from promotion.models import Promotion
 from activity.views import restaurant_suggestion_list
 from order.views import Order
-from order.serializer import OrderManagementSerializer
+from order.serializer import OrderManagementSerializer,OrderRestaurantDetailSerializer
 from .serializers import *
 
 
@@ -89,3 +89,23 @@ class RestaurantOrderAPIView(APIView):
 
         return Response(order_dict, status=status.HTTP_200_OK)
 
+
+class RestaurantOrderDetailAPIView(APIView):
+    permission_classes = [IsAuthenticated, IsSupplier]
+
+    def get(self, request):
+        supplier = request.user.get_supplier()
+        order = Order.objects.get(id=request.GET['id'],supplier=supplier)
+        serializer = OrderRestaurantDetailSerializer(order)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+
+
+class RestaurantUpdateOrderAPIView(APIView):
+    permission_classes = [IsAuthenticated, IsSupplier]
+
+    def post(self, request):
+        supplier = request.user.get_supplier()
+        order = Order.objects.get(id=request.data['id'],supplier=supplier)
+        order.status = request.data['status']
+        order.save()
+        return Response(status=status.HTTP_200_OK)

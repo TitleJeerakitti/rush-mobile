@@ -57,9 +57,26 @@ class Order(models.Model):
         order_menu = []
         for menu in menus:
             order_menu.append(OrderMenu.create_order_menu(
-                self, order, menu['menu_id'], menu['amount']))
+                order, menu['menu_id'], menu['amount']))
         return order
 
+    @staticmethod
+    def create_offline_order(user, total, special_request, discount, menus):
+        order = Order.objects.create(customer=user.get_customer(),
+                                     supplier=user.get_supplier(),
+                                     total=total,
+                                     special_request=special_request,
+                                     discount=discount,
+                                     status=1,
+                                     category=Order.WALKIN,
+                                     )
+        order.save()
+        order_menu = []
+        for menu in menus:
+            order_menu.append(OrderMenu.create_order_menu(
+                order, menu['menu_id'], menu['amount']))
+        return order
+        
     def get_timestamp(self):
         return self.timestamp.strftime("%H:%M %d-%B-%Y")
 
@@ -72,6 +89,12 @@ class Order(models.Model):
         queue.cancel_queue()
         self.save()
 
+    def get_order_date(self):
+        return self.timestamp.strftime("%d-%m-%Y")
+
+    def get_order_time(self):
+        return self.timestamp.strftime("%H:%M")
+
         
 class OrderMenu(models.Model):
     id = models.AutoField(primary_key=True)
@@ -82,7 +105,8 @@ class OrderMenu(models.Model):
     def __str__(self):
         return '{0:08}'.format(self.id)
 
-    def create_order_menu(self, order, menu_id, amount):
+    @staticmethod
+    def create_order_menu(order, menu_id, amount):
         menu = Menu.objects.get(id=menu_id)
         order_menu = OrderMenu.objects.create(
             order=order, menu=menu, amount=amount)
@@ -94,7 +118,7 @@ class Queue(models.Model):
     DEFAULT = 0
     INPROCESS = 1
     DONE = 2
-    CANCEL = 3 
+    CANCEL = 3
     STATUS_CHOICE = (
         (DEFAULT, 'Default'),
         (INPROCESS, 'Inprocess'),
@@ -112,7 +136,8 @@ class Queue(models.Model):
     def get_timestamp(self):
         return self.timestamp.strftime("%H:%M %d-%B-%Y")
 
-    def create_queue(self, order):
+    @staticmethod
+    def create_queue(order):
 
         supplier_queue, create = SupplierQueueIndex.objects.get_or_create(
             supplier=order.supplier, category=order.category)

@@ -2,7 +2,7 @@ from django.urls import path
 
 from account.views import *
 from api.views import *
-from supplier.views import CreateEditMenu,CreateEditSubCategoryAPIView,CreateEditMainCategoryAPIView
+from supplier.views import *
 
 urlpatterns = [
     path('login/', LoginRestuarantUserTokenView.as_view()),
@@ -13,5 +13,8 @@ urlpatterns = [
     path('get-order-management/', RestaurantOrderAPIView.as_view()),
     path('create-edit-menu/', CreateEditMenu.as_view()),
     path('create-edit-sub-category/',CreateEditSubCategoryAPIView.as_view()),
-    path('create-edit-main-category/',CreateEditMainCategoryAPIView.as_view())
+    path('create-edit-main-category/',CreateEditMainCategoryAPIView.as_view()),
+    path('create-offline-order/',RestaurantCreateOrderAPIView.as_view()),
+    path('order-detail/',RestaurantOrderDetailAPIView.as_view()),
+    path('update-order-status/',RestaurantUpdateOrderAPIView.as_view())
 ]
