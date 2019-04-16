@@ -12,9 +12,8 @@ from supplier.serializer import SupplierCardSerializers, MainCategoriesSerialize
 from promotion.models import Promotion
 from activity.views import restaurant_suggestion_list
 from order.views import Order
-from order.serializer import OrderManagementSerializer,OrderRestaurantDetailSerializer
+from order.serializer import OrderManagementSerializer, OrderRestaurantDetailSerializer
 from .serializers import *
-
 
 class HomeAPIView(APIView):
     permission_classes = [IsAuthenticated, IsCustomer]
@@ -95,9 +94,10 @@ class RestaurantOrderDetailAPIView(APIView):
 
     def get(self, request):
         supplier = request.user.get_supplier()
-        order = Order.objects.get(id=request.GET['id'],supplier=supplier)
-        serializer = OrderRestaurantDetailSerializer(order)
-        return Response(serializer.data,status=status.HTTP_200_OK)
+        order = Order.objects.get(
+            id=request.GET['id'], supplier=supplier)
+        serializer = OrderRestaurantDetailSerializer(order,context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class RestaurantUpdateOrderAPIView(APIView):
@@ -105,7 +105,7 @@ class RestaurantUpdateOrderAPIView(APIView):
 
     def post(self, request):
         supplier = request.user.get_supplier()
-        order = Order.objects.get(id=request.data['id'],supplier=supplier)
+        order = Order.objects.get(id=request.data['id'], supplier=supplier)
         order.status = request.data['status']
         order.save()
         return Response(status=status.HTTP_200_OK)

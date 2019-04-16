@@ -67,7 +67,7 @@ class Order(models.Model):
                                      total=total,
                                      special_request=special_request,
                                      discount=discount,
-                                     status=1,
+                                     status=2,
                                      category=Order.WALKIN,
                                      )
         order.save()
@@ -82,6 +82,9 @@ class Order(models.Model):
 
     def get_order_id(self):
         return '{0:08}'.format(self.id)
+
+    def get_customer_id(self):
+        return '{0:08}'.format(self.customer.user.id)
 
     def cancel_order(self):
         self.status = 4

@@ -167,27 +167,37 @@ class OrderManagementSerializer(serializers.ModelSerializer):
     time = serializers.CharField(source='get_order_time')
     queue_number = serializers.SerializerMethodField('get_order_queue_number')
     id = serializers.CharField(source='get_order_id')
+    customer_id = serializers.CharField(source='get_customer_id')
 
     class Meta:
         model = Order
-        fields = ('status', 'id', 'queue_number',
+        fields = ('status', 'id', 'queue_number', 'category',
                   'date', 'time', 'customer_id', 'total')
 
     def get_order_queue_number(self, obj):
-        return str(Queue.objects.get(order=obj))
+        return Queue.objects.get(order=obj).queue_number
 
 
 class OrderRestaurantDetailSerializer(serializers.ModelSerializer):
-    menus = MenuSerializer(source='ordermenu_set', many=True)
+
+    menus = OrderMenuSerializer(source='ordermenu_set', many=True)
     id = serializers.CharField(source='get_order_id')
     date = serializers.CharField(source='get_order_date')
     time = serializers.CharField(source='get_order_time')
     queue_number = serializers.SerializerMethodField('get_order_queue_number')
+    # customer = HomeCustomerSerializer(source='customer')
+    customer = serializers.SerializerMethodField('get_customer_detail')
 
     class Meta:
         model = Order
-        fields = ('id', 'menus', 'customer', 'status',
-                  'date', 'time','queue_number','estimate_time','discount','category')
+        fields = ('id', 'menus', 'customer', 'status', 'total',
+                  'date', 'time', 'queue_number', 'estimate_time', 'discount', 'category')
 
     def get_order_queue_number(self, obj):
         return str(Queue.objects.get(order=obj))
+
+    def get_customer_detail(self, obj):
+        from customer.serializer import HomeCustomerSerializer
+        customer = HomeCustomerSerializer(
+            obj.customer, context={'request': self.context.get('request')})
+        return customer.data
