@@ -65,7 +65,7 @@ class RestaurantHomeAPIView(APIView):
 
     def get(self, request):
         supplier = request.user.get_supplier()
-        main_category = MainCategory.objects.filter(supplier=supplier)
+        main_category = MainCategory.objects.filter(supplier=supplier,is_display=True)
         serializers = MainCategoriesSerializer(
             main_category, many=True, context={'request': request})
         return Response(serializers.data, status=status.HTTP_200_OK)
