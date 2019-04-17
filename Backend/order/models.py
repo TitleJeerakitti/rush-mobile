@@ -1,5 +1,6 @@
 from django.db import models
 from django.http import HttpResponse
+import datetime
 
 from customer.models import Customer
 from supplier.models import Supplier, Menu, SupplierQueueIndex
@@ -44,7 +45,7 @@ class Order(models.Model):
     discount = models.FloatField(default=0.0)
     category = models.CharField(
         choices=CATEGORY_CHOICE, default=ONLINE, max_length=1)
-    donetime = models.DateTimeField(null=True,blank=True)
+    donetime = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return str(self.id)
@@ -77,7 +78,7 @@ class Order(models.Model):
             order_menu.append(OrderMenu.create_order_menu(
                 order, menu['menu_id'], menu['amount']))
         return order
-        
+
     def get_timestamp(self):
         return self.timestamp.strftime("%H:%M %d-%B-%Y")
 
@@ -99,7 +100,19 @@ class Order(models.Model):
     def get_order_time(self):
         return self.timestamp.strftime("%H:%M")
 
-        
+    def update_status(self, status):
+        queue = Queue.objects.get(order=self)
+        if status == 3:
+            queue.update_status(2)
+        elif status == 4 or status == 6:
+            queue.update_status(3)
+        elif status == 5:
+            queue.update_status(4)
+        self.donetime = datetime.datetime.now()
+        self.status = status
+        self.save()
+
+
 class OrderMenu(models.Model):
     id = models.AutoField(primary_key=True)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
@@ -123,16 +136,20 @@ class Queue(models.Model):
     INPROCESS = 1
     DONE = 2
     CANCEL = 3
+    SUCCESS = 4
+
     STATUS_CHOICE = (
         (DEFAULT, 'Default'),
         (INPROCESS, 'Inprocess'),
         (DONE, 'DONE'),
         (CANCEL, 'CANCEL'),
+        (SUCCESS, 'SUCCESS')
     )
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     status = models.IntegerField(choices=STATUS_CHOICE, default=0)
     timestamp = models.DateTimeField(auto_now_add=True)
     queue_number = models.CharField(default='A000', max_length=8)
+    donetime = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return self.order.get_order_id()+' '+self.queue_number
@@ -153,4 +170,9 @@ class Queue(models.Model):
 
     def cancel_queue(self):
         self.status = 3
+        self.save()
+
+    def update_status(self, status):
+        self.status = status
+        self.donetime = datetime.datetime.now()
         self.save()

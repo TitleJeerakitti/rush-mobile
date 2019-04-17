@@ -16,5 +16,7 @@ urlpatterns = [
     path('create-edit-main-category/',CreateEditMainCategoryAPIView.as_view()),
     path('create-offline-order/',RestaurantCreateOrderAPIView.as_view()),
     path('order-detail/',RestaurantOrderDetailAPIView.as_view()),
-    path('update-order-status/',RestaurantUpdateOrderAPIView.as_view())
+    path('update-order-status/',RestaurantUpdateOrderAPIView.as_view()),
+    path('open-close-shop/',OpenOrCloseShopAPIView.as_view()),
+    path('get-queue/',QueueManagementAPIView.as_view())
 ]

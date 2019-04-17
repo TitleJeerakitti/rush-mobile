@@ -201,3 +201,10 @@ class OrderRestaurantDetailSerializer(serializers.ModelSerializer):
         customer = HomeCustomerSerializer(
             obj.customer, context={'request': self.context.get('request')})
         return customer.data
+
+
+class QueueManagementSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Queue
+        fields = '__all__'

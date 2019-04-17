@@ -11,9 +11,10 @@ from supplier.models import Category, Supplier, MainCategory
 from supplier.serializer import SupplierCardSerializers, MainCategoriesSerializer
 from promotion.models import Promotion
 from activity.views import restaurant_suggestion_list
-from order.views import Order
-from order.serializer import OrderManagementSerializer, OrderRestaurantDetailSerializer
+from order.models import Order, Queue
+from order.serializer import OrderManagementSerializer, OrderRestaurantDetailSerializer, QueueManagementSerializer
 from .serializers import *
+
 
 class HomeAPIView(APIView):
     permission_classes = [IsAuthenticated, IsCustomer]
@@ -96,7 +97,8 @@ class RestaurantOrderDetailAPIView(APIView):
         supplier = request.user.get_supplier()
         order = Order.objects.get(
             id=request.GET['id'], supplier=supplier)
-        serializer = OrderRestaurantDetailSerializer(order,context={'request': request})
+        serializer = OrderRestaurantDetailSerializer(
+            order, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -106,6 +108,27 @@ class RestaurantUpdateOrderAPIView(APIView):
     def post(self, request):
         supplier = request.user.get_supplier()
         order = Order.objects.get(id=request.data['id'], supplier=supplier)
-        order.status = request.data['status']
-        order.save()
+        order.update_status(int(request.data['status']))
         return Response(status=status.HTTP_200_OK)
+
+
+class QueueManagementAPIView(APIView):
+    permission_classes = [IsAuthenticated, IsSupplier]
+
+    def get(self, request):
+        today = datetime.today()
+        supplier = request.user.get_supplier()
+        queue_list = Queue.objects.filter(order__supplier=supplier, status=2,
+                                          timestamp__year=today.year, timestamp__month=today.month,
+                                          timestamp__day=today.day).order_by('-donetime')
+        serializer = QueueManagementSerializer(queue_list, many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+
+
+class OpenOrCloseShopAPIView(APIView):
+    permission_classes = [IsAuthenticated, IsSupplier]
+
+    def get(self, request):
+        supplier = request.user.get_supplier()
+        supplier.open_close()
+        return Response({'is_open':supplier.is_open},status=status.HTTP_200_OK)

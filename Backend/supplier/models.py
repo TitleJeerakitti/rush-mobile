@@ -77,6 +77,10 @@ class Supplier(models.Model):
     def distance_from_location(self, user_location):
         return GEOSGeometry(user_location).distance(GEOSGeometry(self.location())) * 100
 
+    def open_close(self):
+        self.is_open = not self.is_open
+        self.save()
+        
     @staticmethod
     def nearby(user_location):
         supplier_list = Supplier.objects.all()
