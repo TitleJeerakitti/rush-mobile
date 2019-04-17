@@ -50,11 +50,11 @@ class Order(models.Model):
     def __str__(self):
         return str(self.id)
 
-    def create_order(self, customer_id, supplier_id, total, special_request, discount, menus, category):
+    def create_online_order(self, customer_id, supplier_id, total, special_request, discount, menus, category):
         customer = Customer.objects.get(user__id=customer_id)
         supplier = Supplier.objects.get(user__id=supplier_id)
         order = Order.objects.create(customer=customer, supplier=supplier, total=total,
-                                     special_request=special_request, discount=discount, status=1, category=category)
+                                     special_request=special_request, discount=discount, status=1, category=Order.ONLINE)
         order.save()
         order_menu = []
         for menu in menus:

@@ -88,7 +88,7 @@ class CreateOrderSerializer(serializers.Serializer):
     def create(self, validated_data, customer_id):
 
         promotion_code = validated_data.pop('promotion_code')
-        order = Order.create_order(self, customer_id, **validated_data)
+        order = Order.create_online_order(self, customer_id, **validated_data)
         queue = Queue.create_queue(order)
         if promotion_code:
             promotion = PromotionUsage.create_usage(
