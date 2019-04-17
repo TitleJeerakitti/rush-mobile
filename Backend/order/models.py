@@ -44,7 +44,7 @@ class Order(models.Model):
     discount = models.FloatField(default=0.0)
     category = models.CharField(
         choices=CATEGORY_CHOICE, default=ONLINE, max_length=1)
-    donetime = models.DateTimeField(null=Trueblank=True)
+    donetime = models.DateTimeField(null=True,blank=True)
 
     def __str__(self):
         return str(self.id)
