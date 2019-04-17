@@ -204,7 +204,8 @@ class OrderRestaurantDetailSerializer(serializers.ModelSerializer):
 
 
 class QueueManagementSerializer(serializers.ModelSerializer):
+    category = serializers.CharField(source='order.category')
 
     class Meta:
         model = Queue
-        fields = '__all__'
+        fields = ('status','timestamp','queue_number','donetime','category')

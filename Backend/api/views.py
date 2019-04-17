@@ -121,8 +121,10 @@ class QueueManagementAPIView(APIView):
         queue_list = Queue.objects.filter(order__supplier=supplier, status=2,
                                           timestamp__year=today.year, timestamp__month=today.month,
                                           timestamp__day=today.day).order_by('-donetime')
-        serializer = QueueManagementSerializer(queue_list, many=True)
-        return Response(serializer.data,status=status.HTTP_200_OK)
+        online_serializer = QueueManagementSerializer(queue_list.filter(order__category=Order.ONLINE), many=True)
+        offline_serializer = QueueManagementSerializer(queue_list.filter(order__category=Order.WALKIN), many=True)
+
+        return Response({'online_queue':online_serializer.data,'offline_queue':offline_serializer.data},status=status.HTTP_200_OK)
 
 
 class OpenOrCloseShopAPIView(APIView):
