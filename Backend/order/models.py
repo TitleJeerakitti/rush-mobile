@@ -48,7 +48,7 @@ class Order(models.Model):
     donetime = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-        return str(self.id)
+        return str(self.id) + ' order by ' + str(self.customer) + ' -- ' + str(self.supplier)
 
     def create_online_order(self, customer_id, supplier_id, total, special_request, discount, menus, category):
         customer = Customer.objects.get(user__id=customer_id)
@@ -101,6 +101,7 @@ class Order(models.Model):
         return self.timestamp.strftime("%H:%M")
 
     def update_status(self, status):
+        from activity.models import PaySuccess,Activity
         queue = Queue.objects.get(order=self)
         if status == 3:
             queue.update_status(2)
@@ -108,6 +109,11 @@ class Order(models.Model):
             queue.update_status(3)
         elif status == 5:
             queue.update_status(4)
+            PaySuccess.push(user=self.customer.user,
+                            supplier=self.supplier,
+                            action=600,
+                            msg=''
+            )
         self.donetime = datetime.datetime.now()
         self.status = status
         self.save()

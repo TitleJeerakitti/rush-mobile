@@ -154,6 +154,6 @@ class HomeSupplierSeriailizer(serializers.ModelSerializer):
 
     class Meta:
         model = Supplier
-        fields = ('id', 'name', 'category', 'profile_picture', 'is_open',)
+        fields = ('id', 'name', 'category', 'profile_picture', 'is_open', 'timestamp')
 
 

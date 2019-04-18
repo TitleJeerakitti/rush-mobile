@@ -51,6 +51,7 @@ class Supplier(models.Model):
     is_open = models.BooleanField('open status', default=False)
     latitude = models.FloatField(default=0)
     longitude = models.FloatField(default=0)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name

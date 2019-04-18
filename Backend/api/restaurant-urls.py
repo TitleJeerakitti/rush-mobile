@@ -18,5 +18,6 @@ urlpatterns = [
     path('order-detail/',RestaurantOrderDetailAPIView.as_view()),
     path('update-order-status/',RestaurantUpdateOrderAPIView.as_view()),
     path('open-close-shop/',OpenOrCloseShopAPIView.as_view()),
-    path('get-queue/',QueueManagementAPIView.as_view())
+    path('get-queue/',QueueManagementAPIView.as_view()),
+    path('get-report/',ReportAPIView.as_view()),
 ]

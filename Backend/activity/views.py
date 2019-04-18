@@ -23,23 +23,18 @@ def restaurant_suggestion_list(user):
             supplier_list[activity.content_object.supplier.user.id] = 1
         else:
             supplier_list[activity.content_object.supplier.user.id] += 1
-
-    SupplierTuple = collections.namedtuple('SupplierTuple', 'count id')
+    
+    SupplierTuple = collections.namedtuple('id_list', 'count id')
     supplier_list = sorted([SupplierTuple(v, k) for (k, v) in supplier_list.items()],
                            reverse=True)
-    criterion = Q()
-    count = 0
+    id_list = []
     for supplier in supplier_list:
-        criterion = criterion | Q(user_id=supplier.id)
-        count += 1
-        if count == limit:
-            break
-    supplier = Supplier.objects.filter(criterion)
-    # get supplier that popular 
-    if count < limit:
-        supplier_extend = Supplier.objects.all().exclude(criterion)[:limit-count]
-        return supplier.union(supplier_extend,all=False)
-    
+        id_list.append(supplier.id)
+
+    clauses = ' '.join(['WHEN user_id=%s THEN %s' % (pk, i) for i, pk in enumerate(id_list)])
+    ordering = 'CASE %s END' % clauses
+    supplier = Supplier.objects.filter(pk__in=id_list).extra(
+           select={'ordering': ordering}, order_by=('ordering',))
     return supplier
 
 

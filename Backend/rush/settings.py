@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'social_django',
     'rest_framework_social_oauth2',
     'phonenumber_field',
+    'django_extensions',
     # 'testing.apps.TestingConfig',   #app
     'account.apps.AccountConfig',
     'supplier.apps.SupplierConfig',
@@ -52,6 +53,7 @@ INSTALLED_APPS = [
     'promotion.apps.PromotionConfig',
     'activity.apps.ActivityConfig',
     'api.apps.ApiConfig',
+    'report.apps.ReportConfig',
 ]
 
 MIDDLEWARE = [

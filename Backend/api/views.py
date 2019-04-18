@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.utils.timezone import datetime
+from datetime import timedelta
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -13,8 +14,9 @@ from promotion.models import Promotion
 from activity.views import restaurant_suggestion_list
 from order.models import Order, Queue
 from order.serializer import OrderManagementSerializer, OrderRestaurantDetailSerializer, QueueManagementSerializer
+from report.models import *
 from .serializers import *
-
+from report.serializers import *
 
 class HomeAPIView(APIView):
     permission_classes = [IsAuthenticated, IsCustomer]
@@ -134,3 +136,53 @@ class OpenOrCloseShopAPIView(APIView):
         supplier = request.user.get_supplier()
         supplier.open_close()
         return Response({'is_open':supplier.is_open},status=status.HTTP_200_OK)
+
+class ReportAPIView(APIView):
+    permission_classes = [IsAuthenticated, IsSupplier]
+
+    def post(self, request):
+        mode = int(request.data['status'])
+
+        supplier = request.user.get_supplier()
+        if mode == 1:
+            time = datetime.strptime(request.data['start_date'], '%Y-%m-%d')
+            report_day_total = ReportDayTotal.objects.filter(supplier=supplier,timestamp__year=time.year, timestamp__month=time.month, timestamp__day=time.day)
+            serializer_total = ReportDayTotalSerializer(report_day_total,many=True)
+            report_day_menu_list = ReportDayMenu.objects.filter(supplier=supplier,timestamp__year=time.year, timestamp__month=time.month, timestamp__day=time.day).order_by('-amount')
+            serializer_top_menu = ReportDayMenuSerializer(report_day_menu_list,many=True,context={'request':request})
+            order_list = Order.objects.filter(status__gte=4,supplier=supplier,timestamp__year=time.year, timestamp__month=time.month, timestamp__day=time.day)
+            serializer_order = OrderManagementSerializer(order_list,many=True)
+            return Response({'total':serializer_total.data
+                            ,'top_menu':serializer_top_menu.data,
+                            'order':serializer_order.data}
+                            ,status=status.HTTP_200_OK)
+        elif mode == 2:
+            start_time = datetime.strptime(request.data['start_date'], '%Y-%m-%d')-timedelta(days=1)
+            end_time = datetime.strptime(request.data['end_date'], '%Y-%m-%d')+timedelta(days=1)
+            report_day_total = ReportDayTotal.objects.filter(supplier=supplier,timestamp__range=[start_time,end_time])
+            serializer_total = ReportDayTotalSerializer(report_day_total,many=True)
+            report_day_menu = ReportDayMenu.get_top_menu_list(supplier,ReportDayMenu.objects.filter(supplier=supplier,timestamp__range=[start_time,end_time]))
+            serializer_top_menu = ReportDayMenuSumSerializer(report_day_menu,many=True)
+            return Response({'total':serializer_total.data
+                            ,'top_menu':serializer_top_menu.data}
+                            ,status=status.HTTP_200_OK)
+        elif mode == 3:
+            time = datetime.strptime(request.data['start_date'], '%Y-%m-%d')
+            report_day_total = ReportDayTotal.objects.filter(supplier=supplier,timestamp__month=time.month,timestamp__year=time.year)
+            serializer_total = ReportDayTotalSerializer(report_day_total,many=True)
+            report_day_menu = ReportDayMenu.get_top_menu_list(supplier,ReportDayMenu.objects.filter(supplier=supplier,timestamp__month=time.month,timestamp__year=time.year))
+            serializer_top_menu = ReportDayMenuSumSerializer(report_day_menu,many=True)
+            return Response({'total':serializer_total.data
+                            ,'top_menu':serializer_top_menu.data}
+                            ,status=status.HTTP_200_OK)
+        elif mode == 4:
+            time = datetime.strptime(request.data['start_date'], '%Y-%m-%d')
+            report_day_total = ReportDayTotal.objects.filter(supplier=supplier,timestamp__year=time.year)
+            serializer_total = ReportDayTotalSerializer(report_day_total,many=True)
+            report_day_menu = ReportDayMenu.get_top_menu_list(supplier,ReportDayMenu.objects.filter(supplier=supplier,timestamp__year=time.year))
+            serializer_top_menu = ReportDayMenuSumSerializer(report_day_menu,many=True)
+            return Response({'total':serializer_total.data
+                            ,'top_menu':serializer_top_menu.data}
+                            ,status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_200_OK)
