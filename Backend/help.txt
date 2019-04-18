@@ -1,11 +1,10 @@
 docker ps
 docker exec -ti <id> /bin/bash
-psql rushdb postgres
-psql -U postgres
+
 pip freeze > requirements.txt 
 pip install -r requirements.txt --upgrade
-
-
+psql rushdb postgres
+psql -U postgres
 
 
 
@@ -15,4 +14,11 @@ apt-get update
 apt-get install -y gdal-bin libgdal-dev
 apt-get install -y python3-gdal
 apt-get install -y binutils libproj-dev
-For postgres container
+
+
+#script 
+python manage.py runscript calculate_from_day --script-args 5 <--- this is day until now
+python manage.py runscript calculate_today 
+
+#cronjob
+

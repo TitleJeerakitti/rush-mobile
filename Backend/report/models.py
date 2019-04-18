@@ -44,6 +44,8 @@ class ReportDayTotal(models.Model):
                 order_success=order_success.count(),
                 order_fail=order_fail.count(),
             )
+            report.timestamp = time
+            report.save()
             return 'Done!!'
         return 'Already have in database'
 
@@ -77,11 +79,13 @@ class ReportDayMenu(models.Model):
                 else:
                     menu_calculated[str(order_menu.menu.id)] = 1
         for key in menu_calculated:
-            ReportDayMenu.objects.create(
+            report = ReportDayMenu.objects.create(
                 supplier=supplier,
                 menu=Menu.objects.get(id=int(key)),
                 amount=int(menu_calculated[key]),
             )
+            report.timestamp = time
+            report.save()
         return 'Done!!'
 
     @staticmethod
