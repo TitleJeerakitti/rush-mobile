@@ -157,7 +157,7 @@ class ReportAPIView(APIView):
                             'order':serializer_order.data}
                             ,status=status.HTTP_200_OK)
         elif mode == 2:
-            start_time = datetime.strptime(request.data['start_date'], '%Y-%m-%d')-timedelta(days=1)
+            start_time = datetime.strptime(request.data['start_date'], '%Y-%m-%d')
             end_time = datetime.strptime(request.data['end_date'], '%Y-%m-%d')+timedelta(days=1)
             report_day_total = ReportDayTotal.objects.filter(supplier=supplier,timestamp__range=[start_time,end_time])
             serializer_total = ReportDayTotalSerializer(report_day_total,many=True)
