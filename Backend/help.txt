@@ -21,4 +21,15 @@ python manage.py runscript calculate_from_day --script-args 5 <--- this is day u
 python manage.py runscript calculate_today 
 
 #cronjob
+1 0 * * * /home/project/rush_script/dump_data_date.sh
+1 0 * * * docker exec -i 9f python manage.py runscript calculate_today
 
+
+#dump_data_date.sh
+#!/bin/bash
+DATE=`date +%d-%m-%y-%s` 
+NAME=`echo rushdb_`
+EXT=`echo .bak`
+filename=${NAME}${DATE}${EXT}
+docker exec -i 40 pg_dump rushdb > ~/data_dump/$filename -U postgres
+echo ..Dump $filename Done

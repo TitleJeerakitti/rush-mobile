@@ -6,8 +6,10 @@ from .models import *
 
 @admin.register(Supplier)
 class SupplierAdmin(admin.ModelAdmin):
-    pass
-
+    list_display = ['name', 'latitude', 'longitude','is_open','timestamp']
+    ordering = ['timestamp', 'name'] 
+    list_filter = ['is_open']
+    
 @admin.register(Telephone)
 class TelephoneAdmin(admin.ModelAdmin):
     pass
