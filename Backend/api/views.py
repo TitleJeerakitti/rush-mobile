@@ -162,7 +162,8 @@ class ReportAPIView(APIView):
             order_list = Order.objects.filter(
                 status__gte=4, supplier=supplier, timestamp__year=time.year, timestamp__month=time.month, timestamp__day=time.day)
             serializer_order = OrderManagementSerializer(order_list, many=True)
-            return Response({'summary': serializer_total.data, 'top_menu': serializer_top_menu.data,
+            serializer_summary = ReportDayTotalSumSerializer(ReportDayTotal.sum_from_list(report_day_total))            
+            return Response({'summary': serializer_summary.data, 'top_menu': serializer_top_menu.data,
                              'order': serializer_order.data}, status=status.HTTP_200_OK)
         elif mode == 2:
             start_time = datetime.strptime(
