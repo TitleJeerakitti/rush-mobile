@@ -4,6 +4,7 @@ from django.db import models
 from supplier.models import Menu, Supplier
 import collections
 
+
 class ReportDayTotal(models.Model):
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True, blank=True)
@@ -49,7 +50,24 @@ class ReportDayTotal(models.Model):
             return 'Done!!'
         return 'Already have in database'
 
-
+    @staticmethod
+    def sum_from_list(report_total_list):
+        total = 0 
+        order_success = 0
+        order_fail = 0
+        total_order = 0
+        for report in report_total_list:
+            total += report.total
+            order_success += report.order_success
+            order_fail += report.order_fail
+        report_sum = ReportDayTotalSum(
+            total=total,
+            order_fail=order_fail,
+            order_success=order_success,
+            total_order=order_fail+order_success
+        )
+        return report_sum
+        
 class ReportDayMenu(models.Model):
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
     menu = models.ForeignKey(Menu, on_delete=models.CASCADE)
@@ -89,7 +107,7 @@ class ReportDayMenu(models.Model):
         return 'Done!!'
 
     @staticmethod
-    def get_top_menu_list(supplier,report_day_list):
+    def get_top_menu_list(supplier, report_day_list):
         sum_list = {}
         for report in report_day_list:
             if report.menu.id not in sum_list:
@@ -99,15 +117,25 @@ class ReportDayMenu(models.Model):
 
         ReportTuple = collections.namedtuple('id_list', 'count id')
         report_list = sorted([ReportTuple(v, k) for (k, v) in sum_list.items()],
-                           reverse=True)
+                             reverse=True)
         item_list = []
         for report in report_list:
-            item_list.append(ReportDayMenuSum(menu=Menu.objects.get(id=report.id),amount=report.count))
+            item_list.append(ReportDayMenuSum(
+                menu=Menu.objects.get(id=report.id), amount=report.count))
         return item_list
 
+
 class ReportDayMenuSum(object):
-    def __init__(self,menu,amount):
+    def __init__(self, menu, amount):
         self.amount = amount
         self.id = menu.id
         self.name = menu.name
         self.image = menu.image
+
+
+class ReportDayTotalSum(object):
+    def __init__(self, total,total_order,order_success,order_fail):
+        self.total = total
+        self.total_order = total_order
+        self.order_success = order_success
+        self.order_fail = order_fail

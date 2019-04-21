@@ -27,3 +27,10 @@ class ReportDayMenuSumSerializer(serializers.Serializer):
     amount = serializers.IntegerField()
     id = serializers.IntegerField()
     image = serializers.ImageField()
+
+
+class ReportDayTotalSumSerializer(serializers.Serializer):
+    total = serializers.IntegerField()
+    total_order = serializers.IntegerField()
+    order_success = serializers.IntegerField()
+    order_fail = serializers.IntegerField()

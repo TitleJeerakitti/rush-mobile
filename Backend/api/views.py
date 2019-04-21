@@ -162,7 +162,7 @@ class ReportAPIView(APIView):
             order_list = Order.objects.filter(
                 status__gte=4, supplier=supplier, timestamp__year=time.year, timestamp__month=time.month, timestamp__day=time.day)
             serializer_order = OrderManagementSerializer(order_list, many=True)
-            return Response({'total': serializer_total.data, 'top_menu': serializer_top_menu.data,
+            return Response({'sumary': serializer_total.data, 'top_menu': serializer_top_menu.data,
                              'order': serializer_order.data}, status=status.HTTP_200_OK)
         elif mode == 2:
             start_time = datetime.strptime(
@@ -177,7 +177,8 @@ class ReportAPIView(APIView):
                 supplier=supplier, timestamp__range=[start_time, end_time]))
             serializer_top_menu = ReportDayMenuSumSerializer(
                 report_day_menu, many=True, context={'request': request})
-            return Response({'total': serializer_total.data, 'top_menu': serializer_top_menu.data}, status=status.HTTP_200_OK)
+            serializer_sumary = ReportDayTotalSumSerializer(ReportDayTotal.sum_from_list(report_day_total))            
+            return Response({'sumary':serializer_sumary.data,'total': serializer_total.data, 'top_menu': serializer_top_menu.data}, status=status.HTTP_200_OK)
         elif mode == 3:
             time = datetime.strptime(request.data['start_date'], '%Y-%m-%d')
             report_day_total = ReportDayTotal.objects.filter(
@@ -188,7 +189,8 @@ class ReportAPIView(APIView):
                 supplier=supplier, timestamp__month=time.month, timestamp__year=time.year))
             serializer_top_menu = ReportDayMenuSumSerializer(
                 report_day_menu, many=True, context={'request': request})
-            return Response({'total': serializer_total.data, 'top_menu': serializer_top_menu.data}, status=status.HTTP_200_OK)
+            serializer_sumary = ReportDayTotalSumSerializer(ReportDayTotal.sum_from_list(report_day_total))            
+            return Response({'sumary':serializer_sumary.data,'total': serializer_total.data, 'top_menu': serializer_top_menu.data}, status=status.HTTP_200_OK)
         elif mode == 4:
             time = datetime.strptime(request.data['start_date'], '%Y-%m-%d')
             report_day_total = ReportDayTotal.objects.filter(
@@ -199,6 +201,7 @@ class ReportAPIView(APIView):
                 supplier, ReportDayMenu.objects.filter(supplier=supplier, timestamp__year=time.year))
             serializer_top_menu = ReportDayMenuSumSerializer(
                 report_day_menu, many=True, context={'request': request})
-            return Response({'total': serializer_total.data, 'top_menu': serializer_top_menu.data}, status=status.HTTP_200_OK)
+            serializer_sumary = ReportDayTotalSumSerializer(ReportDayTotal.sum_from_list(report_day_total))            
+            return Response({'sumary':serializer_sumary.data,'total': serializer_total.data, 'top_menu': serializer_top_menu.data}, status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_200_OK)
