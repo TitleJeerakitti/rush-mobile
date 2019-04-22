@@ -88,7 +88,7 @@ class ReportDayTotal(models.Model):
                 order_fail=order_fail,
                 order_success=order_success,
                 total_order=order_fail+order_success,
-                month=time.strftime('%B')
+                month=time.strftime('%m')
             ))
             month+=1
         return report_month_list
