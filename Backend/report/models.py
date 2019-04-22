@@ -19,7 +19,7 @@ class ReportDayTotal(models.Model):
         return self.order_fail+self.order_success
 
     def get_timestamp(self):
-        return self.timestamp.strftime("%d-%B-%Y")
+        return self.timestamp.strftime("%d-%m-%Y")
 
     @staticmethod
     def calculate(supplier, time):
@@ -88,7 +88,7 @@ class ReportDayTotal(models.Model):
                 order_fail=order_fail,
                 order_success=order_success,
                 total_order=order_fail+order_success,
-                month=time.strftime('%m')
+                month=time.strftime('%B')
             ))
             month+=1
         return report_month_list
@@ -102,7 +102,7 @@ class ReportDayMenu(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True, blank=True)
 
     def __str__(self):
-        return str(self.menu)+'  ' + self.timestamp.strftime("%d-%B-%Y")
+        return str(self.menu)+'  ' + self.timestamp.strftime("%d-%m-%Y")
 
     def get_timestamp(self):
         return self.timestamp.strftime("%d-%B-%Y")
