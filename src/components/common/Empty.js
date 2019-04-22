@@ -12,7 +12,7 @@ const Empty = ({ title }) => {
                 style={styles.imageEmpty}
                 source={LOGO}
             />
-            <FontText size={24}>{title}</FontText>)
+            <FontText size={24}>{title}</FontText>
         </View>    
     );
 };

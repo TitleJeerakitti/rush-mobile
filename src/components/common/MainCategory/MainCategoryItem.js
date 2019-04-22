@@ -16,6 +16,7 @@ const MainCategoryItem = ({ onPress, children, selected }) => {
                         color: selected ? '#000' : '#FFF',
                         // textDecorationLine: selected ? 'underline' : 'none'
                     }}
+                    numberOfLines={1}
                 >
                     {children}
                 </FontText>

@@ -1,7 +1,7 @@
 import React from 'react';
-import { ScrollView, Dimensions, ListView, } from 'react-native';
+import { ScrollView, Dimensions, ListView, Alert, View } from 'react-native';
 import { Icon } from 'react-native-elements';
-import { LinearGradient, Permissions, } from 'expo';
+import { LinearGradient, Permissions, Notifications, } from 'expo';
 import { Actions } from 'react-native-router-flux';
 import { connect } from 'react-redux';
 import { 
@@ -14,7 +14,7 @@ import {
     CategoryItem,
     LoadingImage,
 } from './common';
-import { DARK_RED, SERVER, HOME, } from '../../config';
+import { DARK_RED, SERVER, HOME, UPLOAD_EXPO_TOKEN, } from '../../config';
 import { restaurantSelected, restaurantSelectCategory, } from '../actions';
 
 
@@ -33,7 +33,7 @@ class HomeScreen extends React.Component {
     }
 
     async componentDidMount() {
-        this.getLocationAsync();
+        this.getPermissions();
         try {
             const { access_token, token_type, } = this.props.token;
             const response = await fetch(`${SERVER}${HOME}`, {
@@ -56,26 +56,47 @@ class HomeScreen extends React.Component {
         }
     }
 
-    // async onPressSearchNearby() {
-    //     const locate = await this.getLocationAsync();
-    //     console.log(locate.latitude);
-    //     navigator.geolocation.getCurrentPosition(position => console.log(position));
-    //     // Actions.search_nearby()
-    // }
-
     onSelectRestaurant(item) {
         this.props.restaurantSelected(item);
         Actions.restaurant_menu();
     }
 
-    async getLocationAsync() {
-        // permissions returns only for location permissions on iOS and under certain conditions, see Permissions.LOCATION
-        const { status, permissions } = await Permissions.askAsync(Permissions.LOCATION);
-        if (status === 'granted') {
-            console.log('pass');
-        //   return Location.getCurrentPositionAsync(/*{ enableHighAccuracy: true }*/);
-        } else {
-          throw new Error('Location permission not granted');
+    async getPermissions() {
+        let locationStatus;
+        let notificationStatus;
+        await Permissions.askAsync(Permissions.LOCATION)
+        .then(locationResponse => {
+            locationStatus = locationResponse.status;
+            return (Permissions.askAsync(Permissions.NOTIFICATIONS));
+        }).then(notificationResponse => {
+            notificationStatus = notificationResponse.status;
+        });
+        if (locationStatus !== 'granted') {
+            Alert.alert('Please turn on your location at setting.');
+        }
+        if (notificationStatus === 'granted') {
+            const token = await Notifications.getExpoPushTokenAsync();
+            console.log(token);
+            this.sentNoticeToken(token);
+        }
+    }
+
+    async sentNoticeToken(token) {
+        try {
+            const { access_token, token_type, } = this.props.token;
+            await fetch(`${SERVER}${UPLOAD_EXPO_TOKEN}`, {
+                method: 'POST',
+                headers: {
+                    'Cache-Control': 'no-cache',
+                    'Content-Type': 'application/json',
+                    Authorization: `${token_type} ${access_token}`,
+                },
+                body: JSON.stringify({
+                    expo_token: token,
+                })
+            });
+        } catch (err) {
+            console.log(err);
         }
     }
 
@@ -109,13 +130,28 @@ class HomeScreen extends React.Component {
         );
     }
 
-    renderSuggest(item) {
+    renderSuggest(suggestList) {
+        if (suggestList._cachedRowCount > 0) {
+            return (
+                <ListView
+                    horizontal
+                    dataSource={suggestList}
+                    renderRow={(item) => 
+                        <CategoryItem 
+                            source={{ uri: item.image }} 
+                            overlayAlpha={0} 
+                            onPress={() => this.onSelectRestaurant(item)}
+                        />
+                    }
+                    enableEmptySections
+                />
+            );
+        }
         return (
-            <CategoryItem 
-                source={{ uri: item.image }} 
-                overlayAlpha={0} 
-                onPress={() => this.onSelectRestaurant(item)}
-            />
+            <View style={{ height: 100, justifyContent: 'center', alignItems: 'center' }}>
+                <FontText>ยังไม่มีรายการอาหารที่แนะนำ</FontText>
+                <FontText>ต้องสั่งอาหารก่อนนะครับ</FontText>
+            </View>
         );
     }
 
@@ -147,11 +183,7 @@ class HomeScreen extends React.Component {
                         <CardSection>
                             <FontText>ร้านอาหารแนะนำสำหรับคุณ</FontText>
                         </CardSection>
-                        <ListView
-                            horizontal
-                            dataSource={suggestList}
-                            renderRow={(item) => this.renderSuggest(item)}
-                        />
+                        {this.renderSuggest(suggestList)}
                     </Card>
                 </ScrollView>
             );

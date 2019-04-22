@@ -6,8 +6,8 @@ export const LIGHT_RED = '#EF4036';
 export const DARK_ORANGE = '#FF7E2F';
 export const GRAY = '#5F5F5F';
 
-// export const SERVER = 'http://10.66.4.133:8000';
-export const SERVER = 'http://161.246.6.1:8010';
+export const SERVER = 'http://10.66.4.133:8000';
+// export const SERVER = 'http://161.246.6.1:8010';
 export const CLIENT_ID = '55lYZd3VS5vcHGFvm2KpUKB0tdiBET8gLAXC8TSX';
 export const CLIENT_SECRET = '20gLSwtsfYqqsamMYLj7GGYxziYRaoQXzCcdIARLY1XkQ7tzpv0pJQXxqzMIi5f3kIxgMkLeJKfoEBmOUda8Dj7RmysnwU4yUOL4CZgqVI9gtkwfqS1cqEs2evvgpmla';
 
@@ -19,6 +19,7 @@ export const FORGET_PASSWORD = '/auth/reset-password/';
 export const LOGOUT = '/auth/logout/';
 export const CHECK_TOKEN = '/api/get-customer-data';
 export const EDIT_PROFILE = '/api/customer-profile';
+export const UPLOAD_EXPO_TOKEN = '/api/upload_expo_token';
 // API RESTAURANT
 export const HOME = '/api/home';
 export const SEARCH_BY_NAME = '/restaurant/restaurant-name/';

@@ -160,7 +160,7 @@ class Queue extends React.Component {
             );
         } else if (data.length > 0) {
             return (
-                <View style={{ flex: 1 }} >
+                <View>
                     <ListView 
                         refreshControl={
                             <RefreshControl

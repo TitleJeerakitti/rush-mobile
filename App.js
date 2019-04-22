@@ -1,9 +1,10 @@
 import React from 'react';
 // import { StyleSheet, Text, View } from 'react-native';
-import { Notifications, Permissions, } from 'expo'
+import { Notifications, } from 'expo';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import ReduxThunk from 'redux-thunk';
+import { Actions } from 'react-native-router-flux';
 import firebase from 'firebase';
 import Router from './src/components/Router';
 import reducers from './src/reducers';
@@ -24,22 +25,22 @@ export default class App extends React.Component {
 
   constructor(props) {
     super(props);
-    this.getNotification();
+    // this.getNotification();
     this.listener = Notifications.addListener(this.listener);
   }
 
   componentWillUnmount() {
-    this.listener && Notifications.removeListener(this.listener);
-  }
-
-  async getNotification() {
-    const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-    const token = await Notifications.getExpoPushTokenAsync();
-    console.log(status, token);
+    if (this.listener) {
+      Notifications.removeListener(this.listener);
+    }
   }
 
   listener = ({ origin, data }) => {
     console.log('receive ', origin, data);
+    // handle notification here!
+    if (data.test === 'test') {
+      Actions.queue();
+    }
   }
 
   render() {
