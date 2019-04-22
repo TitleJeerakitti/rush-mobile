@@ -171,7 +171,7 @@ class ReportAPIView(APIView):
             end_time = datetime.strptime(
                 request.data['end_date'], '%Y-%m-%d')+timedelta(days=1)
             report_day_total = ReportDayTotal.objects.filter(
-                supplier=supplier, timestamp__range=[start_time, end_time])
+                supplier=supplier, timestamp__range=[start_time, end_time]).order_by('timestamp')
             serializer_total = ReportDayTotalSerializer(
                 report_day_total, many=True)
             report_day_menu = ReportDayMenu.get_top_menu_list(supplier, ReportDayMenu.objects.filter(
@@ -183,7 +183,7 @@ class ReportAPIView(APIView):
         elif mode == 3:
             time = datetime.strptime(request.data['start_date'], '%Y-%m-%d')
             report_day_total = ReportDayTotal.objects.filter(
-                supplier=supplier, timestamp__month=time.month, timestamp__year=time.year)
+                supplier=supplier, timestamp__month=time.month, timestamp__year=time.year).order_by('timestamp')
             serializer_total = ReportDayTotalSerializer(
                 report_day_total, many=True)
             report_day_menu = ReportDayMenu.get_top_menu_list(supplier, ReportDayMenu.objects.filter(
