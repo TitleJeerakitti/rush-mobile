@@ -196,8 +196,8 @@ class ReportAPIView(APIView):
             time = datetime.strptime(request.data['start_date'], '%Y-%m-%d')
             report_day_total = ReportDayTotal.objects.filter(
                 supplier=supplier, timestamp__year=time.year)
-            serializer_total = ReportDayTotalSerializer(
-                report_day_total, many=True)
+            serializer_total = ReportMonthTotalSumSerializer(
+                                ReportDayTotal.sum_month(report_day_total), many=True)
             report_day_menu = ReportDayMenu.get_top_menu_list(
                 supplier, ReportDayMenu.objects.filter(supplier=supplier, timestamp__year=time.year))
             serializer_top_menu = ReportDayMenuSumSerializer(

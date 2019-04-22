@@ -67,7 +67,34 @@ class ReportDayTotal(models.Model):
             total_order=order_fail+order_success
         )
         return report_sum
+    
+    @staticmethod
+    def sum_month(report_total_list):
+        import datetime
+        month = 1
+        report_month_list = []
+        while month <= 12:
+            time = datetime.datetime.strptime(str(month), '%m')
+            total = 0 
+            order_success = 0
+            order_fail = 0
+            total_order = 0
+            for report in report_total_list.filter(timestamp__month=time.month):
+                total += report.total
+                order_success += report.order_success
+                order_fail += report.order_fail
+            report_month_list.append(ReportMonthTotalSum(
+                total=total,
+                order_fail=order_fail,
+                order_success=order_success,
+                total_order=order_fail+order_success,
+                month=time.strftime('%B')
+            ))
+            month+=1
+        return report_month_list
+
         
+
 class ReportDayMenu(models.Model):
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
     menu = models.ForeignKey(Menu, on_delete=models.CASCADE)
@@ -135,6 +162,14 @@ class ReportDayMenuSum(object):
 
 class ReportDayTotalSum(object):
     def __init__(self, total,total_order,order_success,order_fail):
+        self.total = total
+        self.total_order = total_order
+        self.order_success = order_success
+        self.order_fail = order_fail
+
+class ReportMonthTotalSum(object):
+    def __init__(self, month,total,total_order,order_success,order_fail):
+        self.month=month
         self.total = total
         self.total_order = total_order
         self.order_success = order_success
