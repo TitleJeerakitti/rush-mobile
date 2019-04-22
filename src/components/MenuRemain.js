@@ -228,7 +228,6 @@ class MainRemain extends React.Component {
                 />
                 <TextLineFont title='รายการอาหารที่สั่ง' />
                 <ListView 
-                    style={{ flex: 1 }}
                     dataSource={this.listViewCloneWithRows(this.state.menus)}
                     enableEmptySections
                     renderHeader={() => this.renderEmpty()}

@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "rush-mobile",
+    "name": "Rush",
     "description": "This project is really great.",
-    "slug": "rush-mobile",
+    "slug": "Rush",
     "privacy": "public",
     "sdkVersion": "30.0.0",
     "platforms": ["ios", "android"],
@@ -22,7 +22,11 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false,
+      "bundleIdentifier": "com.kmitl.rush"
+    },
+    "android": {
+      "package": "com.kmitl.rush"
     }
   }
 }
