@@ -169,7 +169,7 @@ class ReportDayTotalSum(object):
 
 class ReportMonthTotalSum(object):
     def __init__(self, month,total,total_order,order_success,order_fail):
-        self.month=month
+        self.timestamp=month
         self.total = total
         self.total_order = total_order
         self.order_success = order_success

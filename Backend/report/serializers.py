@@ -41,4 +41,4 @@ class ReportMonthTotalSumSerializer(serializers.Serializer):
     total_order = serializers.IntegerField()
     order_success = serializers.IntegerField()
     order_fail = serializers.IntegerField()
-    month = serializers.CharField()
+    timestamp = serializers.CharField()
