@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from account.permission import IsCustomer,IsSupplier
 from supplier.models import Supplier
+from notification.models import Notification
 from .serializer import CreateOrderSerializer, QueueDetailSerializer, OrderReceiptSerializer, ConfirmOrderSerializer
 from .models import Queue, Order
 # Create your views here.
@@ -80,7 +81,16 @@ class CancelOrderAPIView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
         try:
             order = Order.objects.get(id=request.data['id'],customer=request.user.get_customer())
+            if order.status != 1:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
             order.cancel_order()
+            if order.category == Order.ONLINE:
+                notification_list = order.supplier.get_notification()
+                for notification in notification_list:
+                    notification.send_notification(
+                        message='Order '+order.get_order_id()+' has been cancel!',
+                        title='RUSH',
+                        data=None)
             return Response(status=status.HTTP_200_OK)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)

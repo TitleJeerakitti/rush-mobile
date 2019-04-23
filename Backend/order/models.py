@@ -101,7 +101,7 @@ class Order(models.Model):
         return self.timestamp.strftime("%H:%M")
 
     def update_status(self, status):
-        from activity.models import PaySuccess,Activity
+        from activity.models import PaySuccess, Activity
         queue = Queue.objects.get(order=self)
         if status == 3:
             queue.update_status(2)
@@ -113,10 +113,26 @@ class Order(models.Model):
                             supplier=self.supplier,
                             action=600,
                             msg=''
-            )
+                            )
         self.donetime = datetime.datetime.now()
         self.status = status
         self.save()
+
+    def get_order_status(self):
+        if self.status == 1:
+            return 'Wating'
+        elif self.status == 2:
+            return 'Cooking'
+        elif self.status == 3:
+            return 'Done'
+        elif self.status == 4:
+            return 'Cancel'
+        elif self.status == 5:
+            return 'Success'
+        elif self.status == 6:
+            return 'Timeout'
+        else:
+            return 'None'
 
 
 class OrderMenu(models.Model):

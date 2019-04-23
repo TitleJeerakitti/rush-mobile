@@ -82,6 +82,10 @@ class Supplier(models.Model):
         self.is_open = not self.is_open
         self.save()
         
+    def get_notification(self):
+        from notification.models import Notification
+        return Notification.objects.filter(user=self.user)
+        
     @staticmethod
     def nearby(user_location):
         supplier_list = Supplier.objects.all()

@@ -15,7 +15,6 @@ urlpatterns = [
     path('get-promotion',PromotionAPIView.as_view()),
     path('create-review',CreateReviewAPIView.as_view()),
     path('customer-cancel-order',CancelOrderAPIView.as_view()),
+    path('upload_expo_token',UploadExpoTokenAPIView.as_view()),
     path('restaurant/',include('api.restaurant-urls')),
-
-    # path('test', TestAPIView.as_view()),
 ]

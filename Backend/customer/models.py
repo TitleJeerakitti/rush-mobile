@@ -56,3 +56,6 @@ class Customer(models.Model):
         else:
             return {'status':601} #customer didn't order food
      
+    def get_notification(self):
+        from notification.models import Notification
+        return Notification.objects.filter(user=self.user)

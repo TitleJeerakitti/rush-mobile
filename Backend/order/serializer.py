@@ -93,6 +93,13 @@ class CreateOrderSerializer(serializers.Serializer):
         if promotion_code:
             promotion = PromotionUsage.create_usage(
                 self, order, promotion_code)
+        if order.category == Order.ONLINE:
+                notification_list = order.supplier.get_notification()
+                for notification in notification_list:
+                    notification.send_notification(
+                        message='New Order!!',
+                        title='RUSH',
+                        data='')
         return Response(status=status.HTTP_200_OK)
 
 

@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'activity.apps.ActivityConfig',
     'api.apps.ApiConfig',
     'report.apps.ReportConfig',
+    'notification.apps.NotificationConfig',
 ]
 
 MIDDLEWARE = [
@@ -87,6 +88,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'rush.wsgi.application'
 

@@ -17,7 +17,7 @@ from order.serializer import OrderManagementSerializer, OrderRestaurantDetailSer
 from report.models import *
 from .serializers import *
 from report.serializers import *
-
+from notification.models import Notification
 
 class HomeAPIView(APIView):
     permission_classes = [IsAuthenticated, IsCustomer]
@@ -37,30 +37,28 @@ class HomeAPIView(APIView):
                          "category": category_serializer.data,
                          "suggest_list": suggest_list_serializer.data}, status=status.HTTP_200_OK)
 
+                    
 # class TestAPIView(APIView):
 #     permission_classes = ()
 
-#     def get(self, request):
+#     def post(self, request):
+#         send_push_message(token=request.data['expo_token'],
+#                           message='testing',
+#                           title='title_testing',
+#                           extra={'test':'send_data'})
+class UploadExpoTokenAPIView(APIView):
+    permission_classes = [IsAuthenticated]
 
-#         from supplier.models import Supplier
-#         try:
-#             latitude = request.GET['latitude']
-#             longitude = request.GET['longitude']
-#         except:
-#             return Response(status.HTTP_400_BAD_REQUEST)
-#         supplier_list = Supplier.objects.all()
-#         user_location = Point(float(longitude),float(latitude),srid=4326)
-#         pnt = GEOSGeometry(user_location)
-
-#         for supplier in supplier_list:
-#             distance = supplier.distance_from_location(user_location)
-#             if distance > 20:
-#                 supplier_list = supplier_list.exclude(user=supplier.user)
-#         supplier_sorted = sorted(supplier_list,key=lambda t:t.distance_from_location(user_location))
-#         # supplier = Supplier.objects.filter(user__is_supplier=True,latitude__range=(latitude_l,latitude_h),longitude__range=(longitude_l,longitude_h))
-#         # serializers = SupplierCardSerializers(
-        #     supplier, many=True, context={'request': request})
-        # return Response(serializers.data)
+    def post(self, request):
+        notification = Notification.objects.filter(expo_token=str(request.data['expo_token']))
+        if notification:
+            return Response(status=status.HTTP_200_OK)
+        else:
+            Notification.create(
+                user=request.user,
+                token=str(request.data['expo_token'])
+            )
+        return Response(status=status.HTTP_200_OK)
 
 
 class RestaurantHomeAPIView(APIView):
@@ -113,6 +111,15 @@ class RestaurantUpdateOrderAPIView(APIView):
         supplier = request.user.get_supplier()
         order = Order.objects.get(id=request.data['id'], supplier=supplier)
         order.update_status(int(request.data['status']))
+        if order.category == Order.ONLINE:
+            
+            notification_list = order.customer.get_notification()
+            for notification in notification_list:
+                print(notification.expo_token)
+                notification.send_notification(
+                    message='your order is '+order.get_order_status(),
+                    title='Rush',
+                    data=None)
         return Response(status=status.HTTP_200_OK)
 
 
