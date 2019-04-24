@@ -100,7 +100,12 @@ class GetCustomerData(APIView):
 class LogoutUserRevokeTokenView(RevokeTokenView):
 
     def post(self, request, *args, **kwargs):
+        from notification.models import Notification
         Activity.push(request.user, 300, request.user.username+'log out.')
+        try:
+            notification = Notification.objects.get(user=request.user,expo_token=request.data['expo_token']).delete()
+        except:
+            pass
         response = super(LogoutUserRevokeTokenView, self).post(
             request, *args, **kwargs)
         return Response(response.data)
