@@ -36,7 +36,10 @@ class QueueCard extends React.Component {
     render() {
         const { status, data, amount, queue } = this.props;
         return (
-            <RestaurantCard data={data} >
+            <RestaurantCard 
+                data={data} 
+                userPosition={this.props.userPosition}
+            >
                 <RowQueue amount={amount} queue={queue} />
                 <QueueProgress status={status} />
                 <ButtonBottomCard>

@@ -28,13 +28,25 @@ class Queue extends React.Component {
             visible: false,
             canLoad: true,
             selected: {},
+            location: {
+                latitude: 0,
+                longitude: 0,
+            }
         };
     }
 
     componentDidMount() {
         this._isMounted = true;
-        if (this.state.canLoad) {
-            this.getQueueAPI();
+        if (this.state.canLoad && this._isMounted) {
+            navigator.geolocation.getCurrentPosition(position => {
+                this.setState({
+                    location: {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                    },
+                });
+                this.getQueueAPI();
+            });
         }
     }
 
@@ -146,6 +158,7 @@ class Queue extends React.Component {
                         })
                     } 
                     onPress={() => this.onSelectQueue(queue)}
+                    userPosition={this.state.location}
                 />
             );
         }

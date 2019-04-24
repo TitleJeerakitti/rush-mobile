@@ -23,25 +23,26 @@ export default class App extends React.Component {
   //   firebase.initializeApp(config);
   // }
 
-  constructor(props) {
-    super(props);
-    // this.getNotification();
-    this.listener = Notifications.addListener(this.listener);
-  }
+  // componentDidMount() {
+  //   this.listener = Notifications.addListener(this.listener);
+  //   console.log(this.listener)
+  // }
 
-  componentWillUnmount() {
-    if (this.listener) {
-      Notifications.removeListener(this.listener);
-    }
-  }
+  // componentWillUnmount() {
+  //   if (this.listener) {
+  //     Notifications.removeListener(this.listener);
+  //   }
+  // }
 
-  listener = ({ origin, data }) => {
-    console.log('receive ', origin, data);
-    // handle notification here!
-    if (data.test === 'test') {
-      Actions.queue();
-    }
-  }
+  // listener = ({ origin, data }) => {
+  //   console.log('receive ', origin, data);
+  //   // handle notification here!
+  //   if (origin === 'selected') {
+  //     if (data.test === 'test') {
+  //       Actions.queue();
+  //     }
+  //   }
+  // }
 
   render() {
     const store = createStore(reducers, applyMiddleware(ReduxThunk));

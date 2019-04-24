@@ -3,13 +3,28 @@ import { View, Text, TouchableOpacity, AsyncStorage, } from 'react-native';
 import { Avatar, Icon } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 import { connect } from 'react-redux';
-import { Constants, } from 'expo';
+import { Constants, Notifications, Permissions } from 'expo';
 import { ifIphoneX, getBottomSpace } from 'react-native-iphone-x-helper';
 import { Row, ButtonSideList, FontText } from './common';
 import { authLogOut } from '../actions';
 import { YELLOW, SERVER, LOGOUT, CLIENT_ID, CLIENT_SECRET } from '../../config';
 
 class SideMenu extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            expoToken: undefined,
+        };
+    }
+
+    async componentDidMount() {
+        const { status } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+        if (status === 'granted') {
+            const token = await Notifications.getExpoPushTokenAsync();
+            this.setState({ expoToken: token });
+        }
+    }
+
     async onLogOut() {
         try {
             const { token_type, access_token } = this.props.token;
@@ -23,8 +38,10 @@ class SideMenu extends React.Component {
                     client_id: CLIENT_ID,
                     client_secret: CLIENT_SECRET,
                     token: access_token,
+                    expo_token: this.state.expoToken,
                 }),
             });
+            console.log(response.status);
             if (response.status === 200) {
                 this.removeToken();
                 Actions.reset('auth');

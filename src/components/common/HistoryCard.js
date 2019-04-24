@@ -21,8 +21,8 @@ class History extends React.Component {
     orderAgain() {
         const { order_detail, supplier_detail } = this.props.data;
         this.props.getOrderAgain(supplier_detail, order_detail.order_id);
-        Actions.jump('homepage');
-        Actions.reset('home_homepage');
+        Actions.replace('home_homepage');
+        // Actions.popTo('homepage');
         Actions.push('restaurant_menu');
     }
 

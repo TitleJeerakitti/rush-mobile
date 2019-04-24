@@ -27,6 +27,7 @@ class RouterComponent extends React.Component {
     constructor(props) {
         super(props);
         ScreenOrientation.allow('PORTRAIT');
+        this.checkToken();
     }
 
     async componentDidMount() {
@@ -36,7 +37,6 @@ class RouterComponent extends React.Component {
         });
 
         this.props.fontLoader();
-        this.checkToken();
     }
 
     async getUserInfo(token) {

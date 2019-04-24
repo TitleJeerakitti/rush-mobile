@@ -177,6 +177,10 @@ class SearchNearby extends React.Component {
                                     mapVisible: true, 
                                     restaurantSelect: item, 
                                 })} 
+                                userPosition={{
+                                    latitude: this.state.latitude,
+                                    longitude: this.state.longitude,
+                                }}
                             />
                         }
                         renderHeader={() => this.renderHeader()}

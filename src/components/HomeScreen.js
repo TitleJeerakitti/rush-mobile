@@ -29,7 +29,7 @@ class HomeScreen extends React.Component {
             categoryList: this.listViewCloneWithRows(),
             suggestList: this.listViewCloneWithRows(),
         };
-        this.mounted = true;
+        this._isMounted = true;
     }
 
     async componentDidMount() {
@@ -43,16 +43,44 @@ class HomeScreen extends React.Component {
                 }
             });
             const responseData = await response.json();
-            if (this.mounted) {
+            if (this._isMounted) {
                 await this.setState({
                     bannerList: responseData.slide_banner,
                     categoryList: this.listViewCloneWithRows(responseData.category),
                     suggestList: this.listViewCloneWithRows(responseData.suggest_list),
                     isLoaded: true,
                 });
+                this.listener = Notifications.addListener(this.listener);
             }
         } catch (error) {
             console.log(error);
+        }
+    }
+
+    // componentDidMount() {
+    //     this.listener = Notifications.addListener(this.listener);
+    //     console.log(this.listener)
+    //   }
+    
+    componentWillUnmount() {
+        if (this.listener && this._isMounted) {
+            Notifications.removeListener(this.listener);
+        }
+        this._isMounted = false;
+    }
+    
+    listener = ({ origin, data }) => {
+        console.log('receive ', origin, data);
+        // handle notification here!
+        if (origin === 'selected') {
+            console.log(data.status)
+            if (data.status === 100) {
+                Actions.queue();
+                Actions.refresh();
+            } else if (data.status === 101) {
+                Actions.history();
+                Actions.refresh();
+            }
         }
     }
 
