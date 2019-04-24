@@ -44,7 +44,7 @@ class QueueAPIView(APIView):
     def get(self, request):
         customer_id = request.user.id
         queue = Queue.objects.filter(
-            order__customer__user__id=customer_id, status=1).order_by('-timestamp')
+            order__customer__user__id=customer_id, order__status__lte=3).order_by('-timestamp') 
         serializer = QueueDetailSerializer(
             queue, many=True, context={'request': request})
         return Response(serializer.data)
@@ -88,9 +88,9 @@ class CancelOrderAPIView(APIView):
                 notification_list = order.supplier.get_notification()
                 for notification in notification_list:
                     notification.send_notification(
-                        message='Order '+order.get_order_id()+' has been cancel!',
-                        title='RUSH',
-                        data=None)
+                        message=request.user.get_customer().get_name()+ '\'s order has been cancel.',
+                        title='Customer cancel an order - '+order.get_order_id(),
+                        data={'status':201})
             return Response(status=status.HTTP_200_OK)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)

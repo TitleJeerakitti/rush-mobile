@@ -88,7 +88,8 @@ class RestaurantOrderAPIView(APIView):
             order_list.filter(status=2).order_by('-timestamp'), many=True).data
         order_dict['done_order'] = OrderManagementSerializer(
             order_list.filter(status=3).order_by('-timestamp'), many=True).data
-
+        order_dict['cancel_order'] = OrderManagementSerializer(
+            order_list.filter(status=4).order_by('-timestamp'), many=True).data
         return Response(order_dict, status=status.HTTP_200_OK)
 
 
@@ -114,12 +115,16 @@ class RestaurantUpdateOrderAPIView(APIView):
         if order.category == Order.ONLINE:
             
             notification_list = order.customer.get_notification()
+            queue = Queue.objects.get(order=order)
+            if request.data['status'] == 1 or request.data['status'] == 2 or request.data['status'] == 3:
+                data_status = 100
+            else:
+                data_status = 101
             for notification in notification_list:
-                print(notification.expo_token)
                 notification.send_notification(
-                    message='your order is '+order.get_order_status(),
-                    title='Rush',
-                    data=None)
+                    message='Your order is '+order.get_order_status(),
+                    title=supplier.name+' - '+queue.queue_number,
+                    data={'status':data_status})
         return Response(status=status.HTTP_200_OK)
 
 
@@ -213,3 +218,18 @@ class ReportAPIView(APIView):
             return Response({'summary':serializer_summary.data,'total': serializer_total.data, 'top_menu': serializer_top_menu.data}, status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_200_OK)
+
+class CallQueueAPIView(APIView):
+    permission_classes = [IsAuthenticated, IsSupplier]
+
+    def post(self, request):
+        supplier = request.user.get_supplier()
+        queue = Queue.objects.get(queue_number=request.data['queue_number'], order__supplier=supplier)
+        if queue.order.category == Order.ONLINE:
+            notification_list = queue.order.customer.get_notification()
+            for notification in notification_list:
+                notification.send_notification(
+                    message='Your order is already done, come grab it!',
+                    title=supplier.name+' - '+queue.queue_number,
+                    data={'status':100})
+        return Response(status=status.HTTP_200_OK)
