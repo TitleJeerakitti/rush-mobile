@@ -33,7 +33,7 @@ def restaurant_suggestion_list(user):
 
     clauses = ' '.join(['WHEN user_id=%s THEN %s' % (pk, i) for i, pk in enumerate(id_list)])
     ordering = 'CASE %s END' % clauses
-    supplier = Supplier.objects.filter(pk__in=id_list).extra(
+    supplier = Supplier.objects.filter(pk__in=id_list,is_open=True).extra(
            select={'ordering': ordering}, order_by=('ordering',))
     return supplier
 
