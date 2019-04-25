@@ -171,7 +171,7 @@ class SubCategory(models.Model):
 
     @property
     def display_menu(self):
-        return Menu.objects.filter(sub_category=self, is_display=True)
+        return Menu.objects.filter(sub_category=self, is_display=True, is_out_of_stock=False)
 
     @staticmethod
     def create(main_category_id, sub_category_id, name, is_display):
