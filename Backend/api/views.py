@@ -9,7 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from account.permission import IsCustomer, IsSupplier
 from supplier.models import Category, Supplier, MainCategory
-from supplier.serializer import SupplierCardSerializers, MainCategoriesSerializer
+from supplier.serializer import SupplierCardSerializers, MainCategoriesSerializer,MainCategoriesSupplierSerializer
 from promotion.models import Promotion
 from activity.views import restaurant_suggestion_list
 from order.models import Order, Queue
@@ -68,7 +68,7 @@ class RestaurantHomeAPIView(APIView):
         supplier = request.user.get_supplier()
         main_category = MainCategory.objects.filter(
             supplier=supplier, is_display=True)
-        serializers = MainCategoriesSerializer(
+        serializers = MainCategoriesSupplierSerializer(
             main_category, many=True, context={'request': request})
         return Response(serializers.data, status=status.HTTP_200_OK)
 

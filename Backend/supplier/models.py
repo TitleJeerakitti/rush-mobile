@@ -173,6 +173,10 @@ class SubCategory(models.Model):
     def display_menu(self):
         return Menu.objects.filter(sub_category=self, is_display=True, is_out_of_stock=False)
 
+    @property
+    def display_menu_supplier(self):
+        return Menu.objects.filter(sub_category=self, is_display=True)
+
     @staticmethod
     def create(main_category_id, sub_category_id, name, is_display):
         if sub_category_id:

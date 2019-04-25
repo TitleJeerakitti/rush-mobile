@@ -108,6 +108,51 @@ class MenusSerializers(serializers.ModelSerializer):
         return 0
 
 
+class MenusSupplierSerializers(serializers.ModelSerializer):
+    picture = serializers.SerializerMethodField('get_image_url')
+    quantity = serializers.SerializerMethodField('get_amount_history')
+
+    class Meta:
+        model = Menu
+        fields = ('id', 'name', 'price', 'picture', 'quantity', 'is_display', 'is_out_of_stock')
+
+    def get_image_url(self, obj):
+        request = self.context.get('request')
+        if obj.image:
+            image_url = obj.image.url
+        else:
+            image_url = '/media/default/food_default.png'
+        return request.build_absolute_uri(image_url)
+
+        return None
+
+    def get_amount_history(self, obj):
+        if self.context.get('order_id'):
+            order = get_object_or_404(Order, id=self.context.get('order_id'))
+            order_menu_obj = OrderMenu.objects.filter(order=order)
+            for order_menu in order_menu_obj:
+                if obj == order_menu.menu:
+                    return order_menu.amount
+        return 0
+
+
+class SubCategoriesSupplierSerializer(serializers.ModelSerializer):
+    menus = MenusSupplierSerializers(source='display_menu_supplier', many=True)
+
+    class Meta:
+        model = SubCategory
+        fields = ('id', 'name', 'menus')
+
+class MainCategoriesSupplierSerializer(serializers.ModelSerializer):
+    # sub_categories = serializers.SerializerMethodField('get_sub_category')
+    sub_categories = SubCategoriesSupplierSerializer(
+        source='display_sub_category', many=True)
+
+    class Meta:
+        model = MainCategory
+        fields = ('id', 'name', 'sub_categories', )
+
+
 class SubCategoriesSerializer(serializers.ModelSerializer):
     menus = MenusSerializers(source='display_menu', many=True)
 
@@ -147,7 +192,7 @@ class RestaurantDetailSerializer(serializers.ModelSerializer):
         else:
             return [{'image': request.build_absolute_uri('/media/default/extra_picture.png')}, ]
         return serializers.data
-
+ 
 
 class HomeSupplierSeriailizer(serializers.ModelSerializer):
     id = serializers.IntegerField(source='user.id')
