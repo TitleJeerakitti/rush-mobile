@@ -22,10 +22,11 @@ class Customer(models.Model):
 
 
     def edit_profile(self,first_name,last_name,tel_number):
-        self.user.first_name = first_name
-        self.user.last_name = last_name
         self.tel_number = tel_number
-        self.user.save(update_fields=['first_name','last_name'])
+        if first_name and last_name:
+            self.user.first_name = first_name
+            self.user.last_name = last_name
+            self.user.save(update_fields=['first_name','last_name'])
         self.save(update_fields=['tel_number'])
         return self
 
