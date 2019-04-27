@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, UIManager, LayoutAnimation, Platform } from 'react-native';
+import { View, Text, UIManager, LayoutAnimation, Platform, Alert } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import { AuthButton, InputIcon, Spinner, AuthBg, AuthCard, } from './common';
 import { LIGHT_RED, SERVER, FORGET_PASSWORD, DARK_RED } from '../../config';
@@ -50,7 +50,7 @@ class ForgetPassword extends React.Component {
             }
         } catch (err) {
             this.onChangeState('loading', false);
-            console.log(err);
+            Alert.alert('Connect lost try again!');
         }
     }
 

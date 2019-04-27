@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, AsyncStorage, } from 'react-native';
+import { View, Text, TouchableOpacity, AsyncStorage, Alert, } from 'react-native';
 import { Avatar, Icon } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 import { connect } from 'react-redux';
@@ -41,14 +41,13 @@ class SideMenu extends React.Component {
                     expo_token: this.state.expoToken,
                 }),
             });
-            console.log(response.status);
             if (response.status === 200) {
                 this.removeToken();
                 Actions.reset('auth');
                 this.props.authLogOut();
             }
         } catch (error) {
-            console.log(error);
+            Alert.alert('Connect lost try again!');
         }
     }
 
@@ -57,7 +56,7 @@ class SideMenu extends React.Component {
           await AsyncStorage.removeItem('token');
         } catch (error) {
           // Error saving data
-          console.log(error);
+          Alert.alert('Cannot remove authentication on your local storage!');
         }
     }
 
@@ -82,7 +81,7 @@ class SideMenu extends React.Component {
         const { userInfo } = this.props;
         return (
             <Text style={{ color: 'white' }}>
-                {userInfo.tel_number !== undefined ? `0${userInfo.tel_number.slice(3, 5)}-${userInfo.tel_number.slice(5, 8)}-${userInfo.tel_number.slice(8)}` : ''}
+                {userInfo.tel_number !== '' ? `0${userInfo.tel_number.slice(3, 5)}-${userInfo.tel_number.slice(5, 8)}-${userInfo.tel_number.slice(8)}` : ''}
             </Text>
         );
     }

@@ -5,7 +5,8 @@ import {
     RefreshControl, 
     LayoutAnimation, 
     Platform, 
-    UIManager 
+    UIManager,
+    Alert,
 } from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
@@ -31,7 +32,8 @@ class Queue extends React.Component {
             location: {
                 latitude: 0,
                 longitude: 0,
-            }
+            },
+            buttonLoading: false,
         };
     }
 
@@ -73,7 +75,7 @@ class Queue extends React.Component {
 
     async onCancelOrder(id) {
         try {
-            this.setState({ canLoad: false });
+            this.setState({ canLoad: false, buttonLoading: true, });
             const { access_token, token_type, } = this.props.token;
             const response = await fetch(`${SERVER}${CANCEL_ORDER}`, {
                 method: 'POST',
@@ -89,11 +91,20 @@ class Queue extends React.Component {
                     loading: false,
                     canLoad: true,
                     visible: false,
+                    buttonLoading: false,
                 });
                 this.getQueueAPI();
             }
         } catch (error) {
-            console.log(error);
+            Alert.alert('Connect lost try again!');
+            if (this._isMounted) {
+                this.setState({ 
+                    loading: false,
+                    canLoad: true,
+                    visible: false,
+                    buttonLoading: false,
+                });
+            }
         }
     }
 
@@ -117,7 +128,14 @@ class Queue extends React.Component {
                 });
             }
         } catch (error) {
-            console.log(error);
+            Alert.alert('Connect lost try again!');
+            if (this._isMounted) {
+                this.setState({ 
+                    loading: false,
+                    canLoad: true,
+                    buttonLoading: false,
+                });
+            }
         }
     }
 
@@ -139,6 +157,7 @@ class Queue extends React.Component {
                     this.onCancelOrder(this.state.selected);
                 }}
                 onCancel={() => this.setState({ visible: !this.state.visible })}
+                loading={this.state.buttonLoading}
             />
         );
     }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ListView, } from 'react-native';
+import { View, ListView, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 // import update from 'immutability-helper';
@@ -27,6 +27,7 @@ class MainRemain extends React.Component {
             discountPrice: null,
             totalPrice: null,
             canUse: false,
+            loading: false,
         };
     }
 
@@ -72,7 +73,7 @@ class MainRemain extends React.Component {
             });
             return response;
         } catch (err) {
-            console.log(err);
+            Alert.alert('Connect lost try again!');
             return undefined;
         }
     }
@@ -129,10 +130,10 @@ class MainRemain extends React.Component {
     }
 
     async placeOrder() {
+        this.setState({ loading: true });
         const { status } = await this.getAPI(CREATE_NEW_ORDER);
-        console.log('order', status);
         if (status === 200 && this._isMounted) {
-            await this.setState({ visible: false, menus: [] });
+            await this.setState({ visible: false, menus: [], loading: false, });
             // this.props.loadData();
             Actions.popTo('home_homepage');
             Actions.queue();
@@ -214,6 +215,7 @@ class MainRemain extends React.Component {
                 onChangeCode={(text) => this.setState({ discountCode: text, errorMessage: '' })}
                 errorMessage={this.state.errorMessage}
                 onCheckCode={() => this.checkPromo()}
+                loading={this.state.loading}
             />
         );
     }

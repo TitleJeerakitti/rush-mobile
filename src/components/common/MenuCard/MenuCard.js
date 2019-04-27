@@ -94,7 +94,7 @@ class MenuContainer extends React.Component {
                         <ImageRound source={{ uri: picture }} />
                         <View style={{ justifyContent: 'center', flex: 1 }}>
                             <FontText>{name}</FontText>
-                            <FontText>{price} บาท</FontText>
+                            <FontText>{price.toFixed(2)} บาท</FontText>
                         </View>
                         {this.renderQuantity()}
                     </View>

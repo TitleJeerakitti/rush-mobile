@@ -4,6 +4,7 @@ import { Divider } from 'react-native-elements';
 import { FontText, Row, CancelConfirmButton, } from '../../common';
 import { DiscountCode } from '../RemainMenu';
 import { DARK_RED, } from '../../../../config';
+import { Spinner } from '../Spinner';
 
 class OrderConfirm extends React.Component {
     
@@ -20,18 +21,32 @@ class OrderConfirm extends React.Component {
         }
     }
 
+    renderButton() {
+        const {
+            onConfirm, 
+            onCancel,
+            loading,
+        } = this.props;
+        if (loading) {
+            return <Spinner />;
+        }
+        return (
+            <CancelConfirmButton 
+                onConfirm={onConfirm}
+                onCancel={onCancel}
+            />
+        );
+    }
+
     render() {
         const { 
             visible, 
-            onConfirm, 
-            onCancel, 
             price, 
             discountCode, 
             onChangeCode, 
             discountPrice,
             onCheckCode,
         } = this.props;
-
         return (
             <Modal
                 visible={visible}
@@ -80,10 +95,7 @@ class OrderConfirm extends React.Component {
                             {this.props.errorMessage}
                         </Text>
                         <Divider style={{ height: 10, backgroundColor: 'transparent' }} />
-                        <CancelConfirmButton 
-                            onConfirm={onConfirm}
-                            onCancel={onCancel}
-                        />
+                        {this.renderButton()}
                     </View>
                 </View>
             </Modal>

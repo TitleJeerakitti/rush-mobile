@@ -1,10 +1,24 @@
 import React from 'react';
 import { Modal, View, Alert } from 'react-native';
 import { FontText, CancelConfirmButton, Card } from '../../common';
+import { Spinner } from '../Spinner';
 
 class CancelConfirm extends React.Component {
+    renderButton() {
+        const { loading, onCancel, onConfirm } = this.props;
+        if (loading) {
+            return <Spinner />;
+        }
+        return (
+            <CancelConfirmButton 
+                onConfirm={onConfirm}
+                onCancel={onCancel}
+            />
+        );
+    }
+
     render() {
-        const { visible, onCancel, onConfirm } = this.props;
+        const { visible, } = this.props;
         return (
             <Modal
                 visible={visible}
@@ -20,10 +34,7 @@ class CancelConfirm extends React.Component {
                             ยืนยันการยกเลิก
                         </FontText>
                         <Card>
-                            <CancelConfirmButton 
-                                onConfirm={onConfirm}
-                                onCancel={onCancel}
-                            />
+                            {this.renderButton()}
                         </Card>
                     </View>
                 </View>

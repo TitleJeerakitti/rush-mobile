@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TextInput, TouchableOpacity, ListView, } from 'react-native';
+import { View, TextInput, TouchableOpacity, ListView, Alert } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
@@ -51,7 +51,10 @@ class SearchByName extends React.Component {
                 });
             }
         } catch (error) {
-            console.log(error);
+            Alert.alert('Connect lost try again!');
+            if (this._isMounted) {
+                this.setState({ refreshing: false });
+            }
         }
     }
 

@@ -40,7 +40,7 @@ class RestaurantMenu extends React.Component {
             const responseData = await response.json();
             this.props.restaurantGetMenu(responseData);
         } catch (error) {
-            console.log(error);
+            Alert.alert('Connect lost try again!');
         }
     }
 

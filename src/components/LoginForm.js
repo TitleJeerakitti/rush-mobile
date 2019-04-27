@@ -85,7 +85,8 @@ class LoginForm extends React.Component {
             this.onChangeState('loading', false);
             return responseData;
         } catch (error) {
-            console.log(error);
+            this.onChangeState('loading', false);
+            Alert.alert('Connect lost try again!');
         }
     }
 
@@ -152,7 +153,7 @@ class LoginForm extends React.Component {
           await AsyncStorage.setItem('token', JSON.stringify(token));
         } catch (error) {
           // Error saving data
-          console.log(error);
+          Alert.alert('Cannot save your login history, you should try to loging out and log in again!');
         }
     }
     

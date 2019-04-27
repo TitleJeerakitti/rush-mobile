@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ListView, RefreshControl, } from 'react-native';
+import { View, ListView, RefreshControl, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import { HistoryCard, FontText, LoadingImage, Space, Empty } from './common';
 import { SERVER, GET_HISTORY } from '../../config';
@@ -68,7 +68,14 @@ class History extends React.Component {
                 });
             }
         } catch (error) {
-            console.log(error);
+            Alert.alert('Connect lost try again!');
+            if (this._isMounted) {
+                await this.setState({ 
+                    canLoad: true,
+                    loading: false,
+                    refreshing: false,
+                });
+            }
         }
     }
 

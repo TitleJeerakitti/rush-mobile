@@ -63,7 +63,6 @@ class ReviewCard extends React.Component {
 
     render() {
         const { disabled, data, selectedStar, rating, error } = this.props;
-        // console.log(data.customer_detail);
         return (
             <Card>
                 <CardSection>

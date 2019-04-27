@@ -13,9 +13,10 @@ import {
     CardSection,
     CategoryItem,
     LoadingImage,
+    PhoneInput,
 } from './common';
-import { DARK_RED, SERVER, HOME, UPLOAD_EXPO_TOKEN, } from '../../config';
-import { restaurantSelected, restaurantSelectCategory, } from '../actions';
+import { DARK_RED, SERVER, HOME, UPLOAD_EXPO_TOKEN, EDIT_PROFILE, } from '../../config';
+import { restaurantSelected, restaurantSelectCategory, authUpdateUserInfo } from '../actions';
 
 
 class HomeScreen extends React.Component {
@@ -28,6 +29,8 @@ class HomeScreen extends React.Component {
             bannerList: [],
             categoryList: this.listViewCloneWithRows(),
             suggestList: this.listViewCloneWithRows(),
+            isShow: this.props.userInfo.tel_number === '',
+            phoneNumber: this.props.userInfo.tel_number,
         };
         this._isMounted = true;
     }
@@ -53,7 +56,7 @@ class HomeScreen extends React.Component {
                 this.listener = Notifications.addListener(this.listener);
             }
         } catch (error) {
-            console.log(error);
+            Alert.alert('Connect lost try again!');
         }
     }
 
@@ -70,10 +73,8 @@ class HomeScreen extends React.Component {
     }
     
     listener = ({ origin, data }) => {
-        console.log('receive ', origin, data);
         // handle notification here!
         if (origin === 'selected') {
-            console.log(data.status)
             if (data.status === 100) {
                 Actions.queue();
                 Actions.refresh();
@@ -104,8 +105,34 @@ class HomeScreen extends React.Component {
         }
         if (notificationStatus === 'granted') {
             const token = await Notifications.getExpoPushTokenAsync();
-            console.log(token);
             this.sentNoticeToken(token);
+        }
+    }
+
+    async updatePhoneNumber() {
+        try {
+            const { access_token, token_type, } = this.props.token;
+            const response = await fetch(`${SERVER}${EDIT_PROFILE}`, {
+                method: 'POST',
+                headers: {
+                    'Cache-Control': 'no-cache',
+                    'Content-Type': 'application/json',
+                    Authorization: `${token_type} ${access_token}`,
+                },
+                body: JSON.stringify({
+                    tel_number: `+66${this.state.phoneNumber.slice(1)}`,
+                    first_name: null,
+                    last_name: null,
+                    profile_picture: null,
+                }),
+            });
+            const responseData = await response.json();
+            if (this._isMounted && response.status === 200) {
+                this.setState({ isShow: false, });
+                this.props.authUpdateUserInfo(responseData);
+            }
+        } catch (err) {
+            Alert.alert('Connect lost try again!');
         }
     }
 
@@ -124,7 +151,7 @@ class HomeScreen extends React.Component {
                 })
             });
         } catch (err) {
-            console.log(err);
+            Alert.alert('Connect lost try again!');
         }
     }
 
@@ -183,6 +210,23 @@ class HomeScreen extends React.Component {
         );
     }
 
+    renderPopup() {
+        if (this.state.isShow) {
+            return (
+                <PhoneInput 
+                    value={this.state.phoneNumber}
+                    onChangeText={(text) => this.setState({ phoneNumber: text })}
+                    onCancel={() => this._isMounted && this.setState({ isShow: false, })}
+                    onConfirm={() => {
+                        if (this.state.phoneNumber.length === 10) {
+                            this.updatePhoneNumber();
+                        }
+                    }}
+                />
+            );
+        }
+    }
+
     render() {
         const { size, isLoaded, categoryList, suggestList } = this.state;
         if (isLoaded) {
@@ -213,6 +257,7 @@ class HomeScreen extends React.Component {
                         </CardSection>
                         {this.renderSuggest(suggestList)}
                     </Card>
+                    {this.renderPopup()}
                 </ScrollView>
             );
         }
@@ -221,11 +266,12 @@ class HomeScreen extends React.Component {
 }
 
 const mapStateToProps = ({ auth }) => {
-    const { token } = auth;
-    return { token };
+    const { token, userInfo } = auth;
+    return { token, userInfo };
 };
 
 export default connect(mapStateToProps, { 
     restaurantSelected,
     restaurantSelectCategory,
+    authUpdateUserInfo,
 })(HomeScreen);
