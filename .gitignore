@@ -6,5 +6,13 @@ src/images/*
 assets/*
 yarn-error.log
 src/test_json
+assets
 
-Backend/rush/__pycache__/
+
+#python
+Backend/media
+
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
