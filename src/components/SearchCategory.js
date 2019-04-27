@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ListView, } from 'react-native';
+import { View, ListView, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { Space, LoadingImage, Empty } from './common';
@@ -41,7 +41,10 @@ class SearchCategory extends React.Component {
                 this.setState({ data: responseData, loading: false });
             }
         } catch (error) {
-            console.log(error);
+            Alert.alert('Connect lost try again!');
+            if (this._isMounted) {
+                this.setState({ loading: false });
+            }
         }
     }
 

@@ -26,22 +26,26 @@ class RestaurantCard extends React.Component {
     constructor(props) {
         super(props);
         this._isMounted = false;
-        this.state = {
-            latitude: 0,
-            longitude: 0,
-        };
+        // this.state = {
+        //     location: {
+        //         latitude: this.props.userPosition.latitude,
+        //         longitude: this.props.userPosition.longitude,
+        //     },
+        // };
     }
 
     componentDidMount() {
         this._isMounted = true;
-        navigator.geolocation.getCurrentPosition(position => {
-            if (this._isMounted) {
-                this.setState({
-                    latitude: position.coords.latitude,
-                    longitude: position.coords.longitude,
-                });
-            }
-        });
+        // navigator.geolocation.getCurrentPosition(position => {
+        //     if (this._isMounted) {
+        //         this.setState({
+        //             location: {
+        //                 latitude: position.coords.latitude,
+        //                 longitude: position.coords.longitude,
+        //             }
+        //         });
+        //     }
+        // });
     }
 
     componentWillUnmount() {
@@ -61,13 +65,15 @@ class RestaurantCard extends React.Component {
     }
 
     renderDistance() {
-        const { location = empty_location } = this.props.data;
-        const response = this._isMounted && geolib.getDistance(this.state, location);
-        return (
-            <ShopDistance>
-                {response < 1000 ? `${response} M` : `${(response / 1000).toFixed(1)} KM`}
-            </ShopDistance>
-        );
+        if (this.props.userPosition !== undefined) {
+            const { location = empty_location } = this.props.data;
+            const response = geolib.getDistance(this.props.userPosition, location);
+            return (
+                <ShopDistance>
+                    {response < 1000 ? `${response} M` : `${(response / 1000).toFixed(1)} KM`}
+                </ShopDistance>
+            );
+        }
     }
 
     render() {
@@ -81,6 +87,7 @@ class RestaurantCard extends React.Component {
             reviewCount,
             category,
         } = this.props.data;
+        // console.log(this.props.userPosition)
         return (
             <Card>
                 <CardSection>

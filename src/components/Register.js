@@ -5,6 +5,7 @@ import {
     LayoutAnimation,
     Platform,
     UIManager,
+    Alert,
 } from 'react-native';
 import { Divider } from 'react-native-elements';
 import { connect } from 'react-redux'; 
@@ -75,7 +76,6 @@ class Register extends React.Component {
                     birthday: date,
                 }),
             });
-            console.log(response.status)
             if (response.status === 201) {
                 Actions.pop();
             } else {
@@ -83,7 +83,7 @@ class Register extends React.Component {
                 this.onChangeState('error', 'คุณกรอกข้อมูลไม่ถูกต้อง');
             }
         } catch (error) {
-            console.log(error);
+            Alert.alert('Connect lost try again!');
         }
     }
 

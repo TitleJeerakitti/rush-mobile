@@ -55,9 +55,14 @@ class ReviewCard extends React.Component {
         );
     }
 
+    renderError(error) {
+        if (error) {
+            return <FontText style={{ color: DARK_RED, }}>{error}</FontText>;
+        }
+    }
+
     render() {
         const { disabled, data, selectedStar, rating, error } = this.props;
-        // console.log(data.customer_detail);
         return (
             <Card>
                 <CardSection>
@@ -82,7 +87,7 @@ class ReviewCard extends React.Component {
                                         selectedStar={selectedStar}
                                     />
                                 </Row>
-                                <FontText style={{ color: DARK_RED }}>{error}</FontText>
+                                {this.renderError(error)}
                                 {this.renderComment()}
                                 {this.renderButton()}
                             </View>

@@ -26,7 +26,7 @@ class EditProfile extends React.Component {
             firstName: '',
             lastName: '',
             picture,
-            telNumber: tel_number ? `0${tel_number.slice(3)}` : '',
+            telNumber: tel_number !== '' ? `0${tel_number.slice(3)}` : '',
             imageURL: null,
         };
     }
@@ -54,12 +54,13 @@ class EditProfile extends React.Component {
                 this.setState({
                     firstName: responseData.first_name,
                     lastName: responseData.last_name,
-                    telNumber: `0${responseData.tel_number.slice(3)}`,
+                    telNumber: responseData.tel_number !== '' ? 
+                        `0${responseData.tel_number.slice(3)}` : '',
                     picture: responseData.profile_picture,
                 });
             }
         } catch (error) {
-            console.log(error);
+            Alert.alert('Connect lost try again!');
         }
     }
 
@@ -90,14 +91,13 @@ class EditProfile extends React.Component {
                 }),
             });
             const responseData = await response.json();
-            console.log(response.status);
             if (response.status === 200) {
                 Alert.alert('Update Profile Success!');
                 this.props.authUpdateUserInfo(responseData);
                 Actions.pop();
             }
         } catch (error) {
-            console.log(error);
+            Alert.alert('Connect lost try again!');
         }
     }
 
@@ -194,12 +194,13 @@ class EditProfile extends React.Component {
                         <Row>
                             <FontText style={{ flex: 1 }}>เบอร์โทร</FontText>
                             <TextInput 
-                                placeholder='เบอร์โทรศัพท์' 
+                                placeholder='ex. 0812345678' 
                                 style={textInputStyle} 
                                 value={telNumber} 
                                 onChangeText={(text) => this.setState({ telNumber: text })}
                                 autoCapitalize='none'
                                 autoCorrect={false}
+                                maxLength={10}
                             />
                         </Row>
                     </CardSection>

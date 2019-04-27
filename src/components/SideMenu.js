@@ -1,15 +1,30 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, AsyncStorage, } from 'react-native';
+import { View, Text, TouchableOpacity, AsyncStorage, Alert, } from 'react-native';
 import { Avatar, Icon } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 import { connect } from 'react-redux';
-import { Constants, } from 'expo';
+import { Constants, Notifications, Permissions } from 'expo';
 import { ifIphoneX, getBottomSpace } from 'react-native-iphone-x-helper';
 import { Row, ButtonSideList, FontText } from './common';
 import { authLogOut } from '../actions';
 import { YELLOW, SERVER, LOGOUT, CLIENT_ID, CLIENT_SECRET } from '../../config';
 
 class SideMenu extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            expoToken: undefined,
+        };
+    }
+
+    async componentDidMount() {
+        const { status } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+        if (status === 'granted') {
+            const token = await Notifications.getExpoPushTokenAsync();
+            this.setState({ expoToken: token });
+        }
+    }
+
     async onLogOut() {
         try {
             const { token_type, access_token } = this.props.token;
@@ -23,6 +38,7 @@ class SideMenu extends React.Component {
                     client_id: CLIENT_ID,
                     client_secret: CLIENT_SECRET,
                     token: access_token,
+                    expo_token: this.state.expoToken,
                 }),
             });
             if (response.status === 200) {
@@ -31,7 +47,7 @@ class SideMenu extends React.Component {
                 this.props.authLogOut();
             }
         } catch (error) {
-            console.log(error);
+            Alert.alert('Connect lost try again!');
         }
     }
 
@@ -40,7 +56,7 @@ class SideMenu extends React.Component {
           await AsyncStorage.removeItem('token');
         } catch (error) {
           // Error saving data
-          console.log(error);
+          Alert.alert('Cannot remove authentication on your local storage!');
         }
     }
 
@@ -65,7 +81,7 @@ class SideMenu extends React.Component {
         const { userInfo } = this.props;
         return (
             <Text style={{ color: 'white' }}>
-                {userInfo.tel_number !== undefined ? `0${userInfo.tel_number.slice(3, 5)}-${userInfo.tel_number.slice(5, 8)}-${userInfo.tel_number.slice(8)}` : ''}
+                {userInfo.tel_number !== '' ? `0${userInfo.tel_number.slice(3, 5)}-${userInfo.tel_number.slice(5, 8)}-${userInfo.tel_number.slice(8)}` : ''}
             </Text>
         );
     }

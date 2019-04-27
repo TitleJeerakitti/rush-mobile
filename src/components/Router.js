@@ -1,5 +1,5 @@
 import React from 'react';
-import { AsyncStorage } from 'react-native';
+import { AsyncStorage, Alert } from 'react-native';
 import { Router, Scene, Actions, Drawer, Tabs } from 'react-native-router-flux';
 import { Font, ScreenOrientation } from 'expo';
 import { connect } from 'react-redux';
@@ -27,6 +27,7 @@ class RouterComponent extends React.Component {
     constructor(props) {
         super(props);
         ScreenOrientation.allow('PORTRAIT');
+        this.checkToken();
     }
 
     async componentDidMount() {
@@ -36,7 +37,6 @@ class RouterComponent extends React.Component {
         });
 
         this.props.fontLoader();
-        this.checkToken();
     }
 
     async getUserInfo(token) {
@@ -49,14 +49,13 @@ class RouterComponent extends React.Component {
                     Authorization: `${token_type} ${access_token}`
                 },
             });
-            console.log(response.status);
             if (response.status === 200) {
                 this.userLoginSuccess(response, token);
             } else {
                 this.refreshToken(refresh_token);
             }
         } catch (error) {
-            console.log(error);
+            Alert.alert('Connect lost try again!');
         }
     }
 
@@ -75,12 +74,11 @@ class RouterComponent extends React.Component {
                     refresh_token: token,
                 }),
             });
-            console.log('refresh', response.status);
             if (response.status === 200) {
                 this.userLoginSuccess(response);
             }
         } catch (error) {
-            console.log(error);
+            Alert.alert('Connect lost try again!');
         }
     }
 
@@ -100,11 +98,10 @@ class RouterComponent extends React.Component {
             const storageToken = await AsyncStorage.getItem('token');
             const token = JSON.parse(storageToken);
             if (token !== null) {
-                console.log(token);
                 this.getUserInfo(token);
             }
         } catch (error) {
-            console.log(error);
+            Alert.alert('Cannot load your local data');
         }
     }
 
@@ -112,7 +109,7 @@ class RouterComponent extends React.Component {
         try {
             await AsyncStorage.setItem('token', JSON.stringify(token));
         } catch (error) {
-            console.log(error);
+            Alert.alert('Cannot save authentication to your local data');
         }
     }
 

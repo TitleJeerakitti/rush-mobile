@@ -30,8 +30,8 @@ class RestaurantMaps extends React.Component {
                 latitude: 0,
                 longitude: 0,
             },
-            userMarker: ScreenWidth > 375 ? userNormal : userTiny,
-            shopMarker: ScreenWidth > 375 ? shopNormal : shopTiny,
+            userMarker: userTiny,
+            shopMarker: shopTiny,
         };
     }
 

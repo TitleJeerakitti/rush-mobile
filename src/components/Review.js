@@ -1,5 +1,13 @@
 import React from 'react';
-import { View, KeyboardAvoidingView, ListView, LayoutAnimation, Platform, UIManager } from 'react-native';
+import { 
+    View, 
+    KeyboardAvoidingView, 
+    ListView, 
+    LayoutAnimation, 
+    Platform, 
+    UIManager, 
+    Alert 
+} from 'react-native';
 import { connect } from 'react-redux';
 import { getBottomSpace } from 'react-native-iphone-x-helper';
 import { TextLineFont, FontText, ReviewCard, LoadingImage } from './common';
@@ -59,7 +67,10 @@ class ReviewPage extends React.Component {
                 });
             }
         } catch (error) {
-            console.log(error);
+            Alert.alert('Connect lost try again!');
+            if (this._isMounted) {
+                this.setState({ loading: false });
+            }
         }
     }
 
@@ -81,12 +92,11 @@ class ReviewPage extends React.Component {
                 })
             });
             const responseData = await response.json();
-            console.log(responseData);
             if (this._isMounted && responseData.status === 200) {
                 this.getReview();
             }
         } catch (error) {
-            console.log(error);
+            Alert.alert('Connect lost try again!');
         }
     }
 

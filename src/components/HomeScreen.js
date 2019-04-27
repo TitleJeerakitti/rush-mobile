@@ -1,7 +1,7 @@
 import React from 'react';
-import { ScrollView, Dimensions, ListView, } from 'react-native';
+import { ScrollView, Dimensions, ListView, Alert, View } from 'react-native';
 import { Icon } from 'react-native-elements';
-import { LinearGradient, Permissions, } from 'expo';
+import { LinearGradient, Permissions, Notifications, } from 'expo';
 import { Actions } from 'react-native-router-flux';
 import { connect } from 'react-redux';
 import { 
@@ -13,9 +13,10 @@ import {
     CardSection,
     CategoryItem,
     LoadingImage,
+    PhoneInput,
 } from './common';
-import { DARK_RED, SERVER, HOME, } from '../../config';
-import { restaurantSelected, restaurantSelectCategory, } from '../actions';
+import { DARK_RED, SERVER, HOME, UPLOAD_EXPO_TOKEN, EDIT_PROFILE, } from '../../config';
+import { restaurantSelected, restaurantSelectCategory, authUpdateUserInfo } from '../actions';
 
 
 class HomeScreen extends React.Component {
@@ -28,12 +29,14 @@ class HomeScreen extends React.Component {
             bannerList: [],
             categoryList: this.listViewCloneWithRows(),
             suggestList: this.listViewCloneWithRows(),
+            isShow: this.props.userInfo.tel_number === '',
+            phoneNumber: this.props.userInfo.tel_number,
         };
-        this.mounted = true;
+        this._isMounted = true;
     }
 
     async componentDidMount() {
-        this.getLocationAsync();
+        this.getPermissions();
         try {
             const { access_token, token_type, } = this.props.token;
             const response = await fetch(`${SERVER}${HOME}`, {
@@ -43,39 +46,112 @@ class HomeScreen extends React.Component {
                 }
             });
             const responseData = await response.json();
-            if (this.mounted) {
+            if (this._isMounted) {
                 await this.setState({
                     bannerList: responseData.slide_banner,
                     categoryList: this.listViewCloneWithRows(responseData.category),
                     suggestList: this.listViewCloneWithRows(responseData.suggest_list),
                     isLoaded: true,
                 });
+                this.listener = Notifications.addListener(this.listener);
             }
         } catch (error) {
-            console.log(error);
+            Alert.alert('Connect lost try again!');
         }
     }
 
-    // async onPressSearchNearby() {
-    //     const locate = await this.getLocationAsync();
-    //     console.log(locate.latitude);
-    //     navigator.geolocation.getCurrentPosition(position => console.log(position));
-    //     // Actions.search_nearby()
-    // }
+    // componentDidMount() {
+    //     this.listener = Notifications.addListener(this.listener);
+    //     console.log(this.listener)
+    //   }
+    
+    componentWillUnmount() {
+        if (this.listener && this._isMounted) {
+            Notifications.removeListener(this.listener);
+        }
+        this._isMounted = false;
+    }
+    
+    listener = ({ origin, data }) => {
+        // handle notification here!
+        if (origin === 'selected') {
+            if (data.status === 100) {
+                Actions.queue();
+                Actions.refresh();
+            } else if (data.status === 101) {
+                Actions.history();
+                Actions.refresh();
+            }
+        }
+    }
 
     onSelectRestaurant(item) {
         this.props.restaurantSelected(item);
         Actions.restaurant_menu();
     }
 
-    async getLocationAsync() {
-        // permissions returns only for location permissions on iOS and under certain conditions, see Permissions.LOCATION
-        const { status, permissions } = await Permissions.askAsync(Permissions.LOCATION);
-        if (status === 'granted') {
-            console.log('pass');
-        //   return Location.getCurrentPositionAsync(/*{ enableHighAccuracy: true }*/);
-        } else {
-          throw new Error('Location permission not granted');
+    async getPermissions() {
+        let locationStatus;
+        let notificationStatus;
+        await Permissions.askAsync(Permissions.LOCATION)
+        .then(locationResponse => {
+            locationStatus = locationResponse.status;
+            return (Permissions.askAsync(Permissions.NOTIFICATIONS));
+        }).then(notificationResponse => {
+            notificationStatus = notificationResponse.status;
+        });
+        if (locationStatus !== 'granted') {
+            Alert.alert('Please turn on your location at setting.');
+        }
+        if (notificationStatus === 'granted') {
+            const token = await Notifications.getExpoPushTokenAsync();
+            this.sentNoticeToken(token);
+        }
+    }
+
+    async updatePhoneNumber() {
+        try {
+            const { access_token, token_type, } = this.props.token;
+            const response = await fetch(`${SERVER}${EDIT_PROFILE}`, {
+                method: 'POST',
+                headers: {
+                    'Cache-Control': 'no-cache',
+                    'Content-Type': 'application/json',
+                    Authorization: `${token_type} ${access_token}`,
+                },
+                body: JSON.stringify({
+                    tel_number: `+66${this.state.phoneNumber.slice(1)}`,
+                    first_name: null,
+                    last_name: null,
+                    profile_picture: null,
+                }),
+            });
+            const responseData = await response.json();
+            if (this._isMounted && response.status === 200) {
+                this.setState({ isShow: false, });
+                this.props.authUpdateUserInfo(responseData);
+            }
+        } catch (err) {
+            Alert.alert('Connect lost try again!');
+        }
+    }
+
+    async sentNoticeToken(token) {
+        try {
+            const { access_token, token_type, } = this.props.token;
+            await fetch(`${SERVER}${UPLOAD_EXPO_TOKEN}`, {
+                method: 'POST',
+                headers: {
+                    'Cache-Control': 'no-cache',
+                    'Content-Type': 'application/json',
+                    Authorization: `${token_type} ${access_token}`,
+                },
+                body: JSON.stringify({
+                    expo_token: token,
+                })
+            });
+        } catch (err) {
+            Alert.alert('Connect lost try again!');
         }
     }
 
@@ -109,14 +185,46 @@ class HomeScreen extends React.Component {
         );
     }
 
-    renderSuggest(item) {
+    renderSuggest(suggestList) {
+        if (suggestList._cachedRowCount > 0) {
+            return (
+                <ListView
+                    horizontal
+                    dataSource={suggestList}
+                    renderRow={(item) => 
+                        <CategoryItem 
+                            source={{ uri: item.image }} 
+                            overlayAlpha={0} 
+                            onPress={() => this.onSelectRestaurant(item)}
+                        />
+                    }
+                    enableEmptySections
+                />
+            );
+        }
         return (
-            <CategoryItem 
-                source={{ uri: item.image }} 
-                overlayAlpha={0} 
-                onPress={() => this.onSelectRestaurant(item)}
-            />
+            <View style={{ height: 100, justifyContent: 'center', alignItems: 'center' }}>
+                <FontText>ยังไม่มีรายการอาหารที่แนะนำ</FontText>
+                <FontText>ต้องสั่งอาหารก่อนนะครับ</FontText>
+            </View>
         );
+    }
+
+    renderPopup() {
+        if (this.state.isShow) {
+            return (
+                <PhoneInput 
+                    value={this.state.phoneNumber}
+                    onChangeText={(text) => this.setState({ phoneNumber: text })}
+                    onCancel={() => this._isMounted && this.setState({ isShow: false, })}
+                    onConfirm={() => {
+                        if (this.state.phoneNumber.length === 10) {
+                            this.updatePhoneNumber();
+                        }
+                    }}
+                />
+            );
+        }
     }
 
     render() {
@@ -147,12 +255,9 @@ class HomeScreen extends React.Component {
                         <CardSection>
                             <FontText>ร้านอาหารแนะนำสำหรับคุณ</FontText>
                         </CardSection>
-                        <ListView
-                            horizontal
-                            dataSource={suggestList}
-                            renderRow={(item) => this.renderSuggest(item)}
-                        />
+                        {this.renderSuggest(suggestList)}
                     </Card>
+                    {this.renderPopup()}
                 </ScrollView>
             );
         }
@@ -161,11 +266,12 @@ class HomeScreen extends React.Component {
 }
 
 const mapStateToProps = ({ auth }) => {
-    const { token } = auth;
-    return { token };
+    const { token, userInfo } = auth;
+    return { token, userInfo };
 };
 
 export default connect(mapStateToProps, { 
     restaurantSelected,
     restaurantSelectCategory,
+    authUpdateUserInfo,
 })(HomeScreen);

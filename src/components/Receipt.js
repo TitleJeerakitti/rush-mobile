@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ListView, } from 'react-native';
+import { View, ListView, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import RestaurantCard from './RestaurantCard';
 import { 
@@ -46,7 +46,7 @@ class Receipt extends React.Component {
                 });
             }
         } catch (error) {
-            console.log(error);
+            Alert.alert('Connect lost try again!');
         }
     }
 

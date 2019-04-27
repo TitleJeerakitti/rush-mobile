@@ -19,6 +19,7 @@ export const FORGET_PASSWORD = '/auth/reset-password/';
 export const LOGOUT = '/auth/logout/';
 export const CHECK_TOKEN = '/api/get-customer-data';
 export const EDIT_PROFILE = '/api/customer-profile';
+export const UPLOAD_EXPO_TOKEN = '/api/upload_expo_token';
 // API RESTAURANT
 export const HOME = '/api/home';
 export const SEARCH_BY_NAME = '/restaurant/restaurant-name/';

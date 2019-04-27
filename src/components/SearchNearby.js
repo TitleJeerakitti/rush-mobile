@@ -1,5 +1,5 @@
 import React from 'react';
-import { RefreshControl, View, ListView, } from 'react-native';
+import { RefreshControl, View, ListView, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import RestaurantCard from './RestaurantCard';
@@ -88,7 +88,7 @@ class SearchNearby extends React.Component {
                 });
             }
         } catch (error) {
-            console.log(error);
+            Alert.alert('Connect lost try again!');
             await this.setState({ refreshing: false });
         }
     }
@@ -177,6 +177,10 @@ class SearchNearby extends React.Component {
                                     mapVisible: true, 
                                     restaurantSelect: item, 
                                 })} 
+                                userPosition={{
+                                    latitude: this.state.latitude,
+                                    longitude: this.state.longitude,
+                                }}
                             />
                         }
                         renderHeader={() => this.renderHeader()}

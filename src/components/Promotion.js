@@ -1,5 +1,5 @@
 import React from 'react';
-import { ListView, } from 'react-native';
+import { ListView, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import { LoadingImage, Empty, Space } from './common';
 import { SERVER, GET_PROMOTION, } from '../../config';
@@ -40,7 +40,8 @@ class Promotion extends React.Component {
                 });
             }
         } catch (error) {
-            console.log(error);
+            Alert.alert('Connect lost try again!');
+            this.setState({ loading: false, });
         }
     }
 
