@@ -29,13 +29,14 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = ('name', 'image')
 
+
 class LocationSerializers(serializers.ModelSerializer):
     latitude = serializers.SerializerMethodField('get_supplier_latitude')
     longitude = serializers.SerializerMethodField('get_supplier_longitude')
 
     class Meta:
         model = Supplier
-        fields = ('latitude','longitude')
+        fields = ('latitude', 'longitude')
 
     def get_supplier_latitude(self, obj):
         return obj.latitude
@@ -46,8 +47,10 @@ class LocationSerializers(serializers.ModelSerializer):
 
 class SupplierCardSerializers(serializers.ModelSerializer):
     id = serializers.SerializerMethodField('get_supplier_id')
-    rating = serializers.FloatField(default=5.0)
-    reviewCount = serializers.IntegerField(default=500)
+    # rating = serializers.SerializerMethodField('get_supplier_rating')
+    # reviewCount = serializers.SerializerMethodField('get_supplier_review_count')
+    rating = serializers.FloatField(source='get_rating')
+    reviewCount = serializers.FloatField(source='get_review_count')
     image = serializers.SerializerMethodField('get_profile_picture')
     category = CategorySerializer()
     location = serializers.SerializerMethodField('get_supplier_location')
@@ -83,7 +86,7 @@ class MenusSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = Menu
-        fields = ('id', 'name', 'price', 'picture', 'quantity', )
+        fields = ('id', 'name', 'price', 'picture', 'quantity', 'is_display', 'is_out_of_stock')
 
     def get_image_url(self, obj):
         request = self.context.get('request')
@@ -105,22 +108,67 @@ class MenusSerializers(serializers.ModelSerializer):
         return 0
 
 
-class SubCategoriesSerializer(serializers.ModelSerializer):
-    menus = MenusSerializers(source='menu_set', many=True)
+class MenusSupplierSerializers(serializers.ModelSerializer):
+    picture = serializers.SerializerMethodField('get_image_url')
+    quantity = serializers.SerializerMethodField('get_amount_history')
+
+    class Meta:
+        model = Menu
+        fields = ('id', 'name', 'price', 'picture', 'quantity', 'is_display', 'is_out_of_stock')
+
+    def get_image_url(self, obj):
+        request = self.context.get('request')
+        if obj.image:
+            image_url = obj.image.url
+        else:
+            image_url = '/media/default/food_default.png'
+        return request.build_absolute_uri(image_url)
+
+        return None
+
+    def get_amount_history(self, obj):
+        if self.context.get('order_id'):
+            order = get_object_or_404(Order, id=self.context.get('order_id'))
+            order_menu_obj = OrderMenu.objects.filter(order=order)
+            for order_menu in order_menu_obj:
+                if obj == order_menu.menu:
+                    return order_menu.amount
+        return 0
+
+
+class SubCategoriesSupplierSerializer(serializers.ModelSerializer):
+    menus = MenusSupplierSerializers(source='display_menu_supplier', many=True)
 
     class Meta:
         model = SubCategory
-        fields = ('name', 'menus')
+        fields = ('id', 'name', 'menus')
+
+class MainCategoriesSupplierSerializer(serializers.ModelSerializer):
+    # sub_categories = serializers.SerializerMethodField('get_sub_category')
+    sub_categories = SubCategoriesSupplierSerializer(
+        source='display_sub_category', many=True)
+
+    class Meta:
+        model = MainCategory
+        fields = ('id', 'name', 'sub_categories', )
+
+
+class SubCategoriesSerializer(serializers.ModelSerializer):
+    menus = MenusSerializers(source='display_menu', many=True)
+
+    class Meta:
+        model = SubCategory
+        fields = ('id', 'name', 'menus')
 
 
 class MainCategoriesSerializer(serializers.ModelSerializer):
     # sub_categories = serializers.SerializerMethodField('get_sub_category')
     sub_categories = SubCategoriesSerializer(
-        source='subcategory_set', many=True)
+        source='display_sub_category', many=True)
 
     class Meta:
         model = MainCategory
-        fields = ('name', 'sub_categories', )
+        fields = ('id', 'name', 'sub_categories', )
 
 
 class RestaurantDetailSerializer(serializers.ModelSerializer):
@@ -129,7 +177,7 @@ class RestaurantDetailSerializer(serializers.ModelSerializer):
     #     source='extrapicture_set', many=True)
     estimate_time = serializers.IntegerField(default=20)
     main_categories = MainCategoriesSerializer(
-        source='main_category', many=True)
+        source='display_main_category', many=True)
 
     class Meta:
         model = Supplier
@@ -142,5 +190,15 @@ class RestaurantDetailSerializer(serializers.ModelSerializer):
             serializers = ExtraPictureSerializer(
                 extra_picture, many=True, context={'request': request})
         else:
-            return [{'image': request.build_absolute_uri('/media/default/extra_picture.png')},]
+            return [{'image': request.build_absolute_uri('/media/default/extra_picture.png')}, ]
         return serializers.data
+ 
+
+class HomeSupplierSeriailizer(serializers.ModelSerializer):
+    id = serializers.IntegerField(source='user.id')
+
+    class Meta:
+        model = Supplier
+        fields = ('id', 'name', 'category', 'profile_picture', 'is_open', 'timestamp')
+
+

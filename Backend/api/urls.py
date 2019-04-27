@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path,include
 
 from account.views import GetCustomerData
 from customer.views import CustomerHistoryAPIView,CustomerProfileAPIView
@@ -14,6 +14,7 @@ urlpatterns = [
     path('customer-profile',CustomerProfileAPIView.as_view()),
     path('get-promotion',PromotionAPIView.as_view()),
     path('create-review',CreateReviewAPIView.as_view()),
-    path('customer-cancel-order',CancelOrderAPIView.as_view())
-    # path('test', TestAPIView.as_view()),
+    path('customer-cancel-order',CancelOrderAPIView.as_view()),
+    path('upload_expo_token',UploadExpoTokenAPIView.as_view()),
+    path('restaurant/',include('api.restaurant-urls')),
 ]

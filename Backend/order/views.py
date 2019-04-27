@@ -5,8 +5,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
-from account.permission import IsCustomer
+from account.permission import IsCustomer,IsSupplier
 from supplier.models import Supplier
+from notification.models import Notification
 from .serializer import CreateOrderSerializer, QueueDetailSerializer, OrderReceiptSerializer, ConfirmOrderSerializer
 from .models import Queue, Order
 # Create your views here.
@@ -43,7 +44,7 @@ class QueueAPIView(APIView):
     def get(self, request):
         customer_id = request.user.id
         queue = Queue.objects.filter(
-            order__customer__user__id=customer_id, status=1).order_by('-timestamp')
+            order__customer__user__id=customer_id, order__status__lte=3).order_by('-timestamp') 
         serializer = QueueDetailSerializer(
             queue, many=True, context={'request': request})
         return Response(serializer.data)
@@ -71,6 +72,7 @@ class UpdateOrderAPIView(APIView):
 
 
 class CancelOrderAPIView(APIView):
+    permission_classes = [IsAuthenticated,IsCustomer]
 
     def post(self, request):
         try:
@@ -79,7 +81,18 @@ class CancelOrderAPIView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
         try:
             order = Order.objects.get(id=request.data['id'],customer=request.user.get_customer())
+            if order.status != 1:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
             order.cancel_order()
+            if order.category == Order.ONLINE:
+                notification_list = order.supplier.get_notification()
+                for notification in notification_list:
+                    notification.send_notification(
+                        message=request.user.get_customer().get_name()+ '\'s order has been cancel.',
+                        title='Customer cancel an order - '+order.get_order_id(),
+                        data={'status':201})
             return Response(status=status.HTTP_200_OK)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+

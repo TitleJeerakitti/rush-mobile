@@ -37,11 +37,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'django.contrib.gis',
     'rest_framework',
     'oauth2_provider',
     'social_django',
     'rest_framework_social_oauth2',
     'phonenumber_field',
+    'django_extensions',
     # 'testing.apps.TestingConfig',   #app
     'account.apps.AccountConfig',
     'supplier.apps.SupplierConfig',
@@ -51,6 +53,8 @@ INSTALLED_APPS = [
     'promotion.apps.PromotionConfig',
     'activity.apps.ActivityConfig',
     'api.apps.ApiConfig',
+    'report.apps.ReportConfig',
+    'notification.apps.NotificationConfig',
 ]
 
 MIDDLEWARE = [
@@ -84,6 +88,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'rush.wsgi.application'
 

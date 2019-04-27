@@ -13,8 +13,8 @@ from activity.models import Activity
 from .models import Customer, User
 
 class CustomerProfileSerializer(serializers.ModelSerializer):
-    first_name = serializers.CharField(source='user.first_name')
-    last_name = serializers.CharField(source='user.last_name')
+    first_name = serializers.CharField(source='user.first_name',allow_null=True)
+    last_name = serializers.CharField(source='user.last_name',allow_null=True)
 
     class Meta:
         model = Customer

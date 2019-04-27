@@ -8,7 +8,10 @@ def save_profile(backend, user, response, *args, **kwargs):
 
     if backend.name == 'facebook':
 
-        customer = user.get_customer()
+        try:
+            customer = user.get_customer()
+        except:
+            customer = None
         if customer is None:
             user.is_customer = True
             user.save()

@@ -10,6 +10,7 @@ from oauth2_provider.models import AccessToken
 from .models import User
 from customer.models import Customer
 from customer.serializer import HomeCustomerSerializer, CustomerSerializer
+from supplier.serializer import HomeSupplierSeriailizer
 from activity.models import Activity
 
 
@@ -27,6 +28,19 @@ def get_customer_data(request, user):
             'role': user_status}
 
 
+def get_supplier_data(request, user):
+    user_status = 'admin'
+    serializers = None
+    if user.is_supplier == True:
+        user_status = 'supplier'
+        serializers = HomeSupplierSeriailizer(
+            user.get_supplier(), context={'request': request})
+    elif user.is_customer == True:
+        user_status = 'customer'
+    return {'user_info': serializers.data,
+            'role': user_status}
+
+
 class LoginUserTokenView(TokenView):
 
     def post(self, request, *args, **kwargs):
@@ -35,9 +49,9 @@ class LoginUserTokenView(TokenView):
         try:
             user = AccessToken.objects.get(
                 token=response.data['access_token']).user
-            user_data = get_customer_data(request,user)
-            user_data['token']=response.data
-            return Response(user_data,status=status.HTTP_200_OK)
+            user_data = get_customer_data(request, user)
+            user_data['token'] = response.data
+            return Response(user_data, status=status.HTTP_200_OK)
             # user_status = 'admin'
             # serializers = None
             # if user.is_customer == True:
@@ -52,7 +66,28 @@ class LoginUserTokenView(TokenView):
             #         'role': user_status},
             # status=status.HTTP_200_OK)
         except:
-            return Response(response.data,status=response.status_code)
+            return Response(response.data, status=response.status_code)
+
+
+class LoginRestuarantUserTokenView(TokenView):
+    def post(self, request, *args, **kwargs):
+        response = super(LoginRestuarantUserTokenView, self).post(
+            request, *args, **kwargs)
+        try:
+            user = AccessToken.objects.get(
+                token=response.data['access_token']).user
+            user_data = get_supplier_data(request, user)
+            user_data['token'] = response.data
+            return Response(user_data, status=status.HTTP_200_OK)
+        except:
+            return Response(response.data, status=response.status_code)
+
+
+class GetSupplierData(APIView):
+
+    def get(self, request):
+        supplier_data = get_supplier_data(request, request.user)
+        return Response(supplier_data, status=status.HTTP_200_OK)
 
 
 class GetCustomerData(APIView):
@@ -65,7 +100,12 @@ class GetCustomerData(APIView):
 class LogoutUserRevokeTokenView(RevokeTokenView):
 
     def post(self, request, *args, **kwargs):
+        from notification.models import Notification
         Activity.push(request.user, 300, request.user.username+'log out.')
+        try:
+            notification = Notification.objects.get(user=request.user,expo_token=request.data['expo_token']).delete()
+        except:
+            pass
         response = super(LogoutUserRevokeTokenView, self).post(
             request, *args, **kwargs)
         return Response(response.data)
