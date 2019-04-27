@@ -33,7 +33,7 @@ class ReportDayTotal(models.Model):
                                                  status=Order.SUCCESS, timestamp__year=time.year,
                                                  timestamp__month=time.month, timestamp__day=time.day)
             order_fail = Order.objects.filter(supplier=supplier, status=Order.CANCEL, timestamp__year=time.year,
-                                              timestamp__month=time.month, timestamp__day=time.day) and Order.objects.filter(
+                                              timestamp__month=time.month, timestamp__day=time.day) or Order.objects.filter(
                 supplier=supplier, status=Order.TIMEOUT, timestamp__year=time.year, timestamp__month=time.month, timestamp__day=time.day)
             total = 0
             for order in order_success:
