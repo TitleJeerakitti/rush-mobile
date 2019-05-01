@@ -2,6 +2,7 @@ import React from 'react';
 import { RefreshControl, View, ListView, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
+import { Permissions } from 'expo';
 import RestaurantCard from './RestaurantCard';
 import { 
     FilterCard, 
@@ -39,19 +40,30 @@ class SearchNearby extends React.Component {
             restaurantSelect: {},
             latitude: INITIAL_LOCATION.latitude,
             longitude: INITIAL_LOCATION.longitude,
+            locationPermission: undefined,
         };
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         this._isMounted = true;
         if (this._isMounted) {
-            navigator.geolocation.getCurrentPosition(position => {
-                this.setState({
-                    latitude: position.coords.latitude,
-                    longitude: position.coords.longitude,
+            const { status } = await Permissions.askAsync(Permissions.LOCATION);
+            // Promise.all(result);
+            if (status === 'granted') {
+                navigator.geolocation.getCurrentPosition(position => {
+                    this.setState({
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                        locationPermission: true,
+                    });
+                    this.getRestaurantAPI();
                 });
-                this.getRestaurantAPI();
-            });
+            } else {
+                this.setState({
+                    isLoaded: true,
+                    locationPermission: false,
+                });
+            }
         }
     }
 
@@ -202,10 +214,10 @@ class SearchNearby extends React.Component {
                     />
                 </View>
             );
+        } else if (!this.state.locationPermission) {
+            return <Empty title='กรุณาเปิด Location ในตั้งค่าก่อน' />;
         }
-        return (
-            <Empty title='ไม่มีร้านอาหารบริเวณใกล้เคียง' />
-        );
+        return <Empty title='ไม่มีร้านอาหารบริเวณใกล้เคียง' />;
     }
 }
 

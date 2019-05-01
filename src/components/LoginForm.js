@@ -116,25 +116,26 @@ class LoginForm extends React.Component {
 
     async logInFB() {
         try {
-          const {
-            type,
-            token,
-            // expires,
-            // permissions,
-            // declinedPermissions,
-          } = await Facebook.logInWithReadPermissionsAsync('322995281815548', {
-            permissions: ['public_profile', 'user_birthday', 'user_gender', 'email'],
-          });
-          if (type === 'success') {
-            // Get the user's name using Facebook's Graph API
-            // const response = await fetch(`https://graph.facebook.com/me?access_token=${token}&fields=id,name,email,birthday,gender,picture.type(large)`);
-            // const responseJson = await response.json();
-            this.getAccessTokenFacebook(token);
-          } else {
-            // type === 'cancel'
-          }
+            const {
+                type,
+                token,
+                // expires,
+                // permissions,
+                // declinedPermissions,
+            } = await Facebook.logInWithReadPermissionsAsync('322995281815548', {
+                behavior: 'native',
+                permissions: ['public_profile', 'user_birthday', 'user_gender', 'email'],
+            });
+            if (type === 'success') {
+                // Get the user's name using Facebook's Graph API
+                // const response = await fetch(`https://graph.facebook.com/me?access_token=${token}&fields=id,name,email,birthday,gender,picture.type(large)`);
+                // const responseJson = await response.json();
+                this.getAccessTokenFacebook(token);
+            } else {
+                // type === 'cancel'
+            }
         } catch ({ message }) {
-          Alert.alert(`Facebook Login Error: ${message}`);
+            Alert.alert(`Facebook Login Error: ${message}`);
         }
     }
 

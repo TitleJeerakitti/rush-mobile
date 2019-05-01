@@ -6,12 +6,12 @@ import {
     StyleSheet,
     StatusBar,
 } from 'react-native';
-import { BlurView } from 'expo';
+import { BlurView, Constants } from 'expo';
 
 const AuthBg = ({ children }) => {
     const { container } = styles;
     return (
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, }}>
             <StatusBar barStyle="light-content" />
             <Image
                 resizeMode='cover'
@@ -36,6 +36,7 @@ const styles = {
         backgroundColor: 'rgba(0,0,0,0.5)',
         justifyContent: 'center',
         alignItems: 'center',
+        // marginTop: Constants.statusBarHeight
     },
 };
 
