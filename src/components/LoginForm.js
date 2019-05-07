@@ -81,6 +81,10 @@ class LoginForm extends React.Component {
                 },
                 body: JSON.stringify(data),
             });
+            if (response.status === 403) {
+                this.onChangeState('loading', false);
+                return { role: 'banned' };
+            }
             const responseData = await response.json();
             this.onChangeState('loading', false);
             return responseData;
@@ -144,6 +148,8 @@ class LoginForm extends React.Component {
             this.storeData(response.token);
             this.props.authLoginSuccess(response);
             Actions.app();
+        } else if (response.role === 'banned') {
+            this.onChangeState('error', 'อีเมลของคุณถูกแบน');
         } else {
             this.onChangeState('error', 'อีเมลหรือรหัสผ่านไม่ถูกต้อง');
         }
