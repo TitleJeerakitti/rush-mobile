@@ -1,0 +1,27 @@
+li a {
+    color: green;
+}
+
+.container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+
+.flex-3 {
+    flex: 3;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+img {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30%;
+    min-width: 100px;
+    max-width: 200px;
+}

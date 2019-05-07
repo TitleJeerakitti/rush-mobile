@@ -1,0 +1,17 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'test.css' %}">
+
+<div class='container'>
+    <img src="{% static 'r-logo.png' %}" alt="Italian Trulli">
+    <form action="" method="post" enctype="multipart/form-data"> 
+        {% csrf_token %}
+        <p>ชื่อร้านค้า {{ form.name }} </p>
+        <p>อีเมลล์ {{ form.email }} </p>
+        <p>รูปภาพ {{ form.picture }} </p>
+        <p>ที่อยู่ {{ form.address }} </p>
+        <p>คำอธิบายร้านค้า {{ form.description }} </p>
+        <p>เบอร์โทรศัทพ์ {{ form.telephone }} </p>
+        <input type="submit" value="Submit">
+    </form>
+</div>
+
