@@ -95,6 +95,8 @@ class GetSupplierData(APIView):
 class GetCustomerData(APIView):
 
     def get(self, request):
+        if request.user.is_banned:
+            return Response(stauts=status.HTTP_403_FORBIDDEN)
         customer_data = get_customer_data(request, request.user)
         return Response(customer_data, status=status.HTTP_200_OK)
 
