@@ -10,9 +10,9 @@ class MyUserChangeForm(UserChangeForm):
 
 class MyUserAdmin(UserAdmin):
     form = MyUserChangeForm
-    list_display = ['username','email','is_customer', 'is_supplier']
+    list_display = ['username','email','is_customer', 'is_supplier','is_banned']
     fieldsets = UserAdmin.fieldsets + (
-            ('TYPE', {'fields': ('is_customer','is_supplier')}),
+            ('TYPE', {'fields': ('is_customer','is_supplier','is_banned')}),
     )
 
 

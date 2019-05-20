@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, LayoutAnimation, Platform, UIManager, } from 'react-native';
+import { ScrollView, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import { 
     Slick, 
@@ -58,14 +58,7 @@ class RestaurantMenu extends React.Component {
             return mainCategories.map((category, index) => 
                 <MainCategoryItem 
                     key={index}
-                    onPress={() => {
-                        this.props.currentCategoryChange(index);
-                        LayoutAnimation.easeInEaseOut();
-                        if (Platform.OS === 'android') {
-                            // UIManager.setLayoutAnimationEnabledExperimental && 
-                            UIManager.setLayoutAnimationEnabledExperimental(true);
-                        }
-                    }}
+                    onPress={() => this.props.currentCategoryChange(index)}
                     selected={index === currentCategory}
                 >
                     {category.name}

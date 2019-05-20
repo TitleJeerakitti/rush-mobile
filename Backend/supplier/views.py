@@ -15,8 +15,29 @@ from order.serializer import CreateOrderSupplierSerializer
 from order.models import Queue,Order
 from .models import *
 from .serializer import *
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
 
+from .forms import SupplierForm
 
+def get_name(request):
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = SupplierForm(request.POST,request.FILES)
+        # check whether it's valid:
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('thanks/')
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = SupplierForm()
+
+    return render(request, 'restaurant_register.html', {'form': form})
+
+def thanks(request):
+    return render(request, 'thanks.html')
 # class SupplierRecordView(APIView):
 
 #     def get(self, format=None):

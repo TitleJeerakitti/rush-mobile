@@ -81,6 +81,10 @@ class LoginForm extends React.Component {
                 },
                 body: JSON.stringify(data),
             });
+            if (response.status === 403) {
+                this.onChangeState('loading', false);
+                return { role: 'banned' };
+            }
             const responseData = await response.json();
             this.onChangeState('loading', false);
             return responseData;
@@ -116,25 +120,26 @@ class LoginForm extends React.Component {
 
     async logInFB() {
         try {
-          const {
-            type,
-            token,
-            // expires,
-            // permissions,
-            // declinedPermissions,
-          } = await Facebook.logInWithReadPermissionsAsync('322995281815548', {
-            permissions: ['public_profile', 'user_birthday', 'user_gender', 'email'],
-          });
-          if (type === 'success') {
-            // Get the user's name using Facebook's Graph API
-            // const response = await fetch(`https://graph.facebook.com/me?access_token=${token}&fields=id,name,email,birthday,gender,picture.type(large)`);
-            // const responseJson = await response.json();
-            this.getAccessTokenFacebook(token);
-          } else {
-            // type === 'cancel'
-          }
+            const {
+                type,
+                token,
+                // expires,
+                // permissions,
+                // declinedPermissions,
+            } = await Facebook.logInWithReadPermissionsAsync('322995281815548', {
+                behavior: 'native',
+                permissions: ['public_profile', 'user_birthday', 'user_gender', 'email'],
+            });
+            if (type === 'success') {
+                // Get the user's name using Facebook's Graph API
+                // const response = await fetch(`https://graph.facebook.com/me?access_token=${token}&fields=id,name,email,birthday,gender,picture.type(large)`);
+                // const responseJson = await response.json();
+                this.getAccessTokenFacebook(token);
+            } else {
+                // type === 'cancel'
+            }
         } catch ({ message }) {
-          Alert.alert(`Facebook Login Error: ${message}`);
+            Alert.alert(`Facebook Login Error: ${message}`);
         }
     }
 
@@ -143,6 +148,8 @@ class LoginForm extends React.Component {
             this.storeData(response.token);
             this.props.authLoginSuccess(response);
             Actions.app();
+        } else if (response.role === 'banned') {
+            this.onChangeState('error', 'อีเมลของคุณถูกแบน');
         } else {
             this.onChangeState('error', 'อีเมลหรือรหัสผ่านไม่ถูกต้อง');
         }
