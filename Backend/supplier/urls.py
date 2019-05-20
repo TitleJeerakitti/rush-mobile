@@ -18,4 +18,8 @@ urlpatterns = [
     path('restaurant-category/',
          SupplierCategoryAPIView.as_view(),
          name='restarant_category'),
+     path('register-form/',
+          get_name,),
+     path('register-form/thanks/',
+          thanks,),
 ]

@@ -49,6 +49,8 @@ class LoginUserTokenView(TokenView):
         try:
             user = AccessToken.objects.get(
                 token=response.data['access_token']).user
+            if user.is_banned:
+                return Response(status=status.HTTP_403_FORBIDDEN)
             user_data = get_customer_data(request, user)
             user_data['token'] = response.data
             return Response(user_data, status=status.HTTP_200_OK)
@@ -93,6 +95,8 @@ class GetSupplierData(APIView):
 class GetCustomerData(APIView):
 
     def get(self, request):
+        if request.user.is_banned:
+            return Response(stauts=status.HTTP_403_FORBIDDEN)
         customer_data = get_customer_data(request, request.user)
         return Response(customer_data, status=status.HTTP_200_OK)
 
@@ -119,6 +123,8 @@ class LoginFacebookConvertTokenView(ConvertTokenView):
         try:
             user = AccessToken.objects.get(
                 token=response.data['access_token']).user
+            if user.is_banned:
+                return Response(status=status.HTTP_403_FORBIDDEN)
             serializers = HomeCustomerSerializer(
                 user.get_customer(), context={'request': request}).data
             return Response({

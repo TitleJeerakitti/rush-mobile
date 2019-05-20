@@ -42,3 +42,7 @@ class MenuAdmin(admin.ModelAdmin):
 @admin.register(SupplierQueueIndex)
 class SupplierQueueIndexAdmin(admin.ModelAdmin):
     pass
+
+@admin.register(SupplierRegisterForm)
+class SupplierRegisterFormAdmin(admin.ModelAdmin):
+    pass

@@ -273,3 +273,13 @@ class SupplierQueueIndex(models.Model):
 
     def get_queue_number(self):
         return self.category+self.index
+
+class SupplierRegisterForm(models.Model):
+    name = models.CharField(max_length=30)
+    email = models.EmailField()
+    picture = models.ImageField(
+        upload_to='supplier/form', default='default/no_picture.png')
+    address = models.CharField(blank=True, max_length=150)
+    description = models.CharField(blank=True, max_length=300)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    telephone = models.CharField(blank=True,max_length=300)
